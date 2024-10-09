@@ -1,0 +1,22 @@
+{
+    "name": "Laravel Dev Container",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [8000],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash"
+            },
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+
+                "mikestead.dotenv",
+                "amiralizadeh9480.laravel-extra-intellisense"
+            ],
+        }
+    },
+    "postCreateCommand": "composer install && php artisan key:generate",
+    "remoteUser": "vscode",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace"
+  }
