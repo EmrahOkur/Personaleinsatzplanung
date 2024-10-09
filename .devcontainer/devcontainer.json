@@ -5,7 +5,7 @@
     "customizations": {
         "vscode": {
             "settings": {
-                "terminal.integrated.shell.linux": "/bin/bash"
+                
             },
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
@@ -15,8 +15,11 @@
             ],
         }
     },
-    "postCreateCommand": "composer install && php artisan key:generate",
+    //"postCreateCommand": "",
     "remoteUser": "vscode",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-    "workspaceFolder": "/workspace"
+    "workspaceFolder": "/workspace",
+    "mounts": [
+         "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ]
   }
