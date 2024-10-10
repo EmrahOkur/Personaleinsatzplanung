@@ -48,7 +48,8 @@ Node-Pakete installieren mit
 
 #### Datenbank erstellen
 !Achtung! Bestehende Daten werden überschrieben
-```php artisan migrate:fresh```
+```php artisan migrate:fresh --seed```
+
 
 #### PHP-Server starten mit
 ```php artisan serve```
