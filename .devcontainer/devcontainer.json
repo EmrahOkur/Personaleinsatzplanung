@@ -12,7 +12,7 @@
                 "mikestead.dotenv",
                 "amiralizadeh9480.laravel-extra-intellisense",
                 "ms-azuretools.vscode-docker"
-            ],
+            ]
         }
     },
     "remoteUser": "vscode",
