@@ -1,5 +1,5 @@
 {
-    "name": "Laravel Dev Container",
+    "name": "Personaleinsatzplanung Dev Container",
     "dockerFile": "Dockerfile",
     "forwardPorts": [8000],
     "customizations": {
@@ -9,17 +9,18 @@
             },
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
-
                 "mikestead.dotenv",
                 "amiralizadeh9480.laravel-extra-intellisense"
             ],
         }
     },
-    //"postCreateCommand": "",
     "remoteUser": "vscode",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "workspaceFolder": "/workspace",
     "mounts": [
          "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
+    "runArgs": [
+        "--network=personaleinsatzplanung_default"
     ]
   }
