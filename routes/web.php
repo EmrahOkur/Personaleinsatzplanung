@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/employee', [EmployeeController::class, 'index']);
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
     Route::get('/employees/search', [EmployeeController::class, 'search'])->name('employees.search');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
