@@ -13,7 +13,7 @@ Hinweise zur Installation von Docker-Desktop
 - Benutzereinrichtung erforderlich
 - Einstellungen -> Resources: Haken setzen bei "Enable integration with my default WSL distro" + Haken setzen bei "Ubuntu"
 
-## Folgende Punkte im WSL abarbeiten
+## Folgende Punkte im WSL/Ubuntu abarbeiten
 
 #### SSH-Key
 SSH-Key erstellen im Order ~/.shh
@@ -23,14 +23,14 @@ Wir brauchen ssh um aus dem Container das Github-Repository zu erreichen.
 evtl. Order "workspace" erstellen und öffnen 
 ```mkdir workspace && cd workspace``
 
-Falls git nivt installiert sein sollte: ```sudo apt install git```
+Falls git nicht installiert sein sollte: ```sudo apt install git```
 
 Repository clonen mit
 ```git clone git@github.com:verimich/Personaleinsatzplanung.git```
 -> Projekt wird in Verzeichnis Personaleinsatzplanung geklont
 
 In das Projekt-Verzeichnis wechseln und ausführen:
-```docker-composer up -d build``
+```docker-composer up -d --build```
 -> damit erstellen wir uns einen Datenbank Container
 
 Projekt in VS Code öffen im Repo-Verzeichnis mit ```code .```
@@ -46,12 +46,9 @@ Für PHP
 Node-Pakete installieren mit
 ```npm install```
 
-#### Datenbank erstellen
+#### Datenbank-Tabelle erstellen und mit Testdaten füllen
 !Achtung! Bestehende Daten werden überschrieben
 ```php artisan migrate:fresh --seed```
 
-
-#### PHP-Server starten mit
-```php artisan serve```
-und in einem zweiten Terminalfenster 
-```npm run dev```
+#### npm und PHP-Server starten mit
+```php artisan start```
