@@ -31,7 +31,7 @@
                                     <td>{{ $employee->email }}</td>
                                     <td>{{ $employee->personalnummer }}</td>
                                     <td>
-                                        <a href="" class="btn btn-primary btn-sm">Bearbeiten</a>
+                                        <a href="" class="btn btn-primary btn-sm xyz">Bearbeiten</a>
                                     </td>
                                 </tr>
                                 @endforeach
