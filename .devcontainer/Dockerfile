@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     npm \
-    iputils-ping
+    iputils-ping \
+    bash 
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

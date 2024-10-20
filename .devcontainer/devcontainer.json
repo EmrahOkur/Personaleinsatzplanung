@@ -2,10 +2,20 @@
     "name": "Personaleinsatzplanung Dev Container",
     "dockerFile": "Dockerfile",
     "forwardPorts": [8000],
+    "containerEnv": {
+        "HISTFILE": "/vscode/.bash_history",
+        "HISTSIZE": "1000",
+        "HISTFILESIZE": "1000"
+    },
     "customizations": {
         "vscode": {
             "settings": {
-                
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                }
             },
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
@@ -19,8 +29,9 @@
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "workspaceFolder": "/workspace",
     "mounts": [
-         "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
-    ],
+       "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+       "source=${localWorkspaceFolder}/.container_bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached"
+   ],
     "runArgs": [
         "--network=personaleinsatzplanung_default"
     ]
