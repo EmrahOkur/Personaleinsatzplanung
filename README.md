@@ -51,4 +51,4 @@ Node-Pakete installieren mit
 ```php artisan migrate:fresh --seed```
 
 #### npm und PHP-Server starten mit
-```php artisan start```
+```npm run start```

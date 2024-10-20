@@ -10,6 +10,7 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.container_bash_history
 Homestead.json
 Homestead.yaml
 auth.json
