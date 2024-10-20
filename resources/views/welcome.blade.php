@@ -21,7 +21,7 @@
                 <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
                     <main class="mt-6">
                         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                           <div class="d-flex fex-direction justif-content-center">
+                           <div class="d-flex flex-column align-items-center">
                                 <img src="images/home.jpg" />
                                 <h2>Personalplanung</h2>
                            </div>
