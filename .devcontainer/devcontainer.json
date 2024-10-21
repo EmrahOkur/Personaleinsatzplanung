@@ -15,7 +15,8 @@
                     "bash": {
                         "path": "/bin/bash"
                     }
-                }
+                },
+                "workbench.tree.indent": 20
             },
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
