@@ -21,7 +21,8 @@
                 "bmewburn.vscode-intelephense-client",
                 "mikestead.dotenv",
                 "amiralizadeh9480.laravel-extra-intellisense",
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",
+                "mhutchie.git-graph"
             ]
         }
     },
