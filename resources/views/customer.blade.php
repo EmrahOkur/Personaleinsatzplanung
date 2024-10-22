@@ -39,6 +39,27 @@
     </div>
     </div>
 
+<!-- Modal zur Bestätigung der Löschung des Kunden -->
+<div class="modal fade" id="customerDeleteModal" tabindex="-1" aria-labelledby="customerDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="customerDeleteModalLabel">Kunden löschen</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="customerDeleteBody">
+        Möchtest du 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+
+        <button onclick = "deleteCustomer()" type="button" class="btn btn-primary " data-bs-dismiss="modal">Löschen</button>
+                <!-- Button trigger modal -->
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -72,11 +93,10 @@
                                         <a href="{{ route('customers.edit',$customer->id) }}" class="btn btn-primary btn-sm">Bearbeiten</a>
                                     </td>
                                     <td>
-                                    <form method="POST" action="{{ route('customers.delete',$customer->id) }}">
-                                        @csrf
-                                        @method("DELETE")
-                                        <button type="submit" class="btn btn-primary btn-sm" value="DELETE">Löschen</button>
-                                    </form>
+                                            <!-- Button trigger modal -->
+                                            {{$space = " "}}
+                                        <button onclick = "deleteCustomerModal(event,'{{$customer->id}}', '{{$customer->vorname  . $space . $customer->nachname}}')" id="deleteCustomerButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerDeleteModal" >
+                                            Löschen
                                     </td>
                                 </tr>
                                 @endforeach
@@ -87,4 +107,36 @@
             </div>
         </div>
     </div>
+    <script>
+        let customer_id;
+        let customer_name;
+        let tr;
+        function setCustomerNameInModal(){
+            let CustomerNameInModal = document.getElementById("customerDeleteBody");
+            CustomerNameInModal.innerHTML = "Möchtest du den Kunden " + customer_name + " löschen?";
+        }
+        function deleteCustomerModal(event,id,name){
+            customer_id = id;
+            customer_name = name
+            var td = event.target.parentNode; 
+            tr = td.parentNode; 
+            setCustomerNameInModal()
+        }
+        function deleteCustomer(){
+            // Ajax request
+            $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+            $.ajax({
+                url: `customers/${customer_id}`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(data) {
+                    tr.parentNode.removeChild(tr);
+                }
+            });
+        }
+    </script>
 </x-app-layout>

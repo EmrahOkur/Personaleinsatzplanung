@@ -30,7 +30,7 @@ class CustomerController extends Controller
         $customer = Customer::findorfail($id);
         $customer->delete();
         $customers = Customer::all();
-        return redirect()->route('customers',compact('customers'));
+        return response()->json(['success' => 'User Deleted Successfully!']);
     }
 
     public function edit($id)
