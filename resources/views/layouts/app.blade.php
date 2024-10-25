@@ -32,7 +32,9 @@
                 {{ $slot }}
             </main>
             <footer>
+                @if(isset($footer))
                 {{ $footer }}
+                @endif
             </footer>
         </div>
     </body>
