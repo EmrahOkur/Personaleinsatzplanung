@@ -1,0 +1,18 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "blank_line_after_opening_tag": true,
+        "blank_line_after_namespace": true,
+        "curly_braces_position": {
+            "control_structures_opening_brace": "same_line"
+        },
+        "class_attributes_separation": {
+            "elements": {
+                "method": "one"
+            }
+        },
+        "no_whitespace_before_comma_in_array": true,
+        "no_unused_imports": true,
+        "ordered_imports": true
+    }
+}
