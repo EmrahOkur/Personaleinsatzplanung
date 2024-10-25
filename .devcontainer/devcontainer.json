@@ -1,7 +1,9 @@
 {
     "name": "Personaleinsatzplanung Dev Container",
     "dockerFile": "Dockerfile",
-    "forwardPorts": [8000],
+    "forwardPorts": [
+        8000
+    ],
     "containerEnv": {
         "HISTFILE": "/vscode/.bash_history",
         "HISTSIZE": "1000",
@@ -10,13 +12,29 @@
     "customizations": {
         "vscode": {
             "settings": {
+                "docker.buildKit": true,
+                "remote.containers.buildCache": "enabled",
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.profiles.linux": {
                     "bash": {
                         "path": "/bin/bash"
                     }
                 },
-                "workbench.tree.indent": 20
+                "workbench.tree.indent": 20,
+                "editor.formatOnSave": true,
+                "laravel-pint.enable": true,
+                "laravel-pint.enableDebugLogs": true,
+                "laravel-pint.configPath": "pint.json",
+                "[php]": {
+                    "editor.defaultFormatter": "open-southeners.laravel-pint"
+                },
+                "[blade]": {
+                    "editor.defaultFormatter": "open-southeners.laravel-pint",
+                    "editor.formatOnSave": true
+                },
+                "files.associations": {
+                    "*.blade.php": "blade"
+                }
             },
             "extensions": [
                 "bmewburn.vscode-intelephense-client",
@@ -24,7 +42,11 @@
                 "amiralizadeh9480.laravel-extra-intellisense",
                 "ms-azuretools.vscode-docker",
                 "mhutchie.git-graph",
-                "eamodio.gitlens"
+                "eamodio.gitlens",
+                "DEVSENSE.phptools-vscode",
+                "bmewburn.vscode-intelephense-client",
+                "open-southeners.laravel-pint",
+                "onecentlin.laravel-blade"
             ]
         }
     },
@@ -32,10 +54,10 @@
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "workspaceFolder": "/workspace",
     "mounts": [
-       "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
-       "source=${localWorkspaceFolder}/.container_bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached"
-   ],
+        "source=${localWorkspaceFolder}/../../.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/.container_bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached"
+    ],
     "runArgs": [
         "--network=personaleinsatzplanung_default"
     ]
-  }
+}
