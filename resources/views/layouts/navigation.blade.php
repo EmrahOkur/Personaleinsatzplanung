@@ -18,13 +18,11 @@
             </li>
         </ul>
     </li>
-
     <li class="nav-item">
-        <x-nav-link :href="route('employees')" :active="request()->routeIs('employees')">
-            {{ __('Mitarbeiter') }}
-        </x-nav-link>
+        <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="{{ route('employees') }}">
+            <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
+        </a>
     </li>
-
     <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-cog"></i> Einstellungen
