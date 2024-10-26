@@ -121,26 +121,8 @@
         </main>
 
         <!-- Footer -->
-        <footer class="footer">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    @yield('footer-content-left')
-                </div>
-                <div>
-                    <button class="btn btn-outline-secondary me-2" title="Speichern">
-                        <i class="fas fa-save"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary me-2" title="Zurück">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary" title="Rückgängig">
-                        <i class="fas fa-undo"></i>
-                    </button>
-                </div>
-                <div>
-                    @yield('footer-content-right')
-                </div>
-            </div>
+        <footer class="footer">            
+            @yield('footer')            
         </footer>
     </div>
 

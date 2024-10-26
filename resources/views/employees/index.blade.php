@@ -6,49 +6,49 @@
     @endsection
     
     @section('main')
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <div class="container mt-4">
-                            <div class="row mb-4 d-flex justify-content-end">
-                                <div class="col-md-6">
-                                    <input type="text" id="search" class="form-control" placeholder="Mitarbeiter suchen...">
-                                </div>
-                                <div class="col-md-6" align="right">
-                                    <button class="btn btn-primary me-3">Mitarbeiter anlegen</button>
-                                </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="container mt-4">
+                        <div class="row mb-4 d-flex justify-content-end">
+                            <div class="col-md-6">
+                                <input type="text" id="search" class="form-control" placeholder="Mitarbeiter suchen...">
                             </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>E-Mail</th>
-                                        <th>Personalnummer</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="employeeTableBody">
-                                    @foreach($employees as $employee)
-                                    <tr>
-                                        <td>{{ $employee->full_name }}</td>
-                                        <td>{{ $employee->email }}</td>
-                                        <td>{{ $employee->employee_number }}</td>
-                                        <td align="right" class="pe-3">
-                                            <a href="{{ route('employees.edit', ['id' =>  $employee->id]) }}" 
-                                                class="btn btn-primary"
-                                            >
-                                                 Bearbeiten
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="col-md-6" align="right">
+                                <button class="btn btn-primary me-3">Mitarbeiter anlegen</button>
+                            </div>
                         </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>E-Mail</th>
+                                    <th>Personalnummer</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody">
+                                @foreach($employees as $employee)
+                                <tr>
+                                    <td>{{ $employee->full_name }}</td>
+                                    <td>{{ $employee->email }}</td>
+                                    <td>{{ $employee->employee_number }}</td>
+                                    <td align="right" class="pe-3">
+                                        <a href="{{ route('employees.edit', ['id' =>  $employee->id]) }}" 
+                                            class="btn btn-primary"
+                                        >
+                                                Bearbeiten
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        @endsection
+        </div>
+    @endsection      
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
