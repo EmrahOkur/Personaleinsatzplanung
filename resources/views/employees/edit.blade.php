@@ -6,7 +6,7 @@
 @section("main")
     <!-- resources/views/components/employee-form.blade.php -->
 <!-- resources/views/components/employee-form.blade.php -->
-<form method="POST" action="{{ route('employees.store') }}" class="needs-validation p-5" novalidate>
+<form method="POST" action="{{ route('employees.edit', $employee->id) }}" class="needs-validation p-5" novalidate>
     @csrf
     <div class="row g-3">
         <!-- Persönliche Informationen -->
@@ -106,25 +106,8 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <label for="gender" class="form-label">Geschlecht</label>
-            <select class="form-select @error('gender') is-invalid @enderror" 
-                    id="gender" 
-                    name="gender" 
-                    required>
-                <option value="">Bitte wählen...</option>
-                <option value="male" {{ old('gender', $employee->gender ?? '') == 'male' ? 'selected' : '' }}>Männlich</option>
-                <option value="female" {{ old('gender', $employee->gender ?? '') == 'female' ? 'selected' : '' }}>Weiblich</option>
-                <option value="other" {{ old('gender', $employee->gender ?? '') == 'other' ? 'selected' : '' }}>Divers</option>
-            </select>
-            <div class="invalid-feedback">
-                @error('gender')
-                    {{ $message }}
-                @else
-                    Bitte wählen Sie ein Geschlecht aus.
-                @enderror
-            </div>
-        </div>
+        
+        
 
         <!-- Beschäftigungsinformationen -->
         <h4 class="mb-3 mt-4">Beschäftigungsinformationen</h4>

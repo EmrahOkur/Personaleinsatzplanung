@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/employees', 'index')->name('employees');
         Route::get('/employees/search', 'search')->name('employees.search');
         Route::post('/employees/store', 'store')->name('employees.store');
-        Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
+        Route::post('/employees/edit/{id}', 'edit')->name('employees.edit');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
