@@ -22,7 +22,6 @@ class EmployeeFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'birth_date' => $this->faker->date(),
-            'gender' => $this->faker->randomElement(['male', 'female', 'diverse']),
             'employee_number' => $this->faker->unique()->numerify('EMP####'),
             'hire_date' => $this->faker->date(),
             'position' => $this->faker->jobTitle(),

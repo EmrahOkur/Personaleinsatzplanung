@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
             $table->date('birth_date')->nullable();
-            $table->enum('gender', ['male', 'female', 'diverse'])->nullable();
 
             // Mitarbeiterdaten
             $table->string('employee_number')->unique();
