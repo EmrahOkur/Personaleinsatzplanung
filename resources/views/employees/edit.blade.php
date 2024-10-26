@@ -6,7 +6,7 @@
 @section("main")
     <!-- resources/views/components/employee-form.blade.php -->
 <!-- resources/views/components/employee-form.blade.php -->
-<form method="POST" action="{{ route('employees.edit', $employee->id) }}" class="needs-validation p-5" novalidate>
+<form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation p-5" novalidate>
     @csrf
     <div class="row g-3">
         <!-- Persönliche Informationen -->

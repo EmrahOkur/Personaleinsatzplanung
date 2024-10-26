@@ -33,11 +33,20 @@ class EmployeeController extends Controller
         return response()->json($employees);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
 
         return view('employees.edit', compact('employee'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $employee = Employee::findOrFail($id);
+        $employee->update($request->all());
+
+        return redirect()
+            ->route('employees');
     }
 
     /**
