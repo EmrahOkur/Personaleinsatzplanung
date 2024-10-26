@@ -17,10 +17,17 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'vorname' => $this->faker->firstName(),
-            'nachname' => $this->faker->lastName(),
-            'personalnummer' => $this->faker->unique()->numerify('EMP####'),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
+            'birth_date' => $this->faker->date(),
+            'gender' => $this->faker->randomElement(['male', 'female', 'diverse']),
+            'employee_number' => $this->faker->unique()->numerify('EMP####'),
+            'hire_date' => $this->faker->date(),
+            'position' => $this->faker->jobTitle(),
+            'vacation_days' => 30,
+            'status' => 'active',
         ];
     }
 }
