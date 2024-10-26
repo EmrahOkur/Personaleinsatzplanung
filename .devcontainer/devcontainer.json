@@ -58,6 +58,13 @@
         "source=${localWorkspaceFolder}/.container_bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached"
     ],
     "runArgs": [
-        "--network=personaleinsatzplanung_default"
-    ]
+        "--network=personaleinsatzplanung_default",
+        "--name=Personalplanung-App"
+    ],
+    // Build Cache verwenden
+    "build": {
+        "args": {
+            "BUILDKIT_INLINE_CACHE": "1"
+        }
+    }
 }
