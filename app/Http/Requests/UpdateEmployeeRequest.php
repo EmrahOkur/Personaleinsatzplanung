@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreEmployeeRequest extends FormRequest
+class UpdateEmployeeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +27,10 @@ class StoreEmployeeRequest extends FormRequest
             'last_name' => ['string', 'max:255'],
             'email' => [
                 'email',
-                Rule::unique('employees', 'email')->ignore($this->employee),
+                Rule::unique('employees', 'email')->ignore($this->input('id')),
             ],
             'phone' => ['string', 'max:20'],
             'birth_date' => ['date', 'before:today'],
-            'gender' => ['string', 'in:male,female,other'],
             'employee_number' => [
                 'string',
                 Rule::unique('employees', 'employee_number')->ignore($this->employee),
@@ -64,8 +63,6 @@ class StoreEmployeeRequest extends FormRequest
             'phone.required' => 'Die Telefonnummer ist erforderlich.',
             'birth_date.required' => 'Das Geburtsdatum ist erforderlich.',
             'birth_date.before' => 'Das Geburtsdatum muss in der Vergangenheit liegen.',
-            'gender.required' => 'Bitte wählen Sie ein Geschlecht aus.',
-            'gender.in' => 'Ungültiger Wert für Geschlecht.',
             'employee_number.required' => 'Die Personalnummer ist erforderlich.',
             'employee_number.unique' => 'Diese Personalnummer wird bereits verwendet.',
             'hire_date.required' => 'Das Eintrittsdatum ist erforderlich.',
@@ -77,8 +74,6 @@ class StoreEmployeeRequest extends FormRequest
             'vacation_days.max' => 'Die Urlaubstage dürfen maximal 100 sein.',
             'status.required' => 'Der Status ist erforderlich.',
             'status.in' => 'Ungültiger Wert für Status.',
-            'emergency_contact_name.required' => 'Der Name des Notfallkontakts ist erforderlich.',
-            'emergency_contact_phone.required' => 'Die Telefonnummer des Notfallkontakts ist erforderlich.',
         ];
     }
 }
