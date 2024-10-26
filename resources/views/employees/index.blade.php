@@ -1,8 +1,8 @@
 <x-app-layout>
     @section('header')
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <span class="ms-5 font-bold text-gray-800 leading-tight text-2xl">
             {{ __('Mitarbeiter') }}
-        </h2>
+        </span>
     @endsection
     
     @section('main')
@@ -21,16 +21,16 @@
                                         <th>Name</th>
                                         <th>E-Mail</th>
                                         <th>Personalnummer</th>
-                                        <th>Aktionen</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="employeeTableBody">
                                     @foreach($employees as $employee)
                                     <tr>
-                                        <td>{{ $employee->vorname }} {{ $employee->nachname }}</td>
+                                        <td>{{ $employee->full_name }}</td>
                                         <td>{{ $employee->email }}</td>
-                                        <td>{{ $employee->personalnummer }}</td>
-                                        <td>
+                                        <td>{{ $employee->employee_number }}</td>
+                                        <td align="right" class="pe-3">
                                             <a href="{{ route('employees.edit', ['id' =>  $employee->id]) }}" 
                                                 class="btn btn-primary"
                                             >
