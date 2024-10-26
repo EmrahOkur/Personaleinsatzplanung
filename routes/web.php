@@ -5,16 +5,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Route::get('/employee', function () {
-//     return view('employee');
-// });
 Route::get('/dashboard', function () {
     return view('layouts/app');
 })->middleware(['auth', 'verified'])->name('layout.app');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::controller(EmployeeController::class)->group(function () {
         Route::get('/employees', 'index')->name('employees');
         Route::get('/employees/search', 'search')->name('employees.search');
