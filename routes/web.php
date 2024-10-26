@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Route::get('/employee', function () {
+//     return view('employee');
+// });
 Route::get('/dashboard', function () {
     return view('layouts/app');
 })->middleware(['auth', 'verified'])->name('layout.app');
