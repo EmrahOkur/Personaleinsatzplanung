@@ -15,7 +15,7 @@
                                 <input type="text" id="search" class="form-control" placeholder="Mitarbeiter suchen...">
                             </div>
                             <div class="col-md-6" align="right">
-                                <button class="btn btn-primary me-3">Mitarbeiter anlegen</button>
+                                <a href="{{ route('employees.new')}}" class="btn btn-primary">Mitarbeiter anlegen</a>
                             </div>
                         </div>
                         <table class="table table-striped">

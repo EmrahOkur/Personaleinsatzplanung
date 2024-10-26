@@ -1,4 +1,4 @@
-@props(['employee'])
+@props(['employee' => null])
 <div class="row g-3">
     <!-- Persönliche Informationen -->
     <h4 class="mb-3">Persönliche Informationen</h4>
@@ -9,7 +9,7 @@
                class="form-control @error('first_name') is-invalid @enderror" 
                id="first_name" 
                name="first_name" 
-               value="{{ old('first_name', $employee->first_name ?? '') }}" 
+               value="{{ old('first_name', $employee?->first_name ?? '') }}"
                required
                maxlength="255"
                pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">

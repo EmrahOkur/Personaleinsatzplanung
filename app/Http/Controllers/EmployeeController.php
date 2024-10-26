@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateEmployeeRequest;
 use App\Models\Employee;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
@@ -18,6 +21,19 @@ class EmployeeController extends Controller
         $employees = Employee::all();
 
         return view('employees.index', compact('employees'));
+    }
+
+    public function new(): View
+    {
+        return view('employees.new');
+    }
+
+    public function create(CreateEmployeeRequest $request)
+    {
+        Employee::insert($request->except(['_token']));
+
+        return redirect()
+            ->route('employees');
     }
 
     public function search(Request $request)
@@ -40,7 +56,7 @@ class EmployeeController extends Controller
         return view('employees.edit', compact('employee'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         $employee = Employee::findOrFail($id);
         $employee->update($request->all());
