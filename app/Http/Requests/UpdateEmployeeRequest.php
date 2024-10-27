@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,21 +29,21 @@ class UpdateEmployeeRequest extends FormRequest
             'last_name' => ['string', 'max:255'],
             'email' => [
                 'email',
-                Rule::unique('employees', 'email')->ignore($this->input('id')),
+                Rule::unique('employees', 'email')->ignore($this->route('id')),
             ],
             'phone' => ['string', 'max:20'],
             'birth_date' => ['date', 'before:today'],
             'employee_number' => [
                 'string',
-                Rule::unique('employees', 'employee_number')->ignore($this->employee),
+                Rule::unique('employees', 'employee_number')->ignore($this->route('id')),
             ],
             'hire_date' => ['date'],
             'exit_date' => ['nullable', 'date', 'after:hire_date'],
             'position' => ['string', 'max:255'],
             'vacation_days' => ['integer', 'min:0', 'max:100'],
             'status' => ['string', 'in:active,inactive,on_leave'],
-            'emergency_contact_name' => ['string', 'max:255'],
-            'emergency_contact_phone' => ['string', 'max:20'],
+            'emergency_contact_name' => ['nullable', 'string', 'max:255'],
+            'emergency_contact_phone' => ['nullable', 'string', 'max:20'],
         ];
     }
 
