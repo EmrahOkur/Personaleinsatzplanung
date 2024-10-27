@@ -74,6 +74,7 @@
             overflow-y: auto;
         }
     </style>
+     @stack('scripts')
 </head>
 <body>
     <!-- Sidebar -->

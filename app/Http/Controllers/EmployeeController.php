@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Employee;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +22,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::all();
+        $employees = Employee::paginate(20);
 
         return view('employees.index', compact('employees'));
     }
@@ -40,13 +44,22 @@ class EmployeeController extends Controller
     {
         $term = $request->input('term');
 
-        $employees = Employee::where('vorname', 'LIKE', "%{$term}%")
-            ->orWhere('nachname', 'LIKE', "%{$term}%")
+        $employees = Employee::where('first_name', 'LIKE', "%{$term}%")
+            ->orWhere('last_name', 'LIKE', "%{$term}%")
             ->orWhere('email', 'LIKE', "%{$term}%")
-            ->orWhere('personalnummer', 'LIKE', "%{$term}%")
-            ->get();
+            ->orWhere('employee_number', 'LIKE', "%{$term}%")
+            ->paginate(20);
 
-        return response()->json($employees);
+        return response()->json([
+            'employees' => $employees->items(),
+            'pagination' => [
+                'total' => $employees->total(),
+                'per_page' => $employees->perPage(),
+                'current_page' => $employees->currentPage(),
+                'last_page' => $employees->lastPage(),
+            ],
+            'links' => (string) $employees->links(),
+        ]);
     }
 
     public function edit(Request $request, $id)
@@ -56,7 +69,7 @@ class EmployeeController extends Controller
         return view('employees.edit', compact('employee'));
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(UpdateEmployeeRequest $request, $id): RedirectResponse
     {
         $employee = Employee::findOrFail($id);
         $employee->update($request->all());
@@ -68,7 +81,7 @@ class EmployeeController extends Controller
     /**
      * Store a newly created employee in storage.
      */
-    public function store(StoreEmployeeRequest $request)
+    public function store(CreateEmployeeRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -85,7 +98,7 @@ class EmployeeController extends Controller
                 ->route('employees', $employee)
                 ->with('success', 'Mitarbeiter wurde erfolgreich angelegt.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return redirect()

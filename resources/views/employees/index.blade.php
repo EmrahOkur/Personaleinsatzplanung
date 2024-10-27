@@ -6,6 +6,7 @@
     @endsection
     
     @section('main')
+    @csrf
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -48,14 +49,21 @@
                 </div>
             </div>
         </div>
-    @endsection      
+        
+    @endsection
     
+    @section('footer')
+        <div id="pagination-links" class="d-flex justify-content-center">
+            {{ $employees->links() }}
+        </div>
+    @endsection
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search');
             const tableBody = document.getElementById('employeeTableBody');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+            const csrfToken = document.querySelector('[name="_token"]').getAttribute('content');
+            const paginationLinks = document.getElementById('pagination-links');
             let debounceTimer;
 
         searchInput.addEventListener('input', function() {
@@ -70,13 +78,15 @@
                 })
                     .then(response => response.json())
                     .then(data => {
+                        paginationLinks.innerHtml = '';
+                        paginationLinks.innerHTML = data.links;
                         tableBody.innerHTML = '';
-                        data.forEach(employee => {
+                        data.employees.forEach(employee => {
                             const row = `
                                 <tr>
-                                    <td>${employee.vorname} ${employee.nachname}</td>
+                                    <td>${employee.first_name} ${employee.last_name}</td>
                                     <td>${employee.email}</td>
-                                    <td>${employee.personalnummer}</td>
+                                    <td>${employee.employee_number}</td>
                                     <td>
                                         <a href="/employees/${employee.id}/edit" class="btn btn-primary btn-sm">Bearbeiten</a>
                                     </td>
@@ -93,4 +103,5 @@
         });
     });
 </script>
+@endpush
 </x-app-layout>
