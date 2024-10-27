@@ -7,8 +7,8 @@
     
     @section('main')
     @csrf
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white overflow-hidden">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="container mt-4">
                         <div class="row mb-4 d-flex justify-content-end">
@@ -57,6 +57,7 @@
             {{ $employees->links() }}
         </div>
     @endsection
+
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -102,6 +103,6 @@
             }, 300); // 300ms Verzögerung
         });
     });
-</script>
-@endpush
+    </script>
+    @endpush
 </x-app-layout>
