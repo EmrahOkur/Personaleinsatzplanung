@@ -23,8 +23,10 @@
                 "workbench.tree.indent": 20,
                 "editor.formatOnSave": true,
                 "laravel-pint.enable": true,
+                "editor.defaultFormatter": null,
                 "laravel-pint.enableDebugLogs": true,
                 "laravel-pint.configPath": "pint.json",
+                "laravel-pint.executablePath": "./vendor/bin/pint",
                 "[php]": {
                     "editor.defaultFormatter": "open-southeners.laravel-pint"
                 },
