@@ -1,6 +1,6 @@
 <ul class="nav flex-column">
     <li class="nav-item">
-        <a class="nav-link active" href="#">
+        <a class="nav-link" href="#">
             <i class="fas fa-home"></i> Dashboard
         </a>
     </li>
