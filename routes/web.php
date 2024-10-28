@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ShiftController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/customers/{id}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/customers/edit/{id}', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/edit/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::get('/shifts', [ShiftController::class,'index'] )->name('shifts');
+    Route::post('/shifts/edit', [ShiftController::class,'edit'] )->name('shifts.edit');
+    Route::get('/shifts/getUsersWithShifts', [ShiftController::class,'getUsersWithShifts'] )->name('shifts.getUsersWithShifts');
 });
 
 require __DIR__.'/auth.php';
