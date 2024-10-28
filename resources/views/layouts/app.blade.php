@@ -31,9 +31,9 @@
             </button>
 
             <div class="float-end">
-                <div class="dropdown">
+                <div class="dropdown border rounded-1">
                     <button class="btn dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ Auth::user()->name }}
+                        {{ Auth::user()->getFullName() }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                         <li>
