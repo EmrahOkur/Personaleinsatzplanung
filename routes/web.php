@@ -1,23 +1,31 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/employee', function () {
-//     return view('employee');
-// });
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return view('layouts/app');
+})->middleware(['auth', 'verified'])->name('layout.app');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees');
-    Route::get('/employees/search', [EmployeeController::class, 'search'])->name('employees.search');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::controller(EmployeeController::class)->group(function () {
+        Route::get('/employees', 'index')->name('employees');
+        Route::get('/employees/new', 'new')->name('employees.new');
+        Route::post('/employees/create', 'create')->name('employees.create');
+        Route::get('/employees/search', 'search')->name('employees.search');
+        Route::post('/employees/store', 'store')->name('employees.store');
+        Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
+        Route::post('/employees/update/{id}', 'update')->name('employees.update');
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
