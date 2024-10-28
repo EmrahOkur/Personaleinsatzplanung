@@ -6,17 +6,9 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" href="#benutzerSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-            <i class="fas fa-users"></i> Benutzer
-        </a>
-        <ul class="collapse nav flex-column submenu" id="benutzerSubmenu">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Alle Benutzer</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Neuer Benutzer</a>
-            </li>
-        </ul>
+        <a class="nav-link {{ request()->routeIs('profile') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
+            <i class="fas fa-users"></i> {{ __('Benutzer') }}
+        </a>        
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="{{ route('employees') }}">
