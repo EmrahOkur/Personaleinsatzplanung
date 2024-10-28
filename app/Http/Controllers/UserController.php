@@ -60,14 +60,16 @@ class UserController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::select(['id', 'vorname', 'name', 'email'])
+            ->findOrFail($id);
 
-        return view('users.edit', compact('users'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
         $user = User::findOrFail($id);
+
         $user->update($request->all());
 
         return redirect()
