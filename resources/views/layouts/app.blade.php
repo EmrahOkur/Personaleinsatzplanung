@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Personalplanung')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css'])
-    @vite(['resources/css/layout.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
 </head>
 <body>
+    <!-- Spinner -->
+    <x-loading-spinner />
+
     <!-- Sidebar -->
     <nav id="sidebar">
         <!-- Logo Platzhalter -->
@@ -61,12 +61,19 @@
         </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('sidebarCollapse').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('content').classList.toggle('active');
         });
+
+        function showSpinner() {
+            document.getElementById('loadingSpinner').classList.remove('d-none');
+        }
+
+        function hideSpinner() {
+            document.getElementById('loadingSpinner').classList.add('d-none');
+        }
     </script>
 </body>
 </html>
