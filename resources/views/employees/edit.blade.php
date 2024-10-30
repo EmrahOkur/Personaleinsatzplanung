@@ -8,7 +8,7 @@
 <!-- resources/views/components/employee-form.blade.php -->
 <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation p-5" novalidate>
     @csrf
-    <x-employee-form-fields :employee="$employee" />
+    <x-employee-form-fields :employee="$employee" :departments="$departments" />
 </form>
 
 <!-- JavaScript für erweiterte Frontend-Validierung -->

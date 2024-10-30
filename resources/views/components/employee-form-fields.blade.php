@@ -1,4 +1,5 @@
 @props(['employee' => null])
+@props(['departments' => []])
 <div class="row g-3">
     <!-- Persönliche Informationen -->
     <h4 class="mb-3">Persönliche Informationen</h4>
@@ -120,6 +121,22 @@
                 Bitte geben Sie eine gültige Personalnummer ein (nur Großbuchstaben, Zahlen und Bindestriche).
             @enderror
         </div>
+    </div>
+
+    <div class="col-md-6">
+        <label for="department" class="form-label">Abteilung</label>
+        <select name="department_id" id="department" class="form-select @error('department_id') is-invalid @enderror">
+            <option value="">Bitte wählen...</option>
+            @foreach($departments as $department)
+                <option value="{{ $department?->id }}" 
+                        {{ old('department_id', $employee?->department_id) == $department?->id ? 'selected' : '' }}>
+                    {{ $department->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('department_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
     </div>
 
     <div class="col-md-6">
