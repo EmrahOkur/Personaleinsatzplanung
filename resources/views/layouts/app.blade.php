@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Personalplanung')</title>
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
 </head>
@@ -60,7 +61,7 @@
             @yield('footer')            
         </footer>
     </div>
-
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script>
         document.getElementById('sidebarCollapse').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('active');
