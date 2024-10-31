@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace Database\Factories;
-
+use App\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +18,8 @@ class EmployeeFactory extends Factory
      */
     public function definition(): array
     {
+        $departmentIds = Department::pluck('id')->toArray();
+
         $firstName = $this->faker->firstName();
         $lastName = $this->faker->lastName();
         $email = $firstName . '.' . $lastName;
@@ -34,6 +36,7 @@ class EmployeeFactory extends Factory
             'position' => $this->faker->jobTitle(),
             'vacation_days' => 30,
             'status' => 'active',
+            'department_id' => $departmentIds[array_rand($departmentIds)],
         ];
     }
 }

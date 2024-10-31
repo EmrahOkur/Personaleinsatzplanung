@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Department;
 use App\Models\Employee;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +30,9 @@ class EmployeeController extends Controller
 
     public function new(): View
     {
-        return view('employees.new');
+        $departments = Department::all();
+
+        return view('employees.new', compact('departments'));
     }
 
     public function create(CreateEmployeeRequest $request)
@@ -65,8 +68,12 @@ class EmployeeController extends Controller
     public function edit(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
+        $departments = Department::all();
 
-        return view('employees.edit', compact('employee'));
+        return view('employees.edit', [
+            'employee' => $employee,
+            'departments' => $departments,
+        ]);
     }
 
     public function update(UpdateEmployeeRequest $request, $id): RedirectResponse
