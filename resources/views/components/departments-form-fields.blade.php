@@ -1,4 +1,4 @@
-@props(['user' => null])
+@props(['department' => null])
 <div class="row g-3">
     <!-- Persönliche Informationen -->
     <h4 class="mb-3">Persönliche Informationen</h4>
@@ -42,17 +42,19 @@
     </div>
 
     <div class="col-md-6">
-        <label for="email" class="form-label">E-Mail</label>
-        <input type="email" 
-               class="form-control @error('email') is-invalid @enderror" 
-               id="email" 
-               name="email" 
-               value="{{ old('email', $department->email ?? '') }}" 
+        <label for="department_head" class="form-label">Abteilungsleiter</label>
+        <input type="text" 
+               class="form-control @error('department_head') is-invalid @enderror" 
+               id="department_head" 
+               name="department_head" 
+               value="{{ old('department_head', 
+               $department->departmentHead->last_name 
+               ?? '') }}" 
                required
                maxlength="255"
-               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+               />
         <div class="invalid-feedback">
-            @error('email')
+            @error('department_head')
                 {{ $message }}
             @else
                 Bitte geben Sie eine gültige E-Mail-Adresse ein.
@@ -60,14 +62,8 @@
         </div>
     </div>
 
-   
-   
-    
-
-    
-
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>
-        <a href="{{ route('users') }}" class="btn btn-secondary">Abbrechen</a>
+        <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </div>

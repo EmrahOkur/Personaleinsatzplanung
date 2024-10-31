@@ -12,12 +12,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('short_name');
-            $table->unsignedBigInteger('department_head_id')->nullable();
-            $table->timestamps();
+        Schema::table('departments', function (Blueprint $table) {
+            $table->foreign('department_head_id')
+                ->references('id')
+                ->on('employees')
+                ->onDelete('set null');
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::table('department', function (Blueprint $table) {});
     }
 };
