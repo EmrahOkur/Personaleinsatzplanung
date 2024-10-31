@@ -30,7 +30,7 @@ Repository clonen mit
 -> Projekt wird in Verzeichnis Personaleinsatzplanung geklont
 
 In das Projekt-Verzeichnis wechseln und ausführen:
-```docker-composer up -d --build```
+```docker-compose up -d --build```
 -> damit erstellen wir uns einen Datenbank Container
 
 Projekt in VS Code öffen im Repo-Verzeichnis mit ```code .```
