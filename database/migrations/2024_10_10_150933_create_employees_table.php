@@ -44,6 +44,7 @@ return new class extends Migration {
             $table->index('employee_number');
 
             $table->foreignId('department_id')
+                ->nullable()
                 ->constrained()
                 ->onDelete('restrict')
                 ->onUpdate('cascade');

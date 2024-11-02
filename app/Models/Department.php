@@ -12,6 +12,12 @@ class Department extends Model
     /** @use HasFactory<\Database\Factories\DepartmentFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'short_name',
+        'department_head_id',
+    ];
+
     public function departmentHead()
     {
         return $this->belongsTo(Employee::class);

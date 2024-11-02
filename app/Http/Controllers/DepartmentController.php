@@ -20,7 +20,7 @@ class DepartmentController extends Controller
      */
     public function index(): View
     {
-        $departments = Department::paginate(20);
+        $departments = Department::with('departmentHead')->paginate(20);
 
         return view('departments.index', compact('departments'));
     }
@@ -76,7 +76,8 @@ class DepartmentController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         $department = Department::findOrFail($id);
-        $department->update($request->all());
+
+        $department->update($request->except(['_token']));
 
         return redirect()
             ->route('departments');

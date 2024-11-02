@@ -33,7 +33,7 @@
                                 <tr>
                                     <td>{{ $department->name }}</td>
                                     <td>{{ $department->short_name }}</td>
-                                    <td>{{ $department->department_number }}</td>
+                                    <td>{{ $department->departmentHead->fullName }}</td>
                                     <td align="right" class="pe-3">
                                         <a href="{{ route('departments.edit', ['id' =>  $department->id]) }}" 
                                             class="btn btn-primary"

@@ -49,4 +49,9 @@ class Employee extends Model
     {
         return "{$this->first_name} {$this->last_name}";
     }
+
+    public function getFullNameAndDepartmentAttribute()
+    {
+        return "{$this->first_name} {$this->last_name} ({$this->department->name})";
+    }
 }
