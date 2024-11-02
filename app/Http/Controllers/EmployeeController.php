@@ -51,6 +51,7 @@ class EmployeeController extends Controller
             ->orWhere('last_name', 'LIKE', "%{$term}%")
             ->orWhere('email', 'LIKE', "%{$term}%")
             ->orWhere('employee_number', 'LIKE', "%{$term}%")
+            ->with('department:name')
             ->paginate(20);
 
         return response()->json([
@@ -65,10 +66,30 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function searchInfo(Request $request)
+    {
+        $term = $request->input('query');
+
+        return Employee::where('first_name', 'LIKE', "%{$term}%")
+            ->orWhere('last_name', 'LIKE', "%{$term}%")
+            ->with('department')
+            ->select('id', 'first_name', 'last_name', 'department_id')
+            ->limit(5)
+            ->get()
+            ->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'fullName' => "{$employee->first_name} {$employee->last_name}",
+                    'fullInfo' => "{$employee->first_name} {$employee->last_name} (" . optional($employee->department)->name . ')' ?? 'No Department' . ')',
+                ];
+            });
+
+    }
+
     public function edit(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
-        $departments = Department::all();
+        $departments = Department::except(['_token']);
 
         return view('employees.edit', [
             'employee' => $employee,
