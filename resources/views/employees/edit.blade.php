@@ -5,11 +5,46 @@
 
 @section("main")
     <!-- resources/views/components/employee-form.blade.php -->
-<!-- resources/views/components/employee-form.blade.php -->
-<form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation p-5" novalidate>
-    @csrf
-    <x-employee-form-fields :employee="$employee" :departments="$departments" />
-</form>
+    {{-- Tab Navigation --}}
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" 
+                    data-bs-target="#home-tab-pane" type="button" role="tab" 
+                    aria-controls="home-tab-pane" aria-selected="true">
+                Stammdaten
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" 
+                    data-bs-target="#profile-tab-pane" type="button" role="tab" 
+                    aria-controls="profile-tab-pane" aria-selected="false">
+                Zugangsdaten
+            </button>
+        </li>
+    </ul>
+
+     {{-- Tab Inhalte --}}
+     <div class="tab-content" id="myTabContent">
+        {{-- Inhalt Tab 1 --}}
+        <div class="tab-pane fade show active" id="home-tab-pane" 
+             role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+             <div class="tab-content" id="myTabContent">
+                <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation p-5" novalidate>
+                    @csrf
+                    <x-employee-form-fields :employee="$employee" :departments="$departments" />
+                </form>
+            </div>
+        </div>
+
+        {{-- Inhalt Tab 2 --}}
+        <div class="tab-pane fade" id="profile-tab-pane" 
+             role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <p>no content</p>
+        </div>
+    </div>
+</div>
+
+    
 
 <!-- JavaScript für erweiterte Frontend-Validierung -->
 <script>
