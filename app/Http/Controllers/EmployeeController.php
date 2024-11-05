@@ -89,7 +89,7 @@ class EmployeeController extends Controller
     public function edit(Request $request, $id)
     {
         $employee = Employee::findOrFail($id);
-        $departments = Department::except(['_token']);
+        $departments = Department::all();
 
         return view('employees.edit', [
             'employee' => $employee,
