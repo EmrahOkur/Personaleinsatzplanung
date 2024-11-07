@@ -66,6 +66,20 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
+    public function createEmployeeCreds(Request $request)
+    {
+        User::create($request->except(['_token']));
+
+        return response()->json();
+    }
+
+    public function updateEmployeeCreds(Request $request, $id)
+    {
+        // User::update($request->except(['_token']));
+
+        return response()->json();
+    }
+
     public function update(Request $request, $id): RedirectResponse
     {
         $user = User::findOrFail($id);
