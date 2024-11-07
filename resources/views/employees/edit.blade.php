@@ -55,57 +55,39 @@
                     </form>
                 </div>
             </div>
-    
-            
         </div>
     
         <!-- Modal für neue Zugangsdaten -->
-        <div class="modal fade" id="createCredentialsModal" tabindex="-1" aria-labelledby="createCredentialsModalLabel" aria-hidden="true">
+        <div class="modal fade" id="createCredentialsModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createCredentialsModalLabel">Neue Zugangsdaten einrichten</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                        <h5 class="modal-title">Neue Zugangsdaten einrichten</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form method="post" action="{{ route('users.createEmployeeCreds') }}">
+                    <form id="createCredsForm" onsubmit="return handleCreateCreds(event)">
                         <div class="modal-body">
-                            @csrf
+                            <div id="createCredsAlert" class="alert d-none"></div>
+                            
                             <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                             
                             <div class="mb-3">
                                 <label for="email" class="form-label">Benutzername</label>
-                                <input type="email" 
-                                       class="form-control @error('email') is-invalid @enderror" 
-                                       id="email" 
-                                       name="email" 
-                                       required>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback"></div>
                             </div>
     
                             <div class="mb-3">
                                 <label for="password" class="form-label">Passwort</label>
-                                <input type="password" 
-                                       class="form-control @error('password') is-invalid @enderror" 
-                                       id="password" 
-                                       name="password" 
-                                       required>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="invalid-feedback"></div>
                             </div>
     
                             <div class="mb-3">
                                 <label for="password_confirmation" class="form-label">Passwort bestätigen</label>
-                                <input type="password" 
-                                       class="form-control @error('password_confirmation') is-invalid @enderror" 
-                                       id="password_confirmation" 
-                                       name="password_confirmation" 
-                                       required>
-                                @error('password_confirmation')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="password" class="form-control" id="password_confirmation" 
+                                       name="password_confirmation" required>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -118,53 +100,38 @@
         </div>
     
         <!-- Modal für Zugangsdaten ändern -->
-        <div class="modal fade" id="updateCredentialsModal" tabindex="-1" aria-labelledby="updateCredentialsModalLabel" aria-hidden="true">
+        <div class="modal fade" id="updateCredentialsModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="updateCredentialsModalLabel">Zugangsdaten ändern</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                        <h5 class="modal-title">Zugangsdaten ändern</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form method="post" action="{{ route('users.updateEmployeeCreds') }}">
+                    <form id="updateCredsForm" onsubmit="return handleUpdateCreds(event)">
                         <div class="modal-body">
-                            @csrf
-                            @method('put')
+                            <div id="updateCredsAlert" class="alert d-none"></div>
+                            
                             <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                             
                             <div class="mb-3">
                                 <label for="update_email" class="form-label">Benutzername</label>
-                                <input type="email" 
-                                       class="form-control @error('email') is-invalid @enderror" 
-                                       id="update_email" 
-                                       name="email" 
-                                       value="{{ $employee->user->email ?? '' }}" 
-                                       required>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="email" class="form-control" id="update_email" name="email" 
+                                       value="{{ $employee->user->email ?? '' }}" required>
+                                <div class="invalid-feedback"></div>
                             </div>
     
                             <div class="mb-3">
                                 <label for="update_password" class="form-label">Neues Passwort</label>
-                                <input type="password" 
-                                       class="form-control @error('password') is-invalid @enderror" 
-                                       id="update_password" 
-                                       name="password">
+                                <input type="password" class="form-control" id="update_password" name="password">
                                 <div class="form-text">Leer lassen, wenn das Passwort nicht geändert werden soll.</div>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback"></div>
                             </div>
     
                             <div class="mb-3">
                                 <label for="update_password_confirmation" class="form-label">Passwort bestätigen</label>
-                                <input type="password" 
-                                       class="form-control @error('password_confirmation') is-invalid @enderror" 
-                                       id="update_password_confirmation" 
+                                <input type="password" class="form-control" id="update_password_confirmation" 
                                        name="password_confirmation">
-                                @error('password_confirmation')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -177,4 +144,137 @@
         </div>
     
     @endsection
+    
+    @push('scripts')
+    <script>
+        // Javascript für die AJAX-Calls
+async function handleCreateCreds(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const alert = document.getElementById('createCredsAlert');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Speichern...';
+        
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        alert.classList.add('d-none');
+        
+        const response = await fetch('{{ route("users.createEmployeeCreds") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 422) {
+                Object.keys(data.errors).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        input.nextElementSibling.textContent = data.errors[key][0];
+                    }
+                });
+                throw new Error('Validierungsfehler');
+            }
+            throw new Error(data.message || 'Ein Fehler ist aufgetreten');
+        }
+        
+        alert.textContent = data.message || 'Zugangsdaten wurden erfolgreich erstellt';
+        alert.classList.remove('d-none', 'alert-danger');
+        alert.classList.add('alert-success');
+        
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        alert.textContent = error.message;
+        alert.classList.remove('d-none', 'alert-success');
+        alert.classList.add('alert-danger');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Speichern';
+    }
+    
+    return false;
+}
+
+async function handleUpdateCreds(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const alert = document.getElementById('updateCredsAlert');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    // Verwende die User-ID statt der Employee-ID
+    const userId = '{{ $employee->user->id ?? "" }}';
+    
+    try {
+        if (!userId) {
+            throw new Error('Keine Benutzer-ID gefunden');
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Speichern...';
+        
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        alert.classList.add('d-none');
+        
+        const response = await fetch(`{{ url('users/updateEmployeeCreds') }}/${userId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 422) {
+                Object.keys(data.errors).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        input.nextElementSibling.textContent = data.errors[key][0];
+                    }
+                });
+                throw new Error('Validierungsfehler');
+            }
+            throw new Error(data.message || 'Ein Fehler ist aufgetreten');
+        }
+        
+        alert.textContent = data.message || 'Zugangsdaten wurden erfolgreich aktualisiert';
+        alert.classList.remove('d-none', 'alert-danger');
+        alert.classList.add('alert-success');
+        
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        alert.textContent = error.message;
+        alert.classList.remove('d-none', 'alert-success');
+        alert.classList.add('alert-danger');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Speichern';
+    }
+    
+    return false;
+}   
+    
+   
+    </script>
+    @endpush
     </x-app-layout>

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateEmployeeCredsRequest;
+use App\Http\Requests\UpdateEmployeeCredsRequest;
+use App\Models\Employee;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -66,18 +69,84 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    public function createEmployeeCreds(Request $request)
+    public function createEmployeeCreds(CreateEmployeeCredsRequest $request)
     {
-        User::create($request->except(['_token']));
+        try {
+            DB::beginTransaction();
 
-        return response()->json();
+            $validated = $request->validated();
+
+            $user = User::create([
+                'email' => $validated['email'],
+                'password' => bcrypt($validated['password']),
+                'employee_id' => $validated['employee_id'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Zugangsdaten wurden erfolgreich erstellt',
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                ],
+            ]);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+
+            return response()->json([
+                'message' => 'Fehler beim Erstellen der Zugangsdaten' . $e->getMessage(),
+            ], 500);
+        }
     }
 
-    public function updateEmployeeCreds(Request $request, $id)
+    public function updateEmployeeCreds(UpdateEmployeeCredsRequest $request, $id)
     {
-        // User::update($request->except(['_token']));
+        try {
+            DB::beginTransaction();
 
-        return response()->json();
+            // User direkt über ID finden
+            $user = User::findOrFail($id);
+
+            $validated = $request->validated();
+
+            $updateData = [
+                'email' => $validated['email'],
+            ];
+
+            // Passwort nur aktualisieren wenn angegeben
+            if (! empty($validated['password'])) {
+                $updateData['password'] = bcrypt($validated['password']);
+            }
+
+            $user->update($updateData);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Zugangsdaten wurden erfolgreich aktualisiert',
+                'user' => [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                ],
+            ]);
+
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Benutzer wurde nicht gefunden',
+            ], 404);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Fehler beim Aktualisieren der Zugangsdaten',
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id): RedirectResponse
