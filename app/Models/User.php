@@ -35,6 +35,26 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+    public function isEmployee()
+    {
+        return $this->employee_id !== null;
+    }
+
+    public function hasRole(string $role)
+    {
+        return $this->role === $role;
+    }
+
+    public function hasNotRole(string $role)
+    {
+        return $this->role !== $role;
+    }
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -42,6 +62,10 @@ class User extends Authenticatable
 
     public function getFullName()
     {
+        if ($this->isEmployee()) {
+            return $this->employee->getFullNameAttribute();
+        }
+
         return "{$this->vorname} {$this->name}";
     }
 }

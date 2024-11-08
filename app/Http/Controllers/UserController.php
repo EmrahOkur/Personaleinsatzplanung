@@ -89,6 +89,7 @@ class UserController extends Controller
                 'user' => [
                     'id' => $user->id,
                     'email' => $user->email,
+                    'role' => 'employee'
                 ],
             ]);
 
