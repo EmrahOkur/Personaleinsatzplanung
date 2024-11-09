@@ -15,6 +15,14 @@
             <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
         </a>
     </li>
+    
+    <!-- Neuer Menüpunkt für Zeiterfassung -->
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('time_entries.*') ? 'active' : '' }}" href="{{ route('time_entries.index') }}">
+            <i class="fas fa-clock"></i> {{ __('Zeiterfassung') }}
+        </a>
+    </li>
+
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#settingsSubmenu" aria-expanded="false">
             <i class="fas fa-cog"></i> Einstellungen
