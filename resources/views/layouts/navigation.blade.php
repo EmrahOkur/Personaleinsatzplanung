@@ -1,13 +1,13 @@
 <ul class="nav flex-column">
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('home') }}">
             <i class="fas fa-home"></i> Dashboard
         </a>
     </li>
-    
+
 @if(Auth::user()->hasRole('admin'))
     <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}" href="{{ route('home') }}">
+        <a class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}" href="{{ route('users') }}">
             <i class="fas fa-users"></i> {{ __('Benutzer') }}
         </a>        
     </li>
