@@ -79,26 +79,7 @@
             @enderror
         </div>
     </div>
-    @endunless
-
-    <div class="col-md-6">
-        <label for="phone" class="form-label">Telefonnummer</label>
-        <input type="tel" 
-               class="form-control @error('phone') is-invalid @enderror" 
-               id="phone" 
-               name="phone" 
-               value="{{ old('phone', $user->phone ?? '') }}" 
-               required
-               maxlength="20"
-               pattern="^[+]?[0-9\s\-()]+$">
-        <div class="invalid-feedback">
-            @error('phone')
-                {{ $message }}
-            @else
-                Bitte geben Sie eine gültige Telefonnummer ein.
-            @enderror
-        </div>
-    </div>       
+    @endunless    
 
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>
