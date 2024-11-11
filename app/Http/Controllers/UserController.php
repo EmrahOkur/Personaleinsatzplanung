@@ -63,7 +63,8 @@ class UserController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $user = User::select(['id', 'vorname', 'name', 'email'])
+        $user = User::select(['id', 'vorname', 'name', 'email', 'employee_id', 'role'])
+            ->with('employee')
             ->findOrFail($id);
 
         return view('users.edit', compact('user'));

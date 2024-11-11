@@ -27,6 +27,11 @@ class User extends Authenticatable
         'role',
     ];
 
+    protected $visible = [
+        'role',
+        'employee_id',
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -80,5 +85,23 @@ class User extends Authenticatable
         }
 
         return "{$this->vorname} {$this->name}";
+    }
+
+    public function getLastName()
+    {
+        if ($this->isEmployee()) {
+            return $this->employee->last_name;
+        }
+
+        return $this->vorname;
+    }
+
+    public function getFirstName()
+    {
+        if ($this->isEmployee()) {
+            return $this->employee->first_name;
+        }
+
+        return $this->nachname;
     }
 }
