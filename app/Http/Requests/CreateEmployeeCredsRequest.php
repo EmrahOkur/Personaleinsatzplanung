@@ -27,6 +27,10 @@ class CreateEmployeeCredsRequest extends FormRequest
                 'required',
                 'min:6',
             ],
+            'employee_id' => [
+                'required',
+                'exists:employees,id',
+            ],
         ];
     }
 

@@ -80,6 +80,7 @@ class UserController extends Controller
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
                 'employee_id' => $validated['employee_id'],
+                'role' => 'employee',
             ]);
 
             DB::commit();
@@ -87,9 +88,8 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Zugangsdaten wurden erfolgreich erstellt',
                 'user' => [
-                    'id' => $user->id,
+                    'employee_id' => $user->id,
                     'email' => $user->email,
-                    'role' => 'employee'
                 ],
             ]);
 
