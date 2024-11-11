@@ -47,6 +47,17 @@ class User extends Authenticatable
         return $this->employee_id !== null;
     }
 
+    public function getRole()
+    {
+        $roles = [
+            'admin' => 'Admin',
+            'manager' => 'Mananger',
+            'employee' => 'Mitarbeiter',
+        ];
+
+        return $roles[$this->role];
+    }
+
     public function hasRole(string $role)
     {
         return $this->role === $role;

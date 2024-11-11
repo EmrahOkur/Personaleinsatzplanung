@@ -102,6 +102,6 @@
 
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>
-        <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
+        <a href="{{ route('users') }}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </div>
