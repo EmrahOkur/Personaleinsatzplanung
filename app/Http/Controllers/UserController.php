@@ -23,7 +23,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(20);
+        $users = User::where('role', '!=', 'employee')->paginate(20);
 
         return view('users.index', compact('users'));
     }
@@ -46,6 +46,7 @@ class UserController extends Controller
         $term = $request->input('term');
 
         $users = User::where('vorname', 'LIKE', "%{$term}%")
+            ->where('role', '!=', 'employee')
             ->orWhere('name', 'LIKE', "%{$term}%")
             ->paginate(20);
 
