@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/create', 'create')->name('users.create');
         Route::get('/users/search', 'search')->name('users.search');
         Route::post('/users/store', 'store')->name('users.store');
+        Route::post('/users/createEmployeeCreds', 'createEmployeeCreds')->name('users.createEmployeeCreds');
+        Route::post('/users/updateEmployeeCreds/{id}', 'updateEmployeeCreds')->name('users.updateEmployeeCreds');
         Route::get('/users/edit/{id}', 'edit')->name('users.edit');
         Route::post('/users/update/{id}', 'update')->name('users.update');
     });

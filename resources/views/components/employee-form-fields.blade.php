@@ -228,48 +228,7 @@
             @enderror
         </div>
     </div>
-
-    <!-- Notfallkontakt -->
-    <h4 class="mb-3 mt-4">Notfallkontakt</h4>
-
-    <div class="col-md-6">
-        <label for="emergency_contact_name" class="form-label">Name des Notfallkontakts</label>
-        <input type="text" 
-               class="form-control @error('emergency_contact_name') is-invalid @enderror" 
-               id="emergency_contact_name" 
-               name="emergency_contact_name" 
-               value="{{ old('emergency_contact_name', $employee->emergency_contact_name ?? '') }}" 
-               required
-               maxlength="255"
-               pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
-        <div class="invalid-feedback">
-            @error('emergency_contact_name')
-                {{ $message }}
-            @else
-                Bitte geben Sie einen gültigen Namen für den Notfallkontakt ein.
-            @enderror
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <label for="emergency_contact_phone" class="form-label">Telefonnummer des Notfallkontakts</label>
-        <input type="tel" 
-               class="form-control @error('emergency_contact_phone') is-invalid @enderror" 
-               id="emergency_contact_phone" 
-               name="emergency_contact_phone" 
-               value="{{ old('emergency_contact_phone', $employee->emergency_contact_phone ?? '') }}" 
-               required
-               maxlength="20"
-               pattern="^[+]?[0-9\s\-()]+$">
-        <div class="invalid-feedback">
-            @error('emergency_contact_phone')
-                {{ $message }}
-            @else
-                Bitte geben Sie eine gültige Telefonnummer für den Notfallkontakt ein.
-            @enderror
-        </div>
-    </div>
-
+    
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>
         <a href="{{ route('employees') }}" class="btn btn-secondary">Abbrechen</a>

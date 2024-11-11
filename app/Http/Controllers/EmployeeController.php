@@ -88,7 +88,7 @@ class EmployeeController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $employee = Employee::findOrFail($id);
+        $employee = Employee::with('user')->findOrFail($id);
         $departments = Department::all();
 
         return view('employees.edit', [
