@@ -7,7 +7,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TimeEntryController;
-use App\Http\Controllers\UserController; // Import für den TimeEntryController
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +24,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('layout.app');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+    // Employee Routes
     Route::controller(EmployeeController::class)->group(function () {
         Route::get('/employees', 'index')->name('employees');
         Route::get('/employees/new', 'new')->name('employees.new');
@@ -37,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/employees/update/{id}', 'update')->name('employees.update');
     });
 
+    // User Routes
     Route::controller(UserController::class)->group(function () {
         Route::get('/users', 'index')->name('users');
         Route::get('/users/new', 'new')->name('users.new');
@@ -47,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/update/{id}', 'update')->name('users.update');
     });
 
+    // Department Routes
     Route::controller(DepartmentController::class)->group(function () {
         Route::get('/departments', 'index')->name('departments');
         Route::get('/departments/new', 'new')->name('departments.new');
@@ -57,12 +61,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/departments/update/{id}', 'update')->name('departments.update');
     });
 
-    // Zeiterfassungsrouten
+    // Time Entry Routes
     Route::resource('time_entries', TimeEntryController::class);
+    Route::get('/time-entries/daily', [TimeEntryController::class, 'daily'])->name('time_entries.daily');
+    Route::get('/time-entries/weekly', [TimeEntryController::class, 'weekly'])->name('time_entries.weekly');
+    Route::get('/time-entries/monthly', [TimeEntryController::class, 'monthly'])->name('time_entries.monthly');
 
+    // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 require __DIR__ . '/auth.php';
