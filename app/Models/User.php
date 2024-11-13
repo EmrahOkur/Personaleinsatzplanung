@@ -52,11 +52,16 @@ class User extends Authenticatable
         return $this->employee_id !== null;
     }
 
+    public function isManager()
+    {
+        return $this->role === 'manager';
+    }
+
     public function getRole()
     {
         $roles = [
             'admin' => 'Admin',
-            'manager' => 'Mananger',
+            'manager' => 'Manager',
             'employee' => 'Mitarbeiter',
         ];
 
