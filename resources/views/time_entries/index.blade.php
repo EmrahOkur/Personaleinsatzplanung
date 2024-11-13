@@ -66,7 +66,7 @@
                         <tr>
                             <td>{{ $entry->id }}</td>
                             <td>{{ $entry->employee->full_name }} ({{ $entry->employee->employee_number }})</td>
-                            <td>{{ $entry->date }}</td>
+                            <td>{{ \Carbon\Carbon::parse($entry->date)->translatedFormat('d.m.Y') }}</td> <!-- Deutsches Datumsformat -->
                             <td>{{ $entry->time_start }}</td>
                             <td>{{ $entry->time_end }}</td>
                             <td>{{ $entry->net_work_hours }}</td>
