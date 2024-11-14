@@ -24,6 +24,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>E-Mail</th>
+                                    <th>Rolle</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -32,6 +33,7 @@
                                 <tr>
                                     <td>{{ $user->getFullName() }}</td>
                                     <td>{{ $user->email }}</td>
+                                    <td>{{ $user->getRole() }}</td>
                                     <td align="right" class="pe-3">
                                         <a href="{{ route('users.edit', ['id' =>  $user->id]) }}" 
                                             class="btn btn-primary"

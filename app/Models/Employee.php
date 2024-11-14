@@ -48,6 +48,9 @@ class Employee extends Model
     public function timeEntries()
     {
         return $this->hasMany(TimeEntry::class);
+    public function user()
+    {
+        return $this->hasOne(User::class);
     }
 
     public function getFullNameAttribute()

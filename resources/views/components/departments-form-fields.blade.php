@@ -41,43 +41,48 @@
         </div>
     </div>
     <div class="position-relative">
-    <div class="col-md-6">
-        <input type="hidden" name="department_head_id" id="department_head_id">
+        <div class="col-md-6">
+            <input type="hidden" name="department_head_id" id="department_head_id">
 
-        <label for="department_head" class="form-label">Abteilungsleiter</label>
-        <input type="text" 
-               class="form-control @error('department_head') is-invalid @enderror" 
-               id="employee_search" 
-               value="{{ old('department_head', 
-               $department->departmentHead->fullName 
-               ?? '') }}" 
-               required
-               autocomplete="off"
-               />
-        <div class="invalid-feedback">
-            @error('department_head')
-                {{ $message }}
-            @else
-                Bitte geben Sie eine gültige E-Mail-Adresse ein.
-            @enderror
+            <label for="department_head" class="form-label">Abteilungsleiter</label>
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control @error('department_head') is-invalid @enderror" 
+                       id="employee_search" 
+                       value="{{ old('department_head', $department->departmentHead->fullName ?? '') }}" 
+                       required
+                       autocomplete="off"
+                />
+                <button class="btn btn-outline-secondary" 
+                        type="button" 
+                        id="clear_department_head"
+                        title="Abteilungsleiter entfernen">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="invalid-feedback">
+                    @error('department_head')
+                        {{ $message }}
+                    @else
+                        Bitte geben Sie eine gültige E-Mail-Adresse ein.
+                    @enderror
+                </div>
+            </div>
+
+            <div id="search_loading" class="position-absolute end-0 top-50 translate-middle-y me-5 d-none">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
 
-        <div id="search_loading" class="position-absolute end-0 top-50 translate-middle-y me-2 d-none">
-            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <!-- Results dropdown -->
+        <div id="search_results" class="position-absolute w-100 mt-1 rounded shadow-sm d-none" style="z-index: 1000; max-height: 300px; overflow-y: auto;">
+            <div class="list-group">
+                <!-- Results will be inserted here -->
             </div>
         </div>
     </div>
 
-    <!-- Results dropdown -->
-    <div id="search_results" class="position-absolute w-100 mt-1 rounded shadow-sm d-none" style="z-index: 1000; max-height: 300px; overflow-y: auto;">
-        <div class="list-group">
-            <!-- Results will be inserted here -->
-        </div>
-    </div>
-
-
-</div>
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>
         <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
@@ -86,53 +91,60 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-let searchTimeout;
-const searchInput = document.getElementById('employee_search');
-const searchResults = document.getElementById('search_results');
-
-const loadingSpinner = document.getElementById('search_loading');
-const selectedEmployeeId = document.getElementById('department_head_id');
-
-searchInput.addEventListener('input', function() {
-    clearTimeout(searchTimeout);
-    const query = this.value.trim();
-    
-    if (query.length < 2) {
+document.addEventListener('DOMContentLoaded', function() {
+    let searchTimeout;
+    const searchInput = document.getElementById('employee_search');
+    const searchResults = document.getElementById('search_results');
+    const loadingSpinner = document.getElementById('search_loading');
+    const selectedEmployeeId = document.getElementById('department_head_id');
+    const clearButton = document.getElementById('clear_department_head');
+   console.log(clearButton);
+    // Clear button functionality
+    clearButton.addEventListener('click', function() {
+    console.log("sdfds")
+        searchInput.value = '';
+        selectedEmployeeId.value = '';
         searchResults.classList.add('d-none');
-        return;
-    }
-    
-    loadingSpinner.classList.remove('d-none');
-    
-    searchTimeout = setTimeout(() => {
-        fetch(`/employees/searchInfo?query=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsHtml = data.map(employee => `
-                    <button type="button" 
-                            class="list-group-item list-group-item-action" 
-                            data-id="${employee.id}"
-                            data-fullName="${employee.fullName}"
-                            data-info="${employee.fullInfo}"
-                        >
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>${employee.fullInfo}</strong>
-                        </div>
-                    </button>
-                `).join('');
-                
-                searchResults.querySelector('.list-group').innerHTML = resultsHtml;
-                searchResults.classList.remove('d-none');
-                loadingSpinner.classList.add('d-none');
-                
-                // Add click handlers to results
-                searchResults.querySelectorAll('.list-group-item').forEach(item => {
-                    item.addEventListener('click', selectEmployee);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
+    });
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            searchResults.classList.add('d-none');
+            return;
+        }
+        
+        loadingSpinner.classList.remove('d-none');
+        
+        searchTimeout = setTimeout(() => {
+            fetch(`/employees/searchInfo?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsHtml = data.map(employee => `
+                        <button type="button" 
+                                class="list-group-item list-group-item-action" 
+                                data-id="${employee.id}"
+                                data-fullName="${employee.fullName}"
+                                data-info="${employee.fullInfo}"
+                            >
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>${employee.fullInfo}</strong>
+                            </div>
+                        </button>
+                    `).join('');
+                    
+                    searchResults.querySelector('.list-group').innerHTML = resultsHtml;
+                    searchResults.classList.remove('d-none');
+                    loadingSpinner.classList.add('d-none');
+                    
+                    // Add click handlers to results
+                    searchResults.querySelectorAll('.list-group-item').forEach(item => {
+                        item.addEventListener('click', selectEmployee);
+                    });
+                })
+                .catch(error => {console.error('Error:', error);
                 loadingSpinner.classList.add('d-none');
             });
     }, 300);
