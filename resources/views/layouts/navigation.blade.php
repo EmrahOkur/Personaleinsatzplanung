@@ -19,14 +19,13 @@
             <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
         </a>
     </li>
-@endif
-
-@if(Auth::user()->isEmployee())
-<li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
-        <i class="fas fa-users"></i> {{ __('Zeiterfassung') }}
-    </a>
-</li>
+@if(Auth::user()->isEmployee())  
+    <!-- Neuer Menüpunkt für Zeiterfassung -->
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('time_entries.*') ? 'active' : '' }}" href="{{ route('time_entries.index') }}">
+            <i class="fas fa-clock"></i> {{ __('Zeiterfassung') }}
+        </a>
+    </li>
 @endif
 
 @if(Auth::user()->isEmployee())
@@ -62,5 +61,4 @@
             </ul>
         </div>
     </li>
-@endif
 </ul>

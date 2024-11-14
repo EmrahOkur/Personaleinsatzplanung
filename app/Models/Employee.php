@@ -45,6 +45,9 @@ class Employee extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function timeEntries()
+    {
+        return $this->hasMany(TimeEntry::class);
     public function user()
     {
         return $this->hasOne(User::class);
@@ -57,6 +60,6 @@ class Employee extends Model
 
     public function getFullNameAndDepartmentAttribute()
     {
-        return "{$this->first_name} {$this->last_name} ({$this->department->name})";
+        return "{$this->first_name} {$this->last_name}" . ($this->department ? " ({$this->department->name})" : '');
     }
 }

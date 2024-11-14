@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Beispiel-Benutzer
         User::factory()->create([
             'name' => 'Wendt',
             'vorname' => 'Patrik',
@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'pwe@pwe.de',
             'password' => '$2y$10$Ub.ZAwHgIer4/r0h6TbAmuCVQSnTX81eUh72q17BQW9dxn8YMjWcK', // pwe123 https://onlinephp.io/password-hash
         ]);
+
         User::factory()->create([
             'name' => 'Albig',
             'vorname' => 'Malte',
@@ -37,10 +38,12 @@ class DatabaseSeeder extends Seeder
             'password' => '$2y$10$rO1u4wYJRgkbGyzNkHUvt.HIZGcvGorob43XeHBWGCJyfC68Qygou', // admin123 https://onlinephp.io/password-hash
         ]);
 
+        // Andere Seeders aufrufen
         $this->call([
             DepartmentSeeder::class,
             EmployeeSeeder::class,
             DepartmentHeadSeeder::class,
+            TimeEntrySeeder::class, // TimeEntrySeeder hinzugefügt
         ]);
     }
 }
