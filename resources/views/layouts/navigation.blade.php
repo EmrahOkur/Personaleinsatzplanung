@@ -5,7 +5,7 @@
         </a>
     </li>
 
-@if(Auth::user()->hasRole('admin'))
+@if(Auth::user()->isAdmin())
     <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('users') ? 'active' : '' }}" href="{{ route('users') }}">
             <i class="fas fa-users"></i> {{ __('Benutzer') }}
@@ -13,7 +13,7 @@
     </li>
 @endif
 
-@if(Auth::user()->hasRole('manager'))
+@if(Auth::user()->isManager())
     <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="{{ route('employees') }}">
             <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
@@ -21,7 +21,7 @@
     </li>
 @endif
 
-@if(Auth::user()->hasRole('employee'))
+@if(Auth::user()->isEmployee())
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
         <i class="fas fa-users"></i> {{ __('Zeiterfassung') }}
@@ -29,7 +29,7 @@
 </li>
 @endif
 
-@if(Auth::user()->hasRole('employee'))
+@if(Auth::user()->isEmployee())
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
         <i class="fas fa-users"></i> {{ __('Arbeitsplan') }}
@@ -37,7 +37,7 @@
 </li>
 @endif
 
-@if(Auth::user()->hasRole('employee'))
+@if(Auth::user()->isEmployee())
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
         <i class="fas fa-users"></i> {{ __('Urlaubsantrag') }}
@@ -45,7 +45,7 @@
 </li>  
 @endif
 
-@if(Auth::user()->hasNotRole('employee'))
+@if(Auth::user()->isAdmin())
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#settingsSubmenu" aria-expanded="false">
             <i class="fas fa-cog"></i> Einstellungen
