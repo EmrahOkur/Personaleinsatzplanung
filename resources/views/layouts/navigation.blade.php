@@ -31,7 +31,7 @@
 
 @if(Auth::user()->isEmployee())
 <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
+    <a class="nav-link {{ request()->routeIs('arbeitsplan') ? 'active' : '' }}" href="#">
         <i class="fas fa-users"></i> {{ __('Arbeitsplan') }}
     </a>
 </li>
@@ -39,7 +39,7 @@
 
 @if(Auth::user()->isEmployee())
 <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('employees') ? 'active' : '' }}" href="#">
+    <a class="nav-link {{ request()->routeIs('urlaubs') ? 'active' : '' }}" href="#">
         <i class="fas fa-users"></i> {{ __('Urlaubsantrag') }}
     </a>
 </li>  
