@@ -19,7 +19,8 @@
             <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
         </a>
     </li>
-@if(Auth::user()->isEmployee())  
+    @endif
+@if(Auth::user()->isEmployee() || Auth::user()->isManager())  
     <!-- Neuer Menüpunkt für Zeiterfassung -->
     <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('time_entries.*') ? 'active' : '' }}" href="{{ route('time_entries.index') }}">
@@ -62,3 +63,4 @@
         </div>
     </li>
 </ul>
+@endif
