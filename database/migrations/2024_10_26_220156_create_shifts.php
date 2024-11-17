@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('date_shift');
             $table->string('start_time');
             $table->string('end_time');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('amount_employees');
+            //$table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

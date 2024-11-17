@@ -1,17 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-<h1>
+        <div class="shift-header" id="shift-header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Schichten') }}
+                <div class="">
 
-</h1>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Schichten') }}
-            <div class="">
-
-        </h2>
-        <div class="week-navigation">
-            <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
-            <span id="week-label" class="mx-2"></span>
-            <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
+            </h2>
+            <div class="week-navigation">
+                <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
+                <span id="week-label" class="mx-2"></span>
+                <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
+            </div>
         </div>
     </x-slot>
      <!-- Modal Schicht bearbeiten-->
@@ -83,13 +82,13 @@
     @foreach ( $users as $user )
         <tr>
             <th scope="row">{{$user->name}}</th>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowMonday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowTuesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowWednesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowThursday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowFriday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSaturday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSunday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:absolute;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowMonday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowTuesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowWednesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowThursday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowFriday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSaturday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSunday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
         </tr>
     @endforeach
   </tbody>
@@ -107,29 +106,44 @@
     function updateShift(){
         resetAllButtons();
         let table = document.getElementsByClassName('table-bordered')[0];
+        let header = document.getElementById('shift-header');
         let spinner = document.getElementsByClassName('spinner-border')[0];
         spinner.style.display = "block";
         table.style.display = "none";
+        header.style.display ="none";
         fetch('/shifts/getUsersWithShifts')
-        .then(response => response.json())
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Netzwerkantowrt war nicht ok');
+            }
+            return response.json()
+        })
         .then(users => {
+            console.log("users "+ users)
             const buttons = document.querySelectorAll('.shiftDay');
             buttons.forEach(button => {
                 const dataDate = button.getAttribute('data-date');
                 const dataUserId = button.getAttribute('data-id');
-                let dataDateDateForLaravel = formatDateForLaravel(dataDate);
-                console.log(dataDate)
+                // Falls das Date Format verwendet wird
+                // let dataDateDateForLaravel = formatDateForLaravel(dataDate);
                 // Suche nach dem Benutzer, dessen Schicht mit dem data-date übereinstimmt
                 users.forEach(user => {
                     table.style.display = "table";
-                    spinner.style.display = "none"
+                    spinner.style.display = "none";
+                    header.style.display = "block";
+        
+                    if (Array.isArray(user.shifts)) {
                     user.shifts.forEach(shift => {
-                        if (shift.date_shift == dataDateDateForLaravel && shift.user_id == dataUserId) {
-                            button.textContent = `${shift.start_time} - ${shift.end_time}`;
+                        // Datum trifft zu
+                        if(user.id == dataUserId && shift.date_shift == dataDate ){
+                            button.innerHTML += `${shift.start_time} - ${shift.end_time} <br>`;
+                            console.log('assignedUser ' + user.id + ' shift.date_shift ' + shift.date_shift)
                         }
                         
                     });
+                }else{console.log("Schichten " + user.shifts)}
                 });
+                
             });
         })
     .catch(error => console.error('Fehler:', error));
@@ -156,12 +170,9 @@
         let data_date = event.target.dataset.date;
 
         const laravelDate = formatDateForLaravel(data_date);
-        console.log(laravelDate)
 
         document.getElementById('date_shift').value = laravelDate;
         document.getElementById('user_id').value = user_id;
-        console.log(document.getElementById('date_shift').value)
-        console.log(document.getElementById('user_id').value = user_id)
     }
     // Schicht wird geupdatet 
     updateShift()

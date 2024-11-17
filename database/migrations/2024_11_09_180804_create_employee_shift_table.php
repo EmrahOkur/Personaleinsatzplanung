@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('shift_user', function (Blueprint $table) {
             $table->id();
-            $table->string('vorname');
-            $table->string('nachname');
-            $table->string('ort');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('shift_id')->references('id')->on('shifts')->onDelete('cascade');
         });
-
     }
 
     /**
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('shift_user');
     }
 };
