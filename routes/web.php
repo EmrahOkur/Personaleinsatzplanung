@@ -1,15 +1,19 @@
 <?php
 
+
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 
+use App\Http\Controllers\UrlaubController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+
 
 Route::get('/dashboard', function () {
     return view('layouts/app');
@@ -27,6 +31,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
         Route::post('/employees/update/{id}', 'update')->name('employees.update');
     });
+  
+    Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');
+    Route::get('/urlaubs/beantragen', [UrlaubController::class, 'beantragen'])->name('urlaubs.beantragen');
+    Route::post('/urlaubs/speichern', [UrlaubController::class, 'speichern'])->name('urlaubs.speichern');
+    Route::get('/urlaubs/übersicht', [UrlaubController::class, 'übersicht'])->name('urlaubs.übersicht');
+    Route::get('/urlaubs/feiertage', [UrlaubController::class, 'feiertage'])->name('urlaubs.feiertage');
+    Route::delete('/urlaub/{id}/loeschen', [UrlaubController::class, 'destroy'])->name('urlaubs.loeschen');
+   
+    
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -36,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/customers/{id}', [CustomerController::class, 'delete'])->name('customers.delete');
     Route::get('/customers/edit/{id}', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/edit/{id}', [CustomerController::class, 'update'])->name('customers.update');
+   
 });
 
 require __DIR__.'/auth.php';
