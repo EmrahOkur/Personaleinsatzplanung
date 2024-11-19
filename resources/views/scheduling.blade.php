@@ -23,6 +23,7 @@
             <p id="modal-schedule-date-2"></p>
             <p id="modal-schedule-date-start-2"></p>
             <p id="modal-schedule-date-end-2"></p>
+            <p id="modal-error-message-2"></p>
             <p id="schedule-amount"></p>
             <br>
             <form id="scheduleFormModal2" action="" method="POST">
@@ -33,7 +34,7 @@
         <div class="modal-footer">
             <button type="button" onclick="deleteShift(event)" id="delteShift" class="btn btn-danger" data-bs-dismiss="modal">Löschen</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-            <button type="button" form="edit-shift" id="saveAssignedEmployees" class="btn btn-primary" data-bs-dismiss="modal" >Speichern</button>
+            <button type="button" form="edit-shift" id="saveAssignedEmployees" class="btn btn-primary" >Speichern</button>
         </div>
         </div>
     </div>
@@ -140,13 +141,13 @@
                 const dayCell = document.createElement('td');
                 const tddiv = document.createElement('div');
                 const dateElement = document.createElement('span');
-                const dateButton = document.createElement('button');
-                dateButton.textContent = "Schicht hinzufügen";
-                dateButton.setAttribute("class", "btn btn-primary padding-5px");
-                dateButton.setAttribute("data-bs-target", "#scheduleModal"); 
-                dateButton.setAttribute("data-bs-toggle", "modal");
-                dateButton.setAttribute("data-date", `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`);
-                dateButton.setAttribute("onclick", "firstScheduleModalDate(event)");
+                const addshiftButton = document.createElement('button');
+                addshiftButton.textContent = "Schicht hinzufügen";
+                addshiftButton.setAttribute("class", "btn btn-primary padding-5px");
+                addshiftButton.setAttribute("data-bs-target", "#scheduleModal"); 
+                addshiftButton.setAttribute("data-bs-toggle", "modal");
+                addshiftButton.setAttribute("data-date", `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`);
+                addshiftButton.setAttribute("onclick", "firstScheduleModalDate(event)");
                 dateElement.textContent = `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`;
 
                 // Schicht wird für den Tag angezeigt, falls vorhanden
@@ -166,11 +167,6 @@
                          <p> ${users_arr ? users_arr.map(user => user.name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>
                     `;
-                    //if(users_arr){
-                    //    users_arr.forEach(user => {
-                    //        shiftDiv.innerHTML += `<p>${user.name} </p>`
-                    //    })
-                    //} 
                     tddiv.appendChild(shiftDiv);
                 });
 
@@ -180,7 +176,7 @@
                 // Füge das Datum und den Button zur Zelle hinzu
                 dayCell.appendChild(dateElement);
                 dayCell.appendChild(tddiv);
-                dayCell.appendChild(dateButton);
+                dayCell.appendChild(addshiftButton);
 
                 row.appendChild(dayCell);
 
@@ -236,6 +232,7 @@
 
                 // Inhalt für das zweite Modalfenster
         function secondScheduleModal(e){
+            document.getElementById("modal-error-message-2").innerHTML = '';
             let shiftId = e.target.dataset.shiftid;
             let requiredEmployees = e.target.dataset.requiredemployees;
             let schedule_amount_p = document.getElementById("schedule-amount");
@@ -289,9 +286,16 @@
             })
             .then(response => response.json())
             .then(data => {
-                alert('assigned_employees ' + data.assigned_employees);
-                $('#secondModalSchedule').modal('hide');
-                updateWeek();  // Aktualisiere die Wochenansicht
+                console.log("test");
+                if(data.error){
+                    console.log("error");
+                    document.getElementById("modal-error-message-2").innerHTML = data.error;
+                    // alert(data.error)
+                }else{
+                    $('#secondModalSchedule').modal('hide');
+                    updateWeek();  // Aktualisiere die Wochenansicht
+                
+                }
             })
             .catch(error => console.error('Fehler beim Speichern:', error));
         };

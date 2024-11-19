@@ -38,19 +38,25 @@ class SchedulingController extends Controller
     // Mitarbeiter zu einer Schicht hinzufügen
     public function assignEmployeesToShift(Request $request)
     {
-//        $validated = $request->validate([
+        $validated = $request->validate([
+            'employee_ids' => 'required|'
 //            'shift_id' => 'required|exists:shifts,id',
 //            'employee_ids' => 'required|array',
 //            'employee_ids.*' => 'exists:users,id',
-//        ]);
+        ]);
 
         $shift = Shift::findorfail($request->shift_id);
         // Zuweisung der Mitarbeiter zur Schicht
         $employeeIds = array_unique($request->employee_ids);
+
+        $amaountSelectedEmployees = count($employeeIds);
+        if($amaountSelectedEmployees > $shift->amount_employees){
+            return response()->json(['error' => 'Es können nur maximal ' .$shift->amount_employees .' Mitarbeiter zugewiesen werden.'] );
+        }
         // $request->users ist ein Array der User-IDs, die zugewiesen werden sollen
         $shift->users()->sync($employeeIds);  // sync entfernt nicht mehr ausgewählte User und fügt neue hinzu
         //dd($request->selectedEmployees);
-        return response()->json(['message' => 'Mitarbeiter zugewiesen', 'assigned_employees' => $shift->users->count()]);
+        return response()->json(['assigned_employees' => $shift->users->count()]);
     }
 
     // Mitarbeiter aus einer Schicht entfernen
