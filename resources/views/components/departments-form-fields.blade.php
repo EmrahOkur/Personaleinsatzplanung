@@ -98,10 +98,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingSpinner = document.getElementById('search_loading');
     const selectedEmployeeId = document.getElementById('department_head_id');
     const clearButton = document.getElementById('clear_department_head');
-   console.log(clearButton);
+    
     // Clear button functionality
     clearButton.addEventListener('click', function() {
-    console.log("sdfds")
         searchInput.value = '';
         selectedEmployeeId.value = '';
         searchResults.classList.add('d-none');
