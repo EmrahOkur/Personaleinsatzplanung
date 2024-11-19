@@ -1,7 +1,6 @@
 @props(['department' => null])
 <div class="row g-3">
-    <!-- Persönliche Informationen -->
-    <h4 class="mb-3">Persönliche Informationen</h4>
+   
     
     <div class="col-md-6">
         <label for="name" class="form-label">Name</label>
