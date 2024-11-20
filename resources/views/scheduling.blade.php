@@ -140,6 +140,8 @@
             for (let i = 0; i < 7; i++) {
                 const dayCell = document.createElement('td');
                 const tddiv = document.createElement('div');
+                const tdwrapper = document.createElement('div')
+                tdwrapper.setAttribute("class", "td-wrapper-flex");
                 const dateElement = document.createElement('span');
                 const addshiftButton = document.createElement('button');
                 addshiftButton.textContent = "Schicht hinzufügen";
@@ -174,9 +176,11 @@
                 tddiv.setAttribute("id", dateElement.textContent);
 
                 // Füge das Datum und den Button zur Zelle hinzu
-                dayCell.appendChild(dateElement);
-                dayCell.appendChild(tddiv);
-                dayCell.appendChild(addshiftButton);
+                tdwrapper.appendChild(dateElement);
+                tdwrapper.appendChild(tddiv);
+                tdwrapper.appendChild(addshiftButton);
+
+                dayCell.appendChild(tdwrapper);
 
                 row.appendChild(dayCell);
 
@@ -418,7 +422,7 @@
                 first_value = splitted[0];
                 second_value = splitted[1];
                 if(first_value !== second_value){
-                    all_shifts_employees[i].closest(".list-group").style = "background-color: " + "#E0E0E0;"
+                    all_shifts_employees[i].closest(".list-group").style = "background-color: " + "#D6DBD4;"
                 }
             }
         }
@@ -428,6 +432,11 @@
         .list-group {
             margin-bottom: 20px;
             padding: 10px;
+        }
+        .td-wrapper-flex {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
         }
         
 
