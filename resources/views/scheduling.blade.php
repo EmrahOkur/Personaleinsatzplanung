@@ -163,7 +163,7 @@
                     shiftDiv.innerHTML = `
                         <p class="list-group-item">Start: ${shift.start_time}</p>
                         <p class="list-group-item">Ende: ${shift.end_time}</p>
-                        <p class="list-group-item">Mitarbeiter: ${users_arr.length}/${shift.amount_employees}</p>
+                        <p class="list-group-item list-employees">Mitarbeiter: ${users_arr.length}/${shift.amount_employees}</p>
                          <p class="user-list"> ${users_arr ? users_arr.map(user => user.name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>
                     `;
@@ -190,6 +190,7 @@
             document.querySelectorAll('#secondModalAddEmployees').forEach(button =>{
                 
             usersListEqualHeight();
+            showUnfilledShifts();
         })
 
         })
@@ -245,16 +246,30 @@
         fetch(`/scheduling/getEmployeesForShift/${shiftId}`)
             .then(response => response.json())
             .then(data => {
-                data.forEach(user => {
+                data.users.forEach(user => {
                     let checkboxDiv = document.createElement('div');
                     checkboxDiv.classList.add('form-check');
-                    // Vielleicht korrigieren
+                    console.log("usersinShift ",data.usersInShift)
+                    console.log("the user ",user)
+                    // Falls user in der Schicht enthalten ist
+                    if(data.usersInShift.includes(user.name) ){
+                        console.log("checked");
+                        checkboxDiv.innerHTML =
+                        `
+                        <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${user.id}" id="employee_${user.id}" checked="true">
+                        <label class="form-check-label" for="employee_${user.id}">
+                            ${user.name}
+                        </label>
+                    `;
+                    }else{
+                        console.log("not checked")
                     checkboxDiv.innerHTML = `
                         <input class="form-check-input" name="employee_ids[]" type="checkbox" value="${user.id}" id="employee_${user.id}">
                         <label class="form-check-label" for="employee_${user.id}">
                             ${user.name}
                         </label>
                     `;
+                    }
                     formContainer.appendChild(checkboxDiv);
                 });
             })
@@ -283,7 +298,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("test");
                 if(data.error){
                     console.log("error");
                     document.getElementById("modal-error-message-2").innerHTML = data.error;
@@ -328,8 +342,9 @@
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);
-                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item">Mitarbeiter: 0/${data.amount_employees} </div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
+                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item list-employees">Mitarbeiter: 0/${data.amount_employees} </div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
                     usersListEqualHeight();
+                    showUnfilledShifts();
                 },
                 error: function(xhr, status, error) {
                     // Fehlerbehandlung: Logge die Antwort und zeige sie in der Konsole
@@ -348,7 +363,6 @@
             });
         }
         function deleteShift(e){
-            console.log(`/scheduling/deleteShift/${e.target.dataset.shiftid}`);
             $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -379,7 +393,6 @@
             
         }
         function usersListEqualHeight(){
-            console.log("test");
             let maxHeight = 0;
             let currentElementHeight = 0;
             let usersList = document.querySelectorAll(".user-list");
@@ -388,21 +401,35 @@
                 if(currentElementHeight > maxHeight){
                     maxHeight = currentElementHeight;
                 }
-                console.log("maxHeight ",maxHeight)
             }
             for(i = 0; i < usersList.length;i++){
                 usersList[i].style = "height: " + maxHeight + "px";
             }
         }
 
+        function showUnfilledShifts(){
+            const regex = /(\d+)\/(\d+)/;
+            let all_shifts_employees = document.querySelectorAll('.list-employees');
+            let first_value;
+            let second_value;
+            let splitted;
+            for(i=0;i < all_shifts_employees.length;i++){
+                splitted = all_shifts_employees[i].textContent.match(regex)[0].split("/");
+                first_value = splitted[0];
+                second_value = splitted[1];
+                if(first_value !== second_value){
+                    all_shifts_employees[i].closest(".list-group").style = "background-color: " + "#E0E0E0;"
+                }
+            }
+        }
 
     </script>
     <style>
         .list-group {
             margin-bottom: 20px;
+            padding: 10px;
         }
-        .padding-5px {
-            
-        }
+        
+
     </style>
 </x-app-layout>

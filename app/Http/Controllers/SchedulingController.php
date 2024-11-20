@@ -78,7 +78,9 @@ class SchedulingController extends Controller
     public function getEmployeesForShift($shiftId)
     {
         $users = User::all();
-        return response()->json($users);
+        $shift = Shift::findorfail($shiftId);
+        $userInShift = $shift->users()->pluck('name');
+        return response()->json(['users' =>$users, 'usersInShift' => $userInShift]);
     } 
 
     public function deleteShift($shiftId)
