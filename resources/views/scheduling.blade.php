@@ -164,7 +164,7 @@
                         <p class="list-group-item">Start: ${shift.start_time}</p>
                         <p class="list-group-item">Ende: ${shift.end_time}</p>
                         <p class="list-group-item">Mitarbeiter: ${users_arr.length}/${shift.amount_employees}</p>
-                         <p> ${users_arr ? users_arr.map(user => user.name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
+                         <p class="user-list"> ${users_arr ? users_arr.map(user => user.name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>
                     `;
                     tddiv.appendChild(shiftDiv);
@@ -189,10 +189,7 @@
 
             document.querySelectorAll('#secondModalAddEmployees').forEach(button =>{
                 
-            button.addEventListener('click', function(){
-            //    console.log("secondModalAddEmployees");
-                //resetcheckboxes();
-            });
+            usersListEqualHeight();
         })
 
         })
@@ -331,8 +328,8 @@
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);
-                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item">Mitarbeiter: 0/${data.amount_employees} </div> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
-                    
+                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item">Mitarbeiter: 0/${data.amount_employees} </div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
+                    usersListEqualHeight();
                 },
                 error: function(xhr, status, error) {
                     // Fehlerbehandlung: Logge die Antwort und zeige sie in der Konsole
@@ -349,7 +346,6 @@
                     alert(errorMessage);  // Zeige eine allgemeine Fehlermeldung an
                 }
             });
-
         }
         function deleteShift(e){
             console.log(`/scheduling/deleteShift/${e.target.dataset.shiftid}`);
@@ -382,6 +378,23 @@
             });
             
         }
+        function usersListEqualHeight(){
+            console.log("test");
+            let maxHeight = 0;
+            let currentElementHeight = 0;
+            let usersList = document.querySelectorAll(".user-list");
+            for(i = 0; i < usersList.length; i++){
+                currentElementHeight  = usersList[i].offsetHeight ;
+                if(currentElementHeight > maxHeight){
+                    maxHeight = currentElementHeight;
+                }
+                console.log("maxHeight ",maxHeight)
+            }
+            for(i = 0; i < usersList.length;i++){
+                usersList[i].style = "height: " + maxHeight + "px";
+            }
+        }
+
 
     </script>
     <style>
