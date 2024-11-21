@@ -1,5 +1,7 @@
-<x-app-layout>
-    <x-slot name="header">
+@extends('layouts.app')
+
+@section('main')
+    <section name="header">
         <div class="shift-header" id="shift-header">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Schichten') }}
@@ -12,7 +14,7 @@
                 <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
             </div>
         </div>
-    </x-slot>
+    </section>
      <!-- Modal Schicht bearbeiten-->
      <div class="modal fade" id="shiftModal" tabindex="-1" aria-labelledby="shiftModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -287,5 +289,5 @@
     //updateShifts();
 
 </script>
+@endsection
 
-</x-app-layout>

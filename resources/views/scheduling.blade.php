@@ -1,6 +1,8 @@
 
-<x-app-layout>
-    <x-slot name="header">
+@extends('layouts.app')
+
+@section('main')
+    <section name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Schichten planen') }}
             <div class="month-navigation">
@@ -9,7 +11,7 @@
                 <button id="next-week" class="btn btn-primary">Nächste Woche</button>
             </div>
         </h2>
-    </x-slot>
+    </section>
     <!-- 2. Modalfenster -->
     <div class="modal fade" id="secondModalSchedule" tabindex="-1" aria-labelledby="secondModalScheduleLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -293,7 +295,8 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    //'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 body: JSON.stringify({
                     shift_id: shiftId,
@@ -331,10 +334,12 @@
             let end_time = document.getElementById("end_shift").value;
             let amount_employees = document.getElementById("employee_schedule").value;
             console.log('amount_employees '+amount_employees);
+            console.log('amount_employees '+ document.querySelector('[name="_token"]').getAttribute('content'));
             let date = document.getElementById("schedule-date").textContent;
             $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //'X-CSRF-TOKEN': document.querySelector('[name="_token"]').getAttribute('content')
             }
             });
             $.ajax({
@@ -441,4 +446,4 @@
         
 
     </style>
-</x-app-layout>
+@endsection

@@ -20,6 +20,15 @@
         </a>
     </li>
     @endif
+
+@if(Auth::user()->isManager())
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('scheduling') ? 'active' : '' }}" href="{{ route('scheduling') }}">
+            <i class="fas fa-users"></i> {{ __('Arbeitsplan erstellen') }}
+        </a>
+    </li>
+    @endif
+
 @if(Auth::user()->isEmployee() || Auth::user()->isManager())  
     <!-- Neuer Menüpunkt für Zeiterfassung -->
     <li class="nav-item">
@@ -31,7 +40,7 @@
 
 @if(Auth::user()->isEmployee())
 <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('arbeitsplan') ? 'active' : '' }}" href="#">
+    <a class="nav-link {{ request()->routeIs('shifts') ? 'active' : '' }}" href="{{ route('shifts') }}">
         <i class="fas fa-users"></i> {{ __('Arbeitsplan') }}
     </a>
 </li>
