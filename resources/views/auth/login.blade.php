@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <div class="container">
-        <div class="row justify-content-center mt-5">
+
+        <div class="d-flex justify-content-center align-items-center w-100 h-100 mt-5">
             <div class="col-md-6  w-100  px-5">
                 <div class="card">
                     <div class="card-header">Login</div>
@@ -50,5 +42,3 @@
             </div>
         </div>
     </div>
-</body>
-</html>
