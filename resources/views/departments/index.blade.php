@@ -24,7 +24,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Kürzel</th>
-                                    <th>Leiter</th>
+                                    <th>Leitung</th>
                                     <th></th>
                                 </tr>
                             </thead>

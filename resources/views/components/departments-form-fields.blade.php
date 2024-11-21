@@ -1,4 +1,5 @@
 @props(['department' => null])
+@props(['res' => null])
 <div class="row g-3">
    
     
@@ -86,6 +87,32 @@
         <button class="btn btn-primary" type="submit">Speichern</button>
         <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
     </div>
+
+    <h3>Verantwortlichkeiten</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($res as $responsibility)
+                <tr>
+                    <td>{{ $responsibility->full_name }}</td>
+                    <td>
+                        <form action="{{ route('responsibilities.delete', $responsibility->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-link text-danger p-0">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 
 @push('scripts')

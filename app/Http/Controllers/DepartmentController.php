@@ -65,11 +65,12 @@ class DepartmentController extends Controller
     public function edit(Request $request, $id)
     {
         $department = Department::findOrFail($id);
-        $departments = Department::all();
+        $res = $department->responsibleEmployees;
+        
 
         return view('departments.edit', [
             'department' => $department,
-            'departments' => $departments,
+            'res' => $res,
         ]);
     }
 

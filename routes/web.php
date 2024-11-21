@@ -1,15 +1,17 @@
-<?php 
+<?php
+
 declare(strict_types=1);
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TimeEntryController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ResponsibilityController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\TimeEntryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -84,20 +86,24 @@ Route::middleware('auth')->group(function () {
     Route::put('/customers/edit/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
     // Shift Controller (Employee Shifts)
-    Route::get('/shifts', [ShiftController::class,'index'] )->name('shifts');
-    Route::post('/shifts/edit', [ShiftController::class,'edit'] )->name('shifts.edit');
-    Route::get('/shifts/getUsersWithShifts', [ShiftController::class,'getUsersWithShifts'] )->name('shifts.getUsersWithShifts');
+    Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts');
+    Route::post('/shifts/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
+    Route::get('/shifts/getUsersWithShifts', [ShiftController::class, 'getUsersWithShifts'])->name('shifts.getUsersWithShifts');
     Route::get('/shifts/getShiftsWithUsers', [ShiftController::class, 'getShiftsWithUsers'])->name('scheduling.getShiftsWithUsers');
 
     // Scheduling Controller (User Shifts)
-    Route::get('/scheduling', [SchedulingController::class,'index'] )->name('scheduling');
-    Route::post('/scheduling/addshifts', [SchedulingController::class,'addshifts'] )->name('scheduling.addshifts');
+    Route::get('/scheduling', [SchedulingController::class, 'index'])->name('scheduling');
+    Route::post('/scheduling/addshifts', [SchedulingController::class, 'addshifts'])->name('scheduling.addshifts');
     Route::get('/scheduling/getShifts', [SchedulingController::class, 'getShifts'])->name('scheduling.getShifts');
-    Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class,'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
-    Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class,'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
+    Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class, 'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
+    Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class, 'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
     Route::get('/scheduling/getEmployeesForShift/{shiftId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
     Route::delete('/scheduling/deleteShift/{shiftId}', [SchedulingController::class, 'deleteShift'])->name('scheduling.deleteShift');
 
+    // responsibilities
+    Route::controller(ResponsibilityController::class)->group(function () {
+        Route::delete('/responsibilities/{id}', 'delete')->name('responsibilities.delete');
+    });
 });
 
 require __DIR__ . '/auth.php';
