@@ -46,7 +46,7 @@
             <div class="col-md-6">
                 <input type="hidden" name="department_head_id" id="department_head_id">
 
-                <label for="department_head" class="form-label">Abteilungsleiter</label>
+                <label for="department_head" class="form-label">Abteilungs-/Bereichsleiter</label>
                 <div class="input-group">
                     <input type="text" 
                         class="form-control @error('department_head') is-invalid @enderror" 
@@ -58,7 +58,7 @@
                     <button class="btn btn-outline-secondary" 
                             type="button" 
                             id="clear_department_head"
-                            title="Abteilungsleiter entfernen">
+                            title="Abteilungs-/Bereichsleiter entfernen">
                         <i class="fas fa-times"></i>
                     </button>
                     <div class="invalid-feedback">
@@ -90,8 +90,61 @@
         <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </form>
-
+<hr />  
     <h3>Verantwortlichkeiten</h3>
+    <p>Verantwortliche dürfen Einstellungen für die sich in dieser Abteilung/Bereich befindlichen Mitarbeiter vornehmen</p>
+
+
+    <div class="mt-4">
+        <h4>Verantwortlichen hinzufügen</h4>
+        <div class="position-relative">
+            <div class="col-md-6">
+                <form method="POST" action="{{ route('responsibilities.create', ['department_id' => $department->id, 'id' => '1']) }}" id="responsibilityForm" class="needs-validation" novalidate>
+                    @csrf
+                    <div class="input-group">
+                        <input type="text" 
+                            class="form-control @error('responsibility_employee') is-invalid @enderror" 
+                            id="responsibility_search" 
+                            placeholder="Mitarbeiter suchen..."
+                            required
+                            autocomplete="off"
+                        />
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                id="clear_responsibility"
+                                title="Auswahl entfernen">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="btn btn-primary" type="submit">Hinzufügen</button>
+                        <div class="invalid-feedback">
+                            @error('responsibility_employee')
+                                {{ $message }}
+                            @else
+                                Bitte wählen Sie einen Mitarbeiter aus.
+                            @enderror
+                        </div>
+                    </div>
+                </form>
+    
+                <div id="responsibility_loading" class="position-absolute end-0 top-50 translate-middle-y me-5 d-none">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+    
+            <div id="responsibility_results" class="position-absolute w-100 mt-1 rounded shadow-sm d-none" style="z-index: 1000; max-height: 300px; overflow-y: auto;">
+                <div class="list-group">
+                    <!-- Results will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  
+
+
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -104,9 +157,9 @@
                 <tr>
                     <td>{{ $responsibility->full_name }}</td>
                     <td>
-                        <form action="{{ route('responsibilities.delete', [$responsibility->id, $department->id]) }}" method="GET" class="d-inline">
+                        <form action="{{ route('responsibilities.delete', ['id' => $responsibility->id, 'department_id' => $department->id]) }}" method="POST" class="d-inline">
                             @csrf
-                            @method('GET')
+                            @method('DELETE')
                             <button type="submit" class="btn btn-link text-danger p-0">
                                 <i class="bi bi-trash"></i>entfernen
                             </button>
@@ -201,5 +254,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let responsibilitySearchTimeout;
+    const responsibilitySearch = document.getElementById('responsibility_search');
+    const responsibilityResults = document.getElementById('responsibility_results');
+    const responsibilityLoading = document.getElementById('responsibility_loading');
+    const responsibilityForm = document.getElementById('responsibilityForm');
+    const clearResponsibilityButton = document.getElementById('clear_responsibility');
+    
+    clearResponsibilityButton.addEventListener('click', function() {
+        responsibilitySearch.value = '';
+        responsibilityForm.action = "{{ route('responsibilities.create', ['department_id' => $department->id, 'id' => '1']) }}";
+        responsibilityResults.classList.add('d-none');
+    });
+
+    responsibilitySearch.addEventListener('input', function() {
+        clearTimeout(responsibilitySearchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            responsibilityResults.classList.add('d-none');
+            return;
+        }
+        
+        responsibilityLoading.classList.remove('d-none');
+        
+        responsibilitySearchTimeout = setTimeout(() => {
+            fetch(`/employees/searchInfo?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsHtml = data.map(employee => `
+                        <button type="button" 
+                                class="list-group-item list-group-item-action" 
+                                data-id="${employee.id}"
+                                data-fullname="${employee.fullName}"
+                                data-info="${employee.fullInfo}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>${employee.fullInfo}</strong>
+                            </div>
+                        </button>
+                    `).join('');
+                    
+                    responsibilityResults.querySelector('.list-group').innerHTML = resultsHtml;
+                    responsibilityResults.classList.remove('d-none');
+                    responsibilityLoading.classList.add('d-none');
+                    
+                    responsibilityResults.querySelectorAll('.list-group-item').forEach(item => {
+                        item.addEventListener('click', selectResponsibility);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    responsibilityLoading.classList.add('d-none');
+                });
+        }, 300);
+    });
+
+    function selectResponsibility(event) {
+        const button = event.currentTarget;
+        const id = button.dataset.id;
+        const baseUrl = "{{ route('responsibilities.create', ['department_id' => $department->id, 'id' => ':employeeId']) }}";
+        responsibilityForm.action = baseUrl.replace(':employeeId', id);
+        responsibilitySearch.value = button.dataset.fullname;
+        responsibilityResults.classList.add('d-none');
+    }
+
+    document.addEventListener('click', function(event) {
+        if (!responsibilitySearch.contains(event.target) && !responsibilityResults.contains(event.target)) {
+            responsibilityResults.classList.add('d-none');
+        }
+    });
+});
 </script>
 @endpush

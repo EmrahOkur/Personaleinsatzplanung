@@ -1,7 +1,7 @@
 <x-app-layout>
 
     @section("header")
-        <span class="ls-3 ps-3 fs-4">Abteilung ändern</span>
+        <span class="ls-3 ps-3 fs-4">Abteilung/Bereich ändern</span>
     @endsection
     
     @section("main")

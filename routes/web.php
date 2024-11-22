@@ -102,7 +102,8 @@ Route::middleware('auth')->group(function () {
 
     // responsibilities
     Route::controller(ResponsibilityController::class)->group(function () {
-        Route::get('/responsibilities/{id}/department/{department_id}', 'delete')->name('responsibilities.delete');
+        Route::delete('/responsibilities/delete', 'delete')->name('responsibilities.delete');
+        Route::post('/responsibilities/{id}/department/{department_id}', 'create')->name('responsibilities.create');
     });
 });
 

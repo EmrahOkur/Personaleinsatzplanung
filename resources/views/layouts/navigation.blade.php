@@ -65,7 +65,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('departments') ? 'active' : '' }}" 
                        href="{{ route('departments') }}">
-                        <i class="fas fa-users"></i> {{ __('Abteilungen') }}
+                        <i class="fas fa-users"></i> {{ __('Abteilungen/Bereiche') }}
                     </a>
                 </li>
             </ul>
