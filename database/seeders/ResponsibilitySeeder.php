@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\ResponsibilityModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
