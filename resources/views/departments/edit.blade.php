@@ -6,10 +6,9 @@
     
     @section("main")
         <!-- resources/views/components/departments-form.blade.php -->
-        <form method="POST" action="{{ route('departments.update', $department->id) }}" class="needs-validation p-5" novalidate>
-            @csrf
+        
             <x-departments-form-fields :department="$department" :res="$res" :edit="false"/>
-        </form>
+        
     @endsection  
     
 </x-app-layout>

@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
 
     // responsibilities
     Route::controller(ResponsibilityController::class)->group(function () {
-        Route::delete('/responsibilities/{id}', 'delete')->name('responsibilities.delete');
+        Route::get('/responsibilities/{id}/department/{department_id}', 'delete')->name('responsibilities.delete');
     });
 });
 
