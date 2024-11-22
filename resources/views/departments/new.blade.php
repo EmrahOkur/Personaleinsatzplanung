@@ -5,10 +5,10 @@
     @endsection
     
     @section("main")
-        <!-- resources/views/components/departments-form.blade.php -->
+        <!-- resources/views/components/departments-new-form.blade.php -->
         <form method="POST" action="{{ route('departments.create') }}" class="needs-validation p-5" novalidate>
             @csrf
-            <x-departments-form-fields :edit="false"/>
+            <x-departments-new-form-fields :edit="false"/>
         </form>
     @endsection  
     

@@ -5,10 +5,8 @@
     @endsection
     
     @section("main")
-        <!-- resources/views/components/departments-form.blade.php -->
-        
-            <x-departments-form-fields :department="$department" :res="$res" :edit="false"/>
-        
+        <!-- resources/views/components/departments-edit-form.blade.php -->        
+        <x-departments-edit-form-fields :department="$department" :res="$res" :edit="false"/>        
     @endsection  
     
 </x-app-layout>
