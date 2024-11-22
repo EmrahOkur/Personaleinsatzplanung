@@ -41,7 +41,7 @@
             @yield('footer')            
         </footer>
     </div>
-    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    
     <script>
         document.getElementById('sidebarCollapse').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('active');

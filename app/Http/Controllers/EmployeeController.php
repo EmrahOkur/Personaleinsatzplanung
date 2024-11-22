@@ -69,20 +69,28 @@ class EmployeeController extends Controller
     public function searchInfo(Request $request)
     {
         $term = $request->input('query');
+        try {
 
-        return Employee::where('first_name', 'LIKE', "%{$term}%")
-            ->orWhere('last_name', 'LIKE', "%{$term}%")
-            ->with('department')
-            ->select('id', 'first_name', 'last_name', 'department_id')
-            ->limit(5)
-            ->get()
-            ->map(function ($employee) {
-                return [
+            return Employee::with(['user', 'department'])
+                ->where(function ($query) use ($term) {
+                    $query->where('first_name', 'LIKE', "%{$term}%")
+                        ->orWhere('last_name', 'LIKE', "%{$term}%");
+                })
+                ->select('id', 'first_name', 'last_name', 'department_id')
+                ->limit(5)
+                ->get()
+                ->filter(fn ($employee) => $employee->user !== null)
+                ->map(fn ($employee) => [
                     'id' => $employee->id,
                     'fullName' => "{$employee->first_name} {$employee->last_name}",
-                    'fullInfo' => "{$employee->first_name} {$employee->last_name} (" . optional($employee->department)->name . ')' ?? 'No Department' . ')',
-                ];
-            });
+                    'fullInfo' => "{$employee->first_name} {$employee->last_name} (" .
+                        ($employee->department?->name ?? 'No Department') . ')',
+                ])
+                ->values()
+                ->all();
+        } catch (Exception $ex) {
+            dd($ex);
+        }
 
     }
 

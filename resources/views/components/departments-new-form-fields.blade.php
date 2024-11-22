@@ -1,77 +1,77 @@
 @props(['department' => null])
-<div class="row g-3">
-   
-    
-    <div class="col-md-6">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" 
-               class="form-control @error('name') is-invalid @enderror" 
-               id="name" 
-               name="name" 
-               value="{{ old('name', $department?->name ?? '') }}"
-               required
-               maxlength="255"
-               pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
-        <div class="invalid-feedback">
-            @error('name')
-                {{ $message }}
-            @else
-                Bitte geben Sie einen gültigen Namen ein.
-            @enderror
-        </div>
-    </div>
 
-    <div class="col-md-6">
-        <label for="short_name" class="form-label">Kürzel</label>
-        <input type="text" 
-               class="form-control @error('short_name') is-invalid @enderror" 
-               id="short_name" 
-               name="short_name" 
-               value="{{ old('short_name', $department->short_name ?? '') }}" 
-               required
-               maxlength="255"
-               pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
-        <div class="invalid-feedback">
-            @error('short_name')
-                {{ $message }}
-            @else
-                Bitte geben Sie einen gültiges Kürzel ein.
-            @enderror
-        </div>
-    </div>
-    <div class="position-relative">
+    <div class="row g-3">    
         <div class="col-md-6">
-            <input type="hidden" name="department_head_id" id="department_head_id">
-
-            <label for="department_head" class="form-label">Abteilungsleiter</label>
-            <div class="input-group">
-                <input type="text" 
-                       class="form-control @error('department_head') is-invalid @enderror" 
-                       id="employee_search" 
-                       value="{{ old('department_head', $department->departmentHead->fullName ?? '') }}" 
-                       required
-                       autocomplete="off"
-                />
-                <button class="btn btn-outline-secondary" 
-                        type="button" 
-                        id="clear_department_head"
-                        title="Abteilungsleiter entfernen">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="invalid-feedback">
-                    @error('department_head')
-                        {{ $message }}
-                    @else
-                        Bitte geben Sie eine gültige E-Mail-Adresse ein.
-                    @enderror
-                </div>
+            <label for="name" class="form-label">Name</label>
+            <input type="text" 
+                class="form-control @error('name') is-invalid @enderror" 
+                id="name" 
+                name="name" 
+                value="{{ old('name', $department?->name ?? '') }}"
+                required
+                maxlength="255"
+                pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+            <div class="invalid-feedback">
+                @error('name')
+                    {{ $message }}
+                @else
+                    Bitte geben Sie einen gültigen Namen ein.
+                @enderror
             </div>
+        </div>
 
-            <div id="search_loading" class="position-absolute end-0 top-50 translate-middle-y me-5 d-none">
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+        <div class="col-md-6">
+            <label for="short_name" class="form-label">Kürzel</label>
+            <input type="text" 
+                class="form-control @error('short_name') is-invalid @enderror" 
+                id="short_name" 
+                name="short_name" 
+                value="{{ old('short_name', $department->short_name ?? '') }}" 
+                required
+                maxlength="255"
+                pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+            <div class="invalid-feedback">
+                @error('short_name')
+                    {{ $message }}
+                @else
+                    Bitte geben Sie einen gültiges Kürzel ein.
+                @enderror
             </div>
+        </div>
+
+        <div class="position-relative">
+            <div class="col-md-6">
+                <input type="hidden" name="department_head_id" id="department_head_id">
+
+                <label for="department_head" class="form-label">Abteilungs-/Bereichsleiter</label>
+                <div class="input-group">
+                    <input type="text" 
+                        class="form-control @error('department_head') is-invalid @enderror" 
+                        id="employee_search" 
+                        value="{{ old('department_head', $department->departmentHead->fullName ?? '') }}" 
+                        required
+                        autocomplete="off"
+                    />
+                    <button class="btn btn-outline-secondary" 
+                            type="button" 
+                            id="clear_department_head"
+                            title="Abteilungs-/Bereichsleiter entfernen">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="invalid-feedback">
+                        @error('department_head')
+                            {{ $message }}
+                        @else
+                            Bitte geben Sie eine gültige E-Mail-Adresse ein.
+                        @enderror
+                    </div>
+                </div>
+
+                <div id="search_loading" class="position-absolute end-0 top-50 translate-middle-y me-5 d-none">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
         </div>
 
         <!-- Results dropdown -->
@@ -86,7 +86,6 @@
         <button class="btn btn-primary" type="submit">Speichern</button>
         <a href="{{ route('departments') }}" class="btn btn-secondary">Abbrechen</a>
     </div>
-</div>
 
 @push('scripts')
 <script>
@@ -172,4 +171,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     });
 </script>
+
 @endpush

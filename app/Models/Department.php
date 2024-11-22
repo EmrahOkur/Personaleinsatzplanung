@@ -22,4 +22,9 @@ class Department extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function responsibleEmployees()
+    {
+        return $this->belongsToMany(Employee::class, 'responsibilities');
+    }
 }

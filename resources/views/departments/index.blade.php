@@ -1,7 +1,7 @@
 <x-app-layout>
     @section('header')
         <span class="ms-5 font-bold text-gray-800 leading-tight text-2xl">
-            {{ __('Abteilung') }}
+            {{ __('Abteilung/Bereich') }}
         </span>
     @endsection
     
@@ -13,10 +13,10 @@
                     <div class="container mt-4">
                         <div class="row mb-4 d-flex justify-content-end">
                             <div class="col-md-6">
-                                <input type="text" id="search" class="form-control" placeholder="Abteilung suchen...">
+                                <input type="text" id="search" class="form-control" placeholder="Abteilung/Bereich suchen...">
                             </div>
                             <div class="col-md-6" align="right">
-                                <a href="{{ route('departments.new')}}" class="btn btn-primary">Abteilung anlegen</a>
+                                <a href="{{ route('departments.new')}}" class="btn btn-primary">Abteilung/Bereich anlegen</a>
                             </div>
                         </div>
                         <table class="table table-striped">
@@ -24,7 +24,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Kürzel</th>
-                                    <th>Leiter</th>
+                                    <th>Leitung</th>
                                     <th></th>
                                 </tr>
                             </thead>

@@ -124,7 +124,7 @@
     </div>
 
     <div class="col-md-6">
-        <label for="department" class="form-label">Abteilung</label>
+        <label for="department" class="form-label">Abteilung/Bereich</label>
         <select name="department_id" id="department" class="form-select @error('department_id') is-invalid @enderror">
             <option value="">Bitte wählen...</option>
             @foreach($departments as $department)
