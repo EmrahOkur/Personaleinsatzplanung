@@ -4,25 +4,99 @@
     @endsection
     
     @section("main")
-        <!-- Zugangsdaten -->
-        @include('employees.partials.creds', ['employee' => $employee])
-        @include('employees.partials.new-creds-modal', ['employee' => $employee])
-        @include('employees.partials.edit-creds-modal', ['employee' => $employee])
+
     
-        <div class="">
-            <!-- Stammdaten -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Stammdaten</h5>
+<div class="card">
+    <div class="card-body">
+        {{-- Tab Navigation --}}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" 
+                        id="personal-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#personal" 
+                        type="button" 
+                        role="tab">
+                    Persönliche Daten
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="employment-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#employment" 
+                        type="button" 
+                        role="tab">
+                    Zugangsdaten
+                    @if($employee->user)
+                        <span class="badge bg-success" title="Benutzeraccount aktiv">
+                            <i class="bi bi-check-lg">&#10003;</i>
+                        </span>
+                    @else
+                        <span class="badge bg-danger" title="Kein Benutzeraccount">
+                            <i class="bi bi-x-lg">&#10060;</i>
+                        </span>
+                    @endif
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="documents-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#documents" 
+                        type="button" 
+                        role="tab">
+                    Verfügbarkeiten
+                </button>
+            </li>
+        </ul>
+
+        {{-- Tab Content --}}
+        <div class="tab-content pt-4" id="myTabContent">
+            {{-- Tab 1: Persönliche Daten --}}
+            <div class="tab-pane fade show active" 
+                 id="personal" 
+                 role="tabpanel">
+                 <div class="">
+                    <!-- Stammdaten -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Stammdaten</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation" novalidate>
+                                @csrf
+                                <x-employee-form-fields :employee="$employee" :departments="$departments" />
+                            </form>
+                        </div>
+                    </div>
+                </div>    
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation" novalidate>
-                        @csrf
-                        <x-employee-form-fields :employee="$employee" :departments="$departments" />
-                    </form>
-                </div>
+                
+                {{-- Tab 2: Beschäftigung --}}
+                <div class="tab-pane fade" 
+                id="employment" 
+                role="tabpanel">
+                @include('employees.partials.edit-creds-modal', ['employee' => $employee])
+                 @include('employees.partials.creds', ['employee' => $employee])
+                 @include('employees.partials.new-creds-modal', ['employee' => $employee])
             </div>
-        </div>    
+
+            {{-- Tab 3: Dokumente --}}
+            <div class="tab-pane fade" 
+                 id="documents" 
+                 role="tabpanel">
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Zugangsdaten -->
+        
+        
+    
+        
     @endsection
     
     @push('scripts')
