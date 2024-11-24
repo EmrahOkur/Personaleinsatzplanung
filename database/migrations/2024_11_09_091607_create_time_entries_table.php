@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
+    public function up(): void
     {
         Schema::create('time_entries', function (Blueprint $table) {
             $table->id();
@@ -16,11 +16,22 @@ return new class extends Migration {
             $table->time('time_start');
             $table->time('time_end');
             $table->integer('break_duration')->default(0); // Dauer in Minuten
-            $table->string('activity_type')->default('productive'); // Aktivitätstyp
+            $table->enum('activity_type', ['productive', 'non-productive'])->default('productive'); // Aktivitätstyp
             $table->timestamps();
 
             // Fremdschlüssel
-            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            $table->foreign('employee_id')
+                ->references('id')
+                ->on('employees')
+                ->onDelete('cascade');
+
+            // Index
+            $table->index('employee_id');
         });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('time_entries');
     }
 };
