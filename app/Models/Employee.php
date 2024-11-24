@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,8 +40,33 @@ class Employee extends Model
         return $this->hasOne(Address::class);
     }
 
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function responsibilities()
+    {
+        return $this->belongsToMany(Department::class, 'responsibilities');
+    }
+
+    public function timeEntries()
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
     public function getFullNameAttribute()
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getFullNameAndDepartmentAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}" . ($this->department ? " ({$this->department->name})" : '');
     }
 }

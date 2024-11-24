@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Department;
 use App\Models\Employee;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +30,9 @@ class EmployeeController extends Controller
 
     public function new(): View
     {
-        return view('employees.new');
+        $departments = Department::all();
+
+        return view('employees.new', compact('departments'));
     }
 
     public function create(CreateEmployeeRequest $request)
@@ -48,6 +51,7 @@ class EmployeeController extends Controller
             ->orWhere('last_name', 'LIKE', "%{$term}%")
             ->orWhere('email', 'LIKE', "%{$term}%")
             ->orWhere('employee_number', 'LIKE', "%{$term}%")
+            ->with('department:name')
             ->paginate(20);
 
         return response()->json([
@@ -62,11 +66,43 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function searchInfo(Request $request)
+    {
+        $term = $request->input('query');
+        try {
+
+            return Employee::with(['user', 'department'])
+                ->where(function ($query) use ($term) {
+                    $query->where('first_name', 'LIKE', "%{$term}%")
+                        ->orWhere('last_name', 'LIKE', "%{$term}%");
+                })
+                ->select('id', 'first_name', 'last_name', 'department_id')
+                ->limit(5)
+                ->get()
+                ->filter(fn ($employee) => $employee->user !== null)
+                ->map(fn ($employee) => [
+                    'id' => $employee->id,
+                    'fullName' => "{$employee->first_name} {$employee->last_name}",
+                    'fullInfo' => "{$employee->first_name} {$employee->last_name} (" .
+                        ($employee->department?->name ?? 'No Department') . ')',
+                ])
+                ->values()
+                ->all();
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+
+    }
+
     public function edit(Request $request, $id)
     {
-        $employee = Employee::findOrFail($id);
+        $employee = Employee::with('user')->findOrFail($id);
+        $departments = Department::all();
 
-        return view('employees.edit', compact('employee'));
+        return view('employees.edit', [
+            'employee' => $employee,
+            'departments' => $departments,
+        ]);
     }
 
     public function update(UpdateEmployeeRequest $request, $id): RedirectResponse

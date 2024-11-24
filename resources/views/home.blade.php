@@ -1,9 +1,11 @@
 <x-app-layout>
     @section('header')
-         Willkommen
+        
     @endsection
 
     @section('main')
-        <h1>Willkommen</h1>
+        <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+            <h1>Willkommen, {{Auth::user()->getFullName();}}!</h1>
+        </div>
     @endsection
 </x-app-layout>

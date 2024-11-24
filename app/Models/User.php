@@ -6,6 +6,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -20,8 +22,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'vorname',
         'email',
         'password',
+        'employee_id',
+        'role',
+    ];
+
+    protected $visible = [
+        'role',
+        'employee_id',
     ];
 
     /**
@@ -34,21 +44,80 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function employee()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Employee::class);
     }
+
+    public function isEmployee()
+    {
+        return $this->employee_id !== null;
+    }
+
+    public function isManager()
+    {
+        return $this->role === 'manager';
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function getRole()
+    {
+        $roles = [
+            'admin' => 'Admin',
+            'manager' => 'Manager',
+            'employee' => 'Mitarbeiter',
+        ];
+
+        return $roles[$this->role];
+    }
+
+    public function hasRole(string $role)
+    {
+        return $this->role === $role;
+    }
+
+    public function hasNotRole(string $role)
+    {
+        return $this->role !== $role;
+    }
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     public function getFullName()
     {
+        if ($this->isEmployee()) {
+            return $this->employee->getFullNameAttribute();
+        }
+
         return "{$this->vorname} {$this->name}";
+    }
+
+    public function getLastName()
+    {
+        if ($this->isEmployee()) {
+            return $this->employee->last_name;
+        }
+
+        return $this->vorname;
+    }
+
+    public function getFirstName()
+    {
+        if ($this->isEmployee()) {
+            return $this->employee->first_name;
+        }
+
+        return $this->nachname;
+    }
+    public function shifts(): BelongsToMany
+    {
+        return $this->belongsToMany(Shift::class);
     }
 }

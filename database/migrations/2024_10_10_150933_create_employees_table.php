@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,10 +31,6 @@ return new class extends Migration {
             $table->integer('vacation_days')->default(30);
             $table->enum('status', ['active', 'inactive', 'on_leave'])->default('active');
 
-            // Notfall-Kontakt
-            $table->string('emergency_contact_name')->nullable();
-            $table->string('emergency_contact_phone')->nullable();
-
             // System
             $table->timestamps();
             $table->softDeletes(); // Für logisches Löschen
@@ -40,6 +38,12 @@ return new class extends Migration {
             $table->index(['last_name', 'first_name']);
             $table->index('email');
             $table->index('employee_number');
+
+            $table->foreignId('department_id')
+                ->nullable()
+                ->constrained()
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
         });
     }
 
