@@ -1,17 +1,18 @@
 
 @extends('layouts.app')
-
-@section('main')
-    <section name="header">
+@section('header')
+    <section class="header d-flex flex-column align-items-center">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Schichten planen') }}
-            <div class="month-navigation">
-                <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
-                <span id="week-label" class="mx-2"></span>
-                <button id="next-week" class="btn btn-primary">Nächste Woche</button>
-            </div>
         </h2>
+        <div class="month-navigation">
+            <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
+            <span id="week-label" class="mx-2"></span>
+            <button id="next-week" class="btn btn-primary">Nächste Woche</button>
+        </div>
     </section>
+@endsection
+@section('main')
     <!-- 2. Modalfenster -->
     <div class="modal fade" id="secondModalSchedule" tabindex="-1" aria-labelledby="secondModalScheduleLabel" aria-hidden="true">
     <div class="modal-dialog">
