@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-    <section class=" header shift-header d-flex flex-column align-items-center" id="shift-header">
+    <section class=" header shift-header d-flex flex-column align-items-center" id="shift-header" data-loggeduserid = "{{Auth::id()}}">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Schichten') }}
             <div class="">
@@ -79,7 +79,8 @@
         spinner.style.display = "block";
         table.style.display = "none";
         header.style.display ="none";
-        fetch('/shifts/getUsersWithShifts')
+        let userId = document.getElementById("shift-header").dataset.loggeduserid;
+        fetch(`/shifts/getUsersWithShifts/${userId}`)
         .then(response => {
             if(!response.ok){
                 throw new Error('Netzwerkantowrt war nicht ok');

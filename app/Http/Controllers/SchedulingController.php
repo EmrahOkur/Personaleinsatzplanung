@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shift;
 use App\Models\Employee;
-
+use App\Models\Department;
+use App\Models\User;
 
 class SchedulingController extends Controller
 {
@@ -75,12 +76,15 @@ class SchedulingController extends Controller
     }
 
     // Alle Mitarbeiter für eine bestimmte Schicht abrufen
-    public function getEmployeesForShift($shiftId)
+    public function getEmployeesForShift($shiftId,$userId)
     {
-        $employees = Employee::all();
+        $user = User::findorfail($userId);
+        $department = $user->employee->department;
+        $departmentEmployees = Employee::where('department_id', $department->id)->get();
+
         $shift = Shift::findorfail($shiftId);
         $employeesInShift = $shift->employees()->pluck('employee_id');
-        return response()->json(['employees' =>$employees, 'employeesInShift' => $employeesInShift]);
+        return response()->json(['employees' =>$departmentEmployees, 'employeesInShift' => $employeesInShift]);
     } 
 
     public function deleteShift($shiftId)

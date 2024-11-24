@@ -1,9 +1,9 @@
 
 @extends('layouts.app')
 @section('header')
-    <section class="header d-flex flex-column align-items-center">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Schichten planen') }}
+    <section class="header d-flex flex-column align-items-center" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" >
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight" id="schedule-h2">
+
         </h2>
         <div class="month-navigation">
             <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
@@ -90,9 +90,11 @@
     <div class="container-fluid" style="position:relative;">
         <div class="row">
             <div class="col-md-1">
-                sidebar
+                <div class="employee-sidebar" id="schedule-employee-sidebar">
+                    
+                </div>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-11">
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -114,9 +116,27 @@
     </div>
     
     <script>
+        let userId = document.getElementById("schedule-header").dataset.loggeduserid;
+        function loadEmployeesFromDepartment(){
+            fetch(`/departments/getEmployeesFromDepartmentByUser/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("schedule-h2").textContent = "Abteilung: " + data.department.name;
+                    console.log("data.departmentEmployees ",data.departmentEmployees)
+                    let departmentEmployees = data.departmentEmployees;
+                    let sidebar = document.getElementById('schedule-employee-sidebar');
+                    let sidebarEmployees;
+                    departmentEmployees.forEach(employee => {
+                        sidebarEmployees = document.createElement("p");
+                        sidebarEmployees.innerHTML = employee.first_name + " " + employee.last_name;
+                        sidebar.appendChild(sidebarEmployees);
+                    });
 
+                    
+                })
+        }
+        loadEmployeesFromDepartment();
         let currentDate = new Date();
-
                 // Diese Funktion aktualisiert die Woche und zeigt die richtigen Daten an
         function updateWeek() {
             const weekLabel = document.getElementById('week-label');
@@ -259,7 +279,8 @@
             formContainer.innerHTML = ''; 
 
         // Lade Mitarbeiter für diese Schicht
-        fetch(`/scheduling/getEmployeesForShift/${shiftId}`)
+        console.log(`/scheduling/getEmployeesForShift/${shiftId}/${userId}`)
+        fetch(`/scheduling/getEmployeesForShift/${shiftId}/${userId}`)
             .then(response => response.json())
             .then(data => {
                 data.employees.forEach(employee => {
@@ -270,7 +291,6 @@
                     console.log("the employee ",employee)
                     // Falls user in der Schicht enthalten ist
                     if(data.employeesInShift.includes(employee.id) ){
-                        console.log("checked");
                         checkboxDiv.innerHTML =
                         `
                         <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}" checked="true">

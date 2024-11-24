@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/departments/store', 'store')->name('departments.store');
         Route::get('/departments/edit/{id}', 'edit')->name('departments.edit');
         Route::post('/departments/update/{id}', 'update')->name('departments.update');
+        Route::get('/departments/getEmployeesFromDepartmentByUser/{id}', 'getEmployeesFromDepartmentByUser')->name('departments.getEmployeesFromDepartmentByUser');
     });
 
     // Time Entry Routes
@@ -100,7 +101,7 @@ Route::middleware('auth')->group(function () {
     // Shift Controller (Employee Shifts)
     Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts');
     Route::post('/shifts/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
-    Route::get('/shifts/getUsersWithShifts', [ShiftController::class, 'getUsersWithShifts'])->name('shifts.getUsersWithShifts');
+    Route::get('/shifts/getUsersWithShifts/{userId}', [ShiftController::class, 'getUsersWithShifts'])->name('shifts.getUsersWithShifts');
     Route::get('/shifts/getShiftsWithUsers', [ShiftController::class, 'getShiftsWithUsers'])->name('scheduling.getShiftsWithUsers');
 
     // Scheduling Controller (User Shifts)
@@ -109,7 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/scheduling/getShifts', [SchedulingController::class, 'getShifts'])->name('scheduling.getShifts');
     Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class, 'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
     Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class, 'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
-    Route::get('/scheduling/getEmployeesForShift/{shiftId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
+    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
     Route::delete('/scheduling/deleteShift/{shiftId}', [SchedulingController::class, 'deleteShift'])->name('scheduling.deleteShift');
 
     // responsibilities

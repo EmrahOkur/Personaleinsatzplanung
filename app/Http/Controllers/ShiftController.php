@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Shift;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ShiftController extends Controller
 {
     public function index(){
+
         $employees = Employee::with('shifts')->get();
         $shifts = Shift::all();
         return view('shift',compact('employees','shifts'));
@@ -28,9 +30,12 @@ class ShiftController extends Controller
     
         return redirect()->route('shifts',compact('employees','shifts'));
     }
-    public function getUsersWithShifts()
+    public function getUsersWithShifts($userId)
     {
-        $employees = Employee::with('shifts.employees')->get(); // Alle Benutzer mit ihren Schichten
+        $user = User::findorfail($userId);
+        $department = $user->employee->department;
+        $departmentEmployees = Employee::where('department_id', $department->id)->get();
+        $employees = Employee::with('shifts.employees')->whereIn('id', $departmentEmployees->pluck('id'))->get();; // Alle Benutzer mit ihren Schichten
         return response()->json($employees);
     }
     public function getShiftsWithUsers()
