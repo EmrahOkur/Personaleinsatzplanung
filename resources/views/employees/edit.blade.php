@@ -71,36 +71,34 @@
                         </div>
                     </div>
                 </div>    
-                </div>
+            </div>
                 
                 {{-- Tab 2: Beschäftigung --}}
-                <div class="tab-pane fade" 
+            <div class="tab-pane fade" 
                 id="employment" 
                 role="tabpanel">
                 @include('employees.partials.edit-creds-modal', ['employee' => $employee])
                  @include('employees.partials.creds', ['employee' => $employee])
                  @include('employees.partials.new-creds-modal', ['employee' => $employee])
             </div>
-
+            
             {{-- Tab 3: Dokumente --}}
             <div class="tab-pane fade" 
                  id="documents" 
                  role="tabpanel">
-               
+                 @include('employees.availabilities.index', [
+                     'employee' => $employee,
+                     'timeOptions' => $timeOptions
+                     ])
             </div>
         </div>
     </div>
 </div>
+@endsection
 
-        <!-- Zugangsdaten -->
-        
-        
     
-        
-    @endsection
-    
-    @push('scripts')
-    <script>
+@push('scripts')
+<script>
         // Javascript für die AJAX-Calls
 async function handleCreateCreds(event) {
     event.preventDefault();
@@ -226,9 +224,8 @@ async function handleUpdateCreds(event) {
     }
     
     return false;
-}   
-    
-   
-    </script>
-    @endpush
-    </x-app-layout>
+} 
+</script>
+@endpush
+
+</x-app-layout>
