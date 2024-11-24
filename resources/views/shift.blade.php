@@ -15,43 +15,9 @@
             </div>
         </div>
     </section>
-     <!-- Modal Schicht bearbeiten-->
-     <div class="modal fade" id="shiftModal" tabindex="-1" aria-labelledby="shiftModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="customerModalLabel">Schicht bearbeiten</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form method="POST" action="{{ route('shifts.edit') }}" id="edit-shift">
-        @csrf
-        <div class="modal-body"> 
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                    <label for="start_shift"> Beginn</label>
-                        <input type="time" id="start_shift" name="start_shift" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="end_shift"> Ende</label>
-                        <input type="time" id="end_shift" name="end_shift" class="form-control">
-                    </div>
-                    <input type="hidden" name="date_shift" id="date_shift" >
-                    <input type="hidden" name="user_id" id="user_id" >
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-            <button type="submit" form="edit-shift" class="btn btn-primary">Speichern</button>
-        </div>
-        </form>
-        </div>
-    </div>
-    </div>
     <div class="container-fluid" style="position:relative;">
     <table class="table table-bordered">
-    <div class="spinner-border" role="status">
+    <div class="spinner-border" id="shift-spinner" role="status">
         <span class="sr-only">Loading...</span>
     </div>
         <thead>
@@ -84,13 +50,13 @@
     @foreach ( $employees as $employee )
         <tr>
             <th scope="row">{{$employee->first_name}} {{$employee->last_name}}</th>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowMonday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowTuesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowWednesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowThursday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowFriday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowSaturday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowSunday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><p  id="rowMonday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowTuesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowWednesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowThursday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowFriday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowSaturday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowSunday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
         </tr>
     @endforeach
   </tbody>
@@ -109,7 +75,7 @@
         resetAllButtons();
         let table = document.getElementsByClassName('table-bordered')[0];
         let header = document.getElementById('shift-header');
-        let spinner = document.getElementsByClassName('spinner-border')[0];
+        let spinner = document.getElementById('shift-spinner');
         spinner.style.display = "block";
         table.style.display = "none";
         header.style.display ="none";
@@ -130,9 +96,6 @@
                 // let dataDateDateForLaravel = formatDateForLaravel(dataDate);
                 // Suche nach dem Benutzer, dessen Schicht mit dem data-date übereinstimmt
                 users.forEach(user => {
-                    table.style.display = "table";
-                    spinner.style.display = "none";
-                    header.style.display = "block";
         
                     if (Array.isArray(user.shifts)) {
                     user.shifts.forEach(shift => {
@@ -147,6 +110,11 @@
                 });
                 
             });
+            // Schicht wurde geladen, Spinner soll nicht mehr sichtbar sein
+            table.style.display = "table";
+            spinner.style.display = "none";
+            header.style.display = "block";
+            
         })
     .catch(error => console.error('Fehler:', error));
     }
