@@ -81,16 +81,16 @@
             </tr>
         </thead>
   <tbody>
-    @foreach ( $users as $user )
+    @foreach ( $employees as $employee )
         <tr>
-            <th scope="row">{{$user->name}}</th>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowMonday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowTuesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowWednesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowThursday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowFriday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSaturday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSunday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <th scope="row">{{$employee->first_name}} {{$employee->last_name}}</th>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowMonday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowTuesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowWednesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowThursday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowFriday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowSaturday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+            <td style="position:relative"><button  onclick="shiftModal(event,'{{$employee->id}}')" id="rowSunday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
         </tr>
     @endforeach
   </tbody>

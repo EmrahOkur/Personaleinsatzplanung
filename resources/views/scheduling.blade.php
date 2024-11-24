@@ -66,8 +66,8 @@
                         </div>
                         <div class="col-md-12">
                             <label for="employee_schedule"> Anzahl benötigter Mitarbeiter</label>
-                            @if (count($users) > 0)
-                            <input type="number" id="employee_schedule" name="employee_schedule" class="form-control" value="1" min="1" max="{{count($users)}}">
+                            @if (count($employees) > 0)
+                            <input type="number" id="employee_schedule" name="employee_schedule" class="form-control" value="1" min="1" max="{{count($employees)}}">
                             @else
                             <p>Keine Mitarbeiter vorhanden</p>
                             @endif
@@ -160,15 +160,16 @@
                 shiftsForDay.forEach(shift => {
                     const shiftDiv = document.createElement('div');
                     shiftDiv.classList.add('list-group');
-                    let users_arr = [];
-                    shift.users.forEach(user => {
-                        users_arr.push(user);
+                    let employees_arr = [];
+                    // Alle Mitarbeiter der zugeordneten Schicht werden gezählt
+                    shift.employees.forEach(employee => {
+                        employees_arr.push(employee);
                     })
                     shiftDiv.innerHTML = `
                         <p class="list-group-item">Start: ${shift.start_time}</p>
                         <p class="list-group-item">Ende: ${shift.end_time}</p>
-                        <p class="list-group-item list-employees">Mitarbeiter: ${users_arr.length}/${shift.amount_employees}</p>
-                         <p class="user-list"> ${users_arr ? users_arr.map(user => user.name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
+                        <p class="list-group-item list-employees">Mitarbeiter: ${employees_arr.length}/${shift.amount_employees}</p>
+                         <p class="user-list"> ${employees_arr ? employees_arr.map(employee => employee.first_name +" " + employee.last_name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>
                     `;
                     tddiv.appendChild(shiftDiv);
@@ -252,27 +253,28 @@
         fetch(`/scheduling/getEmployeesForShift/${shiftId}`)
             .then(response => response.json())
             .then(data => {
-                data.users.forEach(user => {
+                data.employees.forEach(employee => {
+                    console.log("employees ",employee)
                     let checkboxDiv = document.createElement('div');
                     checkboxDiv.classList.add('form-check');
-                    console.log("usersinShift ",data.usersInShift)
-                    console.log("the user ",user)
+                    console.log("employeesInShift ",data.employeesInShift)
+                    console.log("the employee ",employee)
                     // Falls user in der Schicht enthalten ist
-                    if(data.usersInShift.includes(user.name) ){
+                    if(data.employeesInShift.includes(employee.id) ){
                         console.log("checked");
                         checkboxDiv.innerHTML =
                         `
-                        <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${user.id}" id="employee_${user.id}" checked="true">
-                        <label class="form-check-label" for="employee_${user.id}">
-                            ${user.name}
+                        <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}" checked="true">
+                        <label class="form-check-label" for="employee_${employee.id}">
+                            ${employee.first_name} - ${employee.last_name}
                         </label>
                     `;
                     }else{
                         console.log("not checked")
                     checkboxDiv.innerHTML = `
-                        <input class="form-check-input" name="employee_ids[]" type="checkbox" value="${user.id}" id="employee_${user.id}">
-                        <label class="form-check-label" for="employee_${user.id}">
-                            ${user.name}
+                        <input class="form-check-input" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}">
+                        <label class="form-check-label" for="employee_${employee.id}">
+                            ${employee.first_name}  ${employee.last_name}
                         </label>
                     `;
                     }
@@ -287,14 +289,54 @@
             document.querySelectorAll('input[name="employee_ids[]"]:checked').forEach(checkbox => {
                 selectedEmployees.push(checkbox.value);
                 console.log(selectedEmployees)
-                console.log(["320","320","320"])
             });
 
             // Mitarbeiter zuweisen oder entfernen
+            
+            $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+            });
+            $.ajax({
+                url: `/scheduling/assignEmployeesToShift`,
+                type: 'POST',
+                data:{shift_id:shiftId, employee_ids:selectedEmployees },
+                success: function(data) {
+                    if(data.error) {
+                    console.log("error");
+                    document.getElementById("modal-error-message-2").innerHTML = data.error;
+                    // alert(data.error)
+                    }
+                    else {
+                    $('#secondModalSchedule').modal('hide');
+                    updateWeek();  // Aktualisiere die Wochenansicht
+                
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.log(shiftId,selectedEmployees)
+                    // Fehlerbehandlung: Logge die Antwort und zeige sie in der Konsole
+                    alert("error");
+                    console.error('Fehler bei der Anfrage:', error);
+                    console.error('Status:', status);
+                    console.error('Antwort:', xhr.responseText);
+                    
+                    // Optionale Ausgabe einer Fehlernachricht im Frontend:
+                    let errorMessage = 'Ein Fehler ist aufgetreten. Bitte versuche es später noch einmal.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;  // Falls der Server eine Fehlermeldung zurückgibt
+                    }
+                    alert(errorMessage);  // Zeige eine allgemeine Fehlermeldung an
+                }
+            });
+            
+             /*
             fetch('/scheduling/assignEmployeesToShift', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    //'Content-Type': 'application/json',
                     //'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -303,6 +345,7 @@
                     employee_ids: selectedEmployees
                 })
             })
+            
             .then(response => response.json())
             .then(data => {
                 if(data.error){
@@ -316,6 +359,7 @@
                 }
             })
             .catch(error => console.error('Fehler beim Speichern:', error));
+         */
         };
 
         }

@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shift;
-use App\Models\User;
+use App\Models\Employee;
 
 
 class SchedulingController extends Controller
 {
     //
     public function index(){
-        $users = User::all();
-        return view('scheduling',compact('users'));
+        $employees = Employee::all();
+        return view('scheduling',compact('employees'));
     }
 
     public function addshifts(Request $request){
-        $users = User::all();
+        $employees = Employee::all();
         $shifts = Shift::all();
         $shift = new Shift;
         $shift->start_time = $request->start_time;
@@ -30,7 +30,7 @@ class SchedulingController extends Controller
 
     public function getShifts(){
         //$shifts = Shift::all();
-        $shifts = Shift::with('users')->get();
+        $shifts = Shift::with('employees')->get();
         return response()->json($shifts);
 
 
@@ -54,9 +54,9 @@ class SchedulingController extends Controller
             return response()->json(['error' => 'Es können nur maximal ' .$shift->amount_employees .' Mitarbeiter zugewiesen werden.'] );
         }
         // $request->users ist ein Array der User-IDs, die zugewiesen werden sollen
-        $shift->users()->sync($employeeIds);  // sync entfernt nicht mehr ausgewählte User und fügt neue hinzu
+        $shift->employees()->sync($employeeIds);  // sync entfernt nicht mehr ausgewählte Mitarbeiter und fügt neue hinzu
         //dd($request->selectedEmployees);
-        return response()->json(['assigned_employees' => $shift->users->count()]);
+        return response()->json(['assigned_employees' => $shift->employees->count()]);
     }
 
     // Mitarbeiter aus einer Schicht entfernen
@@ -65,7 +65,7 @@ class SchedulingController extends Controller
         $validated = $request->validate([
             'shift_id' => 'required|exists:shifts,id',
             'employee_ids' => 'required|array',
-            'employee_ids.*' => 'exists:users,id',
+            //'employee_ids.*' => 'exists:users,id',
         ]);
 
         $shift = Shift::findOrFail($validated['shift_id']);
@@ -77,16 +77,16 @@ class SchedulingController extends Controller
     // Alle Mitarbeiter für eine bestimmte Schicht abrufen
     public function getEmployeesForShift($shiftId)
     {
-        $users = User::all();
+        $employees = Employee::all();
         $shift = Shift::findorfail($shiftId);
-        $userInShift = $shift->users()->pluck('name');
-        return response()->json(['users' =>$users, 'usersInShift' => $userInShift]);
+        $employeesInShift = $shift->employees()->pluck('employee_id');
+        return response()->json(['employees' =>$employees, 'employeesInShift' => $employeesInShift]);
     } 
 
     public function deleteShift($shiftId)
     {
         $shift = Shift::findorfail($shiftId);
-        $shift->users()->detach();
+        $shift->employees()->detach();
         $shift->delete();
         return response()->json(['message' => 'Schicht wurde erfolgreich gelöscht']);
     }

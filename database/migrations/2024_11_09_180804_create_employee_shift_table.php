@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shift_user', function (Blueprint $table) {
+        Schema::create('employee_shift', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->foreignId('shift_id')->references('id')->on('shifts')->onDelete('cascade');
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shift_user');
+        Schema::dropIfExists('employee_shift');
     }
 };

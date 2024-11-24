@@ -116,8 +116,4 @@ class User extends Authenticatable
 
         return $this->nachname;
     }
-    public function shifts(): BelongsToMany
-    {
-        return $this->belongsToMany(Shift::class);
-    }
 }
