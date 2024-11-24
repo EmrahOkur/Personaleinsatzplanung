@@ -88,6 +88,7 @@
         </div>
     </div>
     <div class="container-fluid" style="position:relative;">
+        
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -198,6 +199,7 @@
             document.querySelectorAll('#secondModalAddEmployees').forEach(button =>{
                 
             usersListEqualHeight();
+            amaountEmployeesEqualHeight();
             showUnfilledShifts();
         })
 
@@ -396,8 +398,9 @@
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);
-                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item list-employees">Mitarbeiter: 0/${data.amount_employees} </div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
+                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item list-employees"><p> Mitarbeiter: 0/${data.amount_employees} </p></div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
                     usersListEqualHeight();
+                    amaountEmployeesEqualHeight();
                     showUnfilledShifts();
                 },
                 error: function(xhr, status, error) {
@@ -459,6 +462,21 @@
             for(i = 0; i < usersList.length;i++){
                 usersList[i].style = "height: " + maxHeight + "px";
             }
+        }
+        function amaountEmployeesEqualHeight(){
+            let maxHeight = 0;
+            let currentElementHeight = 0;
+            let employeesList = document.querySelectorAll(".list-employees");
+            for(i = 0; i < employeesList.length; i++){
+                currentElementHeight  = employeesList[i].offsetHeight ;
+                if(currentElementHeight > maxHeight){
+                    maxHeight = currentElementHeight;
+                }
+            }
+            for(i = 0; i < employeesList.length;i++){
+                employeesList[i].style = "height: " + maxHeight + "px";
+            }
+
         }
 
         function showUnfilledShifts(){
