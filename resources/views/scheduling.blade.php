@@ -88,23 +88,29 @@
         </div>
     </div>
     <div class="container-fluid" style="position:relative;">
-        
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th scope="col" class="col-1">Montag</th>
-                    <th scope="col" class="col-1">Dienstag</th>
-                    <th scope="col" class="col-1">Mittwoch</th>
-                    <th scope="col" class="col-1">Donnerstag</th>
-                    <th scope="col" class="col-1">Freitag</th>
-                    <th scope="col" class="col-1">Samstag</th>
-                    <th scope="col" class="col-1">Sonntag</th>
-                </tr>
-            </thead>
-            <tbody id="schedule-body">
-                <!-- Dynamisch generierte Tage werden hier eingefügt -->
-            </tbody>
-        </table>
+        <div class="row">
+            <div class="col-md-1">
+                sidebar
+            </div>
+            <div class="col-md-10">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="col-1">Montag</th>
+                        <th scope="col" class="col-1">Dienstag</th>
+                        <th scope="col" class="col-1">Mittwoch</th>
+                        <th scope="col" class="col-1">Donnerstag</th>
+                        <th scope="col" class="col-1">Freitag</th>
+                        <th scope="col" class="col-1">Samstag</th>
+                        <th scope="col" class="col-1">Sonntag</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Dynamisch generierte Tage werden hier eingefügt -->
+                </tbody>
+            </table>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -398,7 +404,7 @@
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);
-                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <div class="list-group-item list-employees"><p> Mitarbeiter: 0/${data.amount_employees} </p></div> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
+                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <p class="list-group-item list-employees"> Mitarbeiter: 0/${data.amount_employees} </p> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
                     usersListEqualHeight();
                     amaountEmployeesEqualHeight();
                     showUnfilledShifts();
