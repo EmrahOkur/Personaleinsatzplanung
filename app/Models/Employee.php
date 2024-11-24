@@ -45,6 +45,11 @@ class Employee extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function availabilities()
+    {
+        return $this->hasMany(Availability::class);
+    }
+
     public function responsibilities()
     {
         return $this->belongsToMany(Department::class, 'responsibilities');
