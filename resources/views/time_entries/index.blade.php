@@ -2,10 +2,12 @@
 
 @section('main')
     <div class="container">
-        <!-- Überschrift mit einem einladenden Titel und einem Button -->
+        <!-- Überschrift mit einem einladenden Titel und einem Symbol -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="display-5">Zeiterfassungen</h1>
-            <a href="{{ route('time_entries.create') }}" class="btn btn-primary btn-lg">+ Neuer Zeiteintrag</a>
+            <a href="{{ route('time_entries.create') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus"></i> Neuer Zeiteintrag
+            </a>
         </div>
 
         <!-- Filterleiste für Zeiteinträge -->
@@ -31,8 +33,12 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-secondary">Filtern</button>
-                    <a href="{{ route('time_entries.index') }}" class="btn btn-link">Filter zurücksetzen</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <a href="{{ route('time_entries.index') }}" class="btn btn-link">
+                        <i class="fas fa-redo"></i>
+                    </a>
                 </div>
             </div>
         </form>
@@ -40,9 +46,15 @@
         <!-- Auswahl für verschiedene Ansichten -->
         <div class="mb-3">
             <div class="btn-group">
-                <a href="{{ route('time_entries.daily') }}" class="btn btn-outline-secondary">Tagesansicht</a>
-                <a href="{{ route('time_entries.weekly') }}" class="btn btn-outline-secondary">Wochenansicht</a>
-                <a href="{{ route('time_entries.monthly') }}" class="btn btn-outline-secondary">Monatsansicht</a>
+                <a href="{{ route('time_entries.daily') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar-day"></i>
+                </a>
+                <a href="{{ route('time_entries.weekly') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar-week"></i>
+                </a>
+                <a href="{{ route('time_entries.monthly') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar-alt"></i>
+                </a>
             </div>
         </div>
 
@@ -66,18 +78,24 @@
                         <tr>
                             <td>{{ $entry->id }}</td>
                             <td>{{ $entry->employee->full_name }} ({{ $entry->employee->employee_number }})</td>
-                            <td>{{ \Carbon\Carbon::parse($entry->date)->translatedFormat('d.m.Y') }}</td> <!-- Deutsches Datumsformat -->
+                            <td>{{ \Carbon\Carbon::parse($entry->date)->translatedFormat('d.m.Y') }}</td>
                             <td>{{ $entry->time_start }}</td>
                             <td>{{ $entry->time_end }}</td>
                             <td>{{ $entry->net_work_hours }}</td>
                             <td>{{ ucfirst($entry->activity_type) }}</td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('time_entries.edit', $entry->id) }}" class="btn btn-sm btn-warning">Bearbeiten</a>
+                                    <!-- Bearbeiten Button mit Symbol, ohne Button-Hintergrund -->
+                                    <a href="{{ route('time_entries.edit', $entry->id) }}" class="btn btn-sm btn-link text-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <!-- Löschen Button mit Symbol, ohne Button-Hintergrund -->
                                     <form action="{{ route('time_entries.destroy', $entry->id) }}" method="POST" onsubmit="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
+                                        <button type="submit" class="btn btn-sm btn-link text-danger">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </td>
