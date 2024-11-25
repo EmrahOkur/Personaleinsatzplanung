@@ -46,9 +46,9 @@
             </th>
             </tr>
         </thead>
-  <tbody>
-    @foreach ( $employees as $employee )
-        <tr>
+  <tbody id="shift-tbody">
+<!--    @foreach ( $employees as $employee )
+        <tr id="shift-tr">
             <th scope="row">{{$employee->first_name}} {{$employee->last_name}}</th>
             <td style="position:relative"><p  id="rowMonday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
             <td style="position:relative"><p  id="rowTuesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
@@ -59,10 +59,31 @@
             <td style="position:relative"><p  id="rowSunday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
         </tr>
     @endforeach
+-->
   </tbody>
 </table>
 </div>
 <script>
+    let userId = document.getElementById("shift-header").dataset.loggeduserid;
+
+    function loadAllEmployeesNames(employees){
+        let shift_tbody = document.getElementById("shift-tbody");
+        employees.forEach(employee => {
+            const shift_tr = document.createElement("tr"); 
+            shift_tr.innerHTML = `
+                <th scope="row">${employee.first_name} ${employee.last_name}</th>
+                <td style="position:relative"><p  id="rowMonday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowTuesday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowWednesday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowThursday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowFriday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowSaturday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowSunday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            `;
+            shift_tbody.appendChild(shift_tr);
+        })
+        updateDateLabels();
+    }
 
     function resetAllButtons(){
         const buttons = document.querySelectorAll('.shiftDay');
@@ -72,6 +93,7 @@
     }
 
     function updateShift(){
+        // test
         resetAllButtons();
         let table = document.getElementsByClassName('table-bordered')[0];
         let header = document.getElementById('shift-header');
@@ -79,7 +101,6 @@
         spinner.style.display = "block";
         table.style.display = "none";
         header.style.display ="none";
-        let userId = document.getElementById("shift-header").dataset.loggeduserid;
         fetch(`/shifts/getUsersWithShifts/${userId}`)
         .then(response => {
             if(!response.ok){
@@ -88,7 +109,8 @@
             return response.json()
         })
         .then(users => {
-            console.log("users "+ users)
+            loadAllEmployeesNames(users)
+            console.log("users ", users)
             const buttons = document.querySelectorAll('.shiftDay');
             buttons.forEach(button => {
                 const dataDate = button.getAttribute('data-date');
@@ -101,13 +123,14 @@
                     if (Array.isArray(user.shifts)) {
                     user.shifts.forEach(shift => {
                         // Datum trifft zu
+                        console.log("user.id ",user.id," ",dataUserId," shift.date_shift",shift.date_shift, " ",dataDate)
                         if(user.id == dataUserId && shift.date_shift == dataDate ){
                             button.innerHTML += `${shift.start_time} - ${shift.end_time} <br>`;
                             console.log('assignedUser ' + user.id + ' shift.date_shift ' + shift.date_shift)
                         }
                         
                     });
-                }else{console.log("Schichten " + user.shifts)}
+                }else{console.log("Schichten ", user.shifts)}
                 });
                 
             });
@@ -145,8 +168,6 @@
         document.getElementById('date_shift').value = laravelDate;
         document.getElementById('user_id').value = user_id;
     }
-    // Schicht wird geupdatet 
-    updateShift()
 
 
     let currentDate = new Date();
@@ -253,8 +274,10 @@
     });
 
     // Initialisiere die Anzeige
+    // Schicht wird geupdatet 
     updateWeekLabel();
     updateDateLabels();
+    updateShift()
     //updateShifts();
 
 </script>
