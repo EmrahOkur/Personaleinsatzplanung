@@ -26,16 +26,26 @@
             @csrf
             @method('PUT') <!-- Damit der PUT-Request für das Update durchgeführt wird -->
 
-            <div class="mb-3">
-                <label for="employee_id" class="form-label">Mitarbeiter</label>
-                <select name="employee_id" id="employee_id" class="form-control" required>
-                    @foreach($employees as $employee)
-                        <option value="{{ $employee->id }}" {{ $timeEntry->employee_id == $employee->id ? 'selected' : '' }}>
-                            {{ $employee->full_name }} ({{ $employee->employee_number }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <!-- Mitarbeiter Dropdown für Manager/Admin, nicht für Mitarbeiter -->
+            @if(auth()->user()->isManager() || auth()->user()->isAdmin())
+                <div class="mb-3">
+                    <label for="employee_id" class="form-label">Mitarbeiter</label>
+                    <select name="employee_id" id="employee_id" class="form-control" required>
+                        @foreach($employees as $employee)
+                            <option value="{{ $employee->id }}" {{ $timeEntry->employee_id == $employee->id ? 'selected' : '' }}>
+                                {{ $employee->full_name }} ({{ $employee->employee_number }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @else
+                <!-- Mitarbeiter sehen nur ihren eigenen Namen -->
+                <div class="mb-3">
+                    <label for="employee_name" class="form-label">Mitarbeiter</label>
+                    <input type="text" id="employee_name" class="form-control" value="{{ $timeEntry->employee->full_name }}" disabled>
+                    <input type="hidden" name="employee_id" value="{{ $timeEntry->employee_id }}">
+                </div>
+            @endif
 
             <div class="mb-3">
                 <label for="date" class="form-label">Datum</label>
@@ -52,7 +62,6 @@
                 <input type="time" name="time_end" id="time_end" class="form-control" value="{{ old('time_end', $timeEntry->time_end ?? '') }}" required>
             </div>
             
-
             <div class="mb-3">
                 <label for="break_duration" class="form-label">Pausendauer (Minuten)</label>
                 <input type="number" name="break_duration" id="break_duration" class="form-control" min="0" value="{{ $timeEntry->break_duration }}">
@@ -67,7 +76,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Änderungen speichern</button>
+            <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">Abbrechen</a>
         </form>
     </div>
 @endsection
-

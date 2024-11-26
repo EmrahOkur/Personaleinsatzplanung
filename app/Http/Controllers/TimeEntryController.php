@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\TimeEntry;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,59 +14,57 @@ use Illuminate\View\View;
 class TimeEntryController extends Controller
 {
     /**
-     * Zeige eine Liste aller Zeiteinträge mit optionalen Filtern und Paginierung.
+     * Zeigt eine Liste aller Zeiteinträge basierend auf Filtern und Rollen.
      */
     public function index(Request $request): View
     {
+        $user = auth()->user();
         $query = TimeEntry::with('employee');
 
-        // Filter nach Mitarbeitername
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->whereHas('employee', function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%");
-            });
+        // Mitarbeiter sehen nur ihre eigenen Einträge
+        if ($user->isEmployee()) {
+            $query->where('employee_id', $user->employee_id);
         }
 
-        // Filter nach Datum
+        // Filteroptionen
         if ($request->filled('date')) {
             $query->whereDate('date', $request->input('date'));
         }
-
-        // Filter nach Mitarbeiter-ID
         if ($request->filled('employee_id')) {
             $query->where('employee_id', $request->input('employee_id'));
         }
 
-        // Paginierung der Zeiteinträge
+        // Zeiteinträge abrufen
         $timeEntries = $query->paginate(10)->withQueryString();
 
-        // Alle Mitarbeiter abrufen für den Dropdown
-        $employees = Employee::all();
+        // Mitarbeiterliste für Manager oder Admin
+        $employees = $user->isEmployee() ? [] : Employee::all();
 
         return view('time_entries.index', compact('timeEntries', 'employees'));
     }
 
-    /**
-     * Zeige das Formular zur Erstellung eines neuen Zeiteintrags.
-     */
     public function create(): View
     {
-        $employees = Employee::all();
+        $user = auth()->user();
+
+        if ($user->isEmployee()) {
+            // Mitarbeiter können nur für sich selbst Einträge erstellen
+            $employees = [$user->employee];
+        } else {
+            // Manager und Admins sehen alle Mitarbeiter
+            $employees = Employee::all();
+        }
 
         return view('time_entries.create', compact('employees'));
     }
 
-    /**
-     * Speichert einen neuen Zeiteintrag in der Datenbank.
-     */
     public function store(Request $request): RedirectResponse
     {
-        $request->merge([
-            'time_start' => date('H:i', strtotime($request->input('time_start'))),
-            'time_end' => date('H:i', strtotime($request->input('time_end'))),
-        ]);
+        $user = auth()->user();
+
+        if ($user->isEmployee()) {
+            $request->merge(['employee_id' => $user->employee_id]);
+        }
 
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
@@ -88,8 +85,15 @@ class TimeEntryController extends Controller
      */
     public function edit(int $id): View
     {
+        $user = auth()->user();
         $timeEntry = TimeEntry::findOrFail($id);
-        $employees = Employee::all();
+
+        if ($user->isEmployee() && $timeEntry->employee_id !== $user->employee_id) {
+            // Mitarbeiter sehen die Bearbeitungsseite nicht für fremde Einträge
+            return redirect()->route('time_entries.index');
+        }
+
+        $employees = $user->isEmployee() ? [] : Employee::all();
 
         return view('time_entries.edit', compact('timeEntry', 'employees'));
     }
@@ -99,35 +103,26 @@ class TimeEntryController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        try {
-            // Standardzeitformatierung für Validierung
-            $request->merge([
-                'time_start' => date('H:i', strtotime($request->input('time_start'))),
-                'time_end' => date('H:i', strtotime($request->input('time_end'))),
-            ]);
+        $user = auth()->user();
+        $timeEntry = TimeEntry::findOrFail($id);
 
-            // Validierung der Eingabedaten
-            $validated = $request->validate([
-                'employee_id' => 'required|exists:employees,id',
-                'date' => 'required|date',
-                'time_start' => 'required|date_format:H:i',
-                'time_end' => 'required|date_format:H:i|after:time_start',
-                'break_duration' => 'nullable|integer|min:0',
-                'activity_type' => 'required|string',
-            ]);
-
-            // Zeiteintrag finden und aktualisieren
-            $timeEntry = TimeEntry::findOrFail($id);
-            $timeEntry->update($validated);
-
-            return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Falls ein Validierungsfehler auftritt, zur Bearbeitungsseite zurückleiten und Fehler anzeigen
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (Exception $e) {
-            // Falls ein anderer Fehler auftritt, gebe die Nachricht für die Diagnose zurück
-            return redirect()->back()->withErrors(['error' => 'Fehler beim Speichern: ' . $e->getMessage()]);
+        if ($user->isEmployee() && $timeEntry->employee_id !== $user->employee_id) {
+            // Mitarbeiter können fremde Einträge nicht aktualisieren
+            return redirect()->route('time_entries.index');
         }
+
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'date' => 'required|date',
+            'time_start' => 'required|date_format:H:i',
+            'time_end' => 'required|date_format:H:i|after:time_start',
+            'break_duration' => 'nullable|integer|min:0',
+            'activity_type' => 'required|string',
+        ]);
+
+        $timeEntry->update($validated);
+
+        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
     }
 
     /**
@@ -135,77 +130,77 @@ class TimeEntryController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
+        $user = auth()->user();
         $timeEntry = TimeEntry::findOrFail($id);
+
+        if ($user->isEmployee()) {
+            // Mitarbeiter können keine Einträge löschen
+            return redirect()->route('time_entries.index');
+        }
+
         $timeEntry->delete();
 
         return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich gelöscht.');
     }
 
     /**
-     * Zeige eine Tagesansicht der Zeiteinträge an.
+     * Zeigt eine Tagesansicht der Zeiteinträge an.
      */
     public function daily(Request $request): View
     {
+        $user = auth()->user();
         $date = Carbon::parse($request->input('date', Carbon::now()->toDateString()));
         $query = TimeEntry::with('employee')->whereDate('date', $date);
 
-        // Filter nach Mitarbeiter-ID
-        if ($request->filled('employee_id')) {
-            $query->where('employee_id', $request->input('employee_id'));
+        if ($user->isEmployee()) {
+            $query->where('employee_id', $user->employee_id);
         }
 
         $timeEntries = $query->orderBy('employee_id')->get();
-        $employees = Employee::all();
+        $employees = $user->isEmployee() ? [] : Employee::all();
 
         return view('time_entries.daily', compact('timeEntries', 'date', 'employees'));
     }
 
     /**
-     * Zeige eine Wochenansicht der Zeiteinträge an.
+     * Zeigt eine Wochenansicht der Zeiteinträge an.
      */
     public function weekly(Request $request): View
     {
-        // Standardmäßig Startdatum auf den Anfang der aktuellen Woche setzen
+        $user = auth()->user();
         $date = Carbon::parse($request->input('date', Carbon::now()->startOfWeek()->toDateString()));
         $startOfWeek = $date->copy()->startOfWeek();
         $endOfWeek = $date->copy()->endOfWeek();
 
-        // Query mit Datumsbereich und optionalem Mitarbeiter-Filter
         $query = TimeEntry::with('employee')->whereBetween('date', [$startOfWeek, $endOfWeek]);
 
-        if ($request->filled('employee_id')) {
-            $query->where('employee_id', $request->input('employee_id'));
+        if ($user->isEmployee()) {
+            $query->where('employee_id', $user->employee_id);
         }
 
-        // Zeiteinträge abrufen und alle Mitarbeiter für das Dropdown bereitstellen
         $timeEntries = $query->orderBy('employee_id')->get();
-        $employees = Employee::all();
+        $employees = $user->isEmployee() ? [] : Employee::all();
 
         return view('time_entries.weekly', compact('timeEntries', 'date', 'employees'));
     }
 
     /**
-     * Zeige eine Monatsansicht der Zeiteinträge an.
+     * Zeigt eine Monatsansicht der Zeiteinträge an.
      */
     public function monthly(Request $request): View
     {
-        // Standardmäßig den aktuellen Monat verwenden
+        $user = auth()->user();
         $month = $request->input('month', Carbon::now()->format('Y-m'));
-        $year = substr($month, 0, 4);
-        $monthNumber = substr($month, 5, 2);
-
-        // Query mit Jahr und Monat sowie optionalem Mitarbeiter-Filter
         $query = TimeEntry::with('employee')
-            ->whereYear('date', $year)
-            ->whereMonth('date', $monthNumber);
+            ->whereYear('date', substr($month, 0, 4))
+            ->whereMonth('date', substr($month, 5, 2));
 
-        if ($request->filled('employee_id')) {
-            $query->where('employee_id', $request->input('employee_id'));
+        if ($user->isEmployee()) {
+            $query->where('employee_id', $user->employee_id);
         }
 
-        // Zeiteinträge und Mitarbeiter abrufen
         $timeEntries = $query->orderBy('employee_id')->get();
-        $employees = Employee::all();
+        $employees = $user->isEmployee() ? [] : Employee::all();
 
         return view('time_entries.monthly', compact('timeEntries', 'month', 'employees'));
     }

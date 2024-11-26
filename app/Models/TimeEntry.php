@@ -11,6 +11,11 @@ class TimeEntry extends Model
 {
     use HasFactory;
 
+    /**
+     * Definierte Felder, die massenbefüllbar sind.
+     *
+     * @var array
+     */
     protected $fillable = [
         'employee_id',
         'date',
@@ -33,11 +38,15 @@ class TimeEntry extends Model
      */
     public function getNetWorkHoursAttribute(): float
     {
+        if (! $this->time_start || ! $this->time_end) {
+            return 0.0; // Rückgabe von 0 Stunden, wenn Zeiten fehlen
+        }
+
         $start = strtotime($this->time_start);
         $end = strtotime($this->time_end);
-        $break = $this->break_duration * 60; // Annahme: break_duration ist in Minuten
+        $break = ($this->break_duration ?? 0) * 60; // Standardwert: 0 Minuten
 
-        return max(0, ($end - $start - $break) / 3600); // Sicherstellen, dass die Zeit nicht negativ ist
+        return max(0, ($end - $start - $break) / 3600); // Sicherstellen, dass kein negativer Wert entsteht
     }
 
     /**
@@ -62,5 +71,62 @@ class TimeEntry extends Model
     public function scopeForEmployee($query, int $employeeId)
     {
         return $query->where('employee_id', $employeeId);
+    }
+
+    /**
+     * Scope zur Filterung der Zeiteinträge für eine Rolle.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param User                                  $user
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForRole($query, $user)
+    {
+        if ($user->isEmployee()) {
+            return $query->where('employee_id', $user->employee_id);
+        } elseif ($user->isManager()) {
+            return $query; // Manager sehen alle Einträge
+        } elseif ($user->isAdmin()) {
+            return $query; // Admins sehen alle Einträge
+        }
+
+        return $query->whereRaw('1 = 0'); // Standardmäßig keine Einträge zurückgeben
+    }
+
+    /**
+     * Scope zur Filterung nach einem bestimmten Zeitraum.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForDateRange($query, string $startDate, string $endDate)
+    {
+        return $query->whereBetween('date', [$startDate, $endDate]);
+    }
+
+    /**
+     * Berechnung der Gesamtstunden für einen Mitarbeiter in einem Zeitraum.
+     */
+    public static function calculateTotalHoursForEmployee(int $employeeId, string $startDate, string $endDate): float
+    {
+        return self::forEmployee($employeeId)
+            ->forDateRange($startDate, $endDate)
+            ->get()
+            ->sum('net_work_hours');
+    }
+
+    /**
+     * Gruppierung der Zeiteinträge nach Datum.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGroupByDate($query)
+    {
+        return $query->selectRaw('date, SUM(TIMESTAMPDIFF(MINUTE, time_start, time_end)) as total_minutes')
+            ->groupBy('date');
     }
 }
