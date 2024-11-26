@@ -18,16 +18,23 @@
         <form action="{{ route('time_entries.store') }}" method="POST">
             @csrf
 
-            <div class="mb-3">
-                <label for="employee_id" class="form-label">Mitarbeiter</label>
-                <select name="employee_id" id="employee_id" class="form-control" required>
-                    @foreach($employees as $employee)
-                        <option value="{{ $employee->id }}">
-                            {{ $employee->full_name }} ({{ $employee->employee_number }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <!-- Mitarbeiter Dropdown für Manager/Admin -->
+            @if(auth()->user()->isManager() || auth()->user()->isAdmin())
+                <div class="mb-3">
+                    <label for="employee_id" class="form-label">Mitarbeiter</label>
+                    <select name="employee_id" id="employee_id" class="form-control" required>
+                        <option value="" disabled selected>Wählen Sie einen Mitarbeiter</option>
+                        @foreach($employees as $employee)
+                            <option value="{{ $employee->id }}" {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
+                                {{ $employee->full_name }} ({{ $employee->employee_number }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @else
+                <!-- Mitarbeiter sehen keinen Dropdown -->
+                <input type="hidden" name="employee_id" value="{{ auth()->user()->employee_id }}">
+            @endif
 
             <div class="mb-3">
                 <label for="date" class="form-label">Datum</label>
@@ -58,6 +65,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Zeiteintrag speichern</button>
+            <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">Abbrechen</a>
         </form>
     </div>
 @endsection
