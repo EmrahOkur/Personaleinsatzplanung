@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
+
         return redirect()->route('home');
     }
 
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');
     Route::get('/urlaubs/beantragen', [UrlaubController::class, 'beantragen'])->name('urlaubs.beantragen');
     Route::post('/urlaubs/speichern', [UrlaubController::class, 'speichern'])->name('urlaubs.speichern');
+
     Route::get('/urlaubs/übersicht', [UrlaubController::class, 'übersicht'])->name('urlaubs.übersicht');
     Route::get('/urlaubs/feiertage', [UrlaubController::class, 'feiertage'])->name('urlaubs.feiertage');
     Route::delete('/urlaub/{id}/loeschen', [UrlaubController::class, 'destroy'])->name('urlaubs.loeschen');

@@ -1,12 +1,17 @@
 <x-app-layout>
     @section('header')
-        <h1>Urlaubsübersicht</h1>
+        <span class="ls-3 ps-3 fs-4">Urlaubsübersicht</span>    
     @endsection
 
     @section('main')
-
-    <h2>Anspruch</h2>
-
+<div class="p-3">
+    @php
+        $status = [
+            'pending' => 'Freigabe ausstehend',
+            'rejected' => 'Urlaub abgelehnt',
+            'rejected' => 'Urlaub abgelehnt',
+        ];
+    @endphp
     <table class="table table-striped">
         <thead>
             <tr>
@@ -31,48 +36,27 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Abwesenheitsart</th>
-                <th>Abwesend vom</th>
-                <th>Abwesend bis</th>
-                 <th>Status</th>
-                <th>Genehmigender</th>
-                <th>Kontingentverbrauch</th>
-                <th>ID</th>
-                <th></th>
-               
-                
+                <th>Abwesend am</th>
+                <th>Status</th>
+                <th></th>                
             </tr>
         </thead>
         <tbody id="urlaubTableBody">
-        @foreach($urlaubs as $urlaub)
-            @php
-                $kontingentverbrauch = null;
-                $startDatum = new DateTime($urlaub->datum_start);
-                $endDatum = new DateTime($urlaub->datum_ende);
-                $difference = $startDatum->diff($endDatum)->days;
-                $kontingentverbrauch = $difference > 0 ? $difference + 1 : 1;
-            @endphp
-
-            <tr>
-                <td>{{ $urlaub->abwesenheitsart }}</td>
-                <td>{{ $urlaub->datum_start }}</td>
-                <td>{{ $urlaub->datum_ende }}</td>
-                <td>{{ $urlaub->status }}</td>
-                <td>{{ $urlaub->genehmigender }}</td>
-                <td>{{ $kontingentverbrauch !== null ? $kontingentverbrauch : 'N/A' }}</td>
-                <td>{{ $urlaub->id }}</td>
-                <td align="right" class="pe-3">
-    <form action="{{ route('urlaubs.loeschen', $urlaub->id) }}" method="POST" style="display: inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')">
-            Löschen
-        </button>
-    </form>
-</td>
-              
-            </tr>
-        @endforeach
+            @foreach($urlaubs as $urlaub)
+                <tr>
+                    <td>{{ $urlaub->datum }}</td>
+                    <td>{{ $status[$urlaub->status] }}</td>
+                    <td class="pe-3">
+                        <form action="{{ route('urlaubs.loeschen', $urlaub->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')">
+                                <i class="bi bi-trash" ></i>Löschen 
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
 
@@ -84,6 +68,6 @@
             <button type="submit" class="btn btn-primary">Kalenderübersicht</button>
         </form>
     </div>
-
+</div>
     @endsection
 </x-app-layout>

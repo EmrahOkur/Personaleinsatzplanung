@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\Employee;
 use App\Models\Urlaub;
+use Illuminate\Database\Seeder;
 
 class UrlaubSeeder extends Seeder
 {
@@ -13,6 +15,13 @@ class UrlaubSeeder extends Seeder
      */
     public function run(): void
     {
-        Urlaub::factory()->count(1)->create();
+        
+        $employees = Employee::all();
+        foreach ($employees as $e) {
+            Urlaub::factory()->count(5)->create(
+                ['employee_id' => $e->id]
+            );
+        }
+
     }
 }
