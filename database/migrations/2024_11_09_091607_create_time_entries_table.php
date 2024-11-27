@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->date('date');
             $table->time('time_start');
             $table->time('time_end');
-            $table->integer('break_duration')->default(0); // Dauer in Minuten
+            $table->integer('break_duration')->nullable();  // Hier ist break_duration nullable gesetzt
             $table->enum('activity_type', ['productive', 'non-productive'])->default('productive'); // Aktivitätstyp
             $table->timestamps();
 

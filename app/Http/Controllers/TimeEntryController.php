@@ -62,7 +62,17 @@ class TimeEntryController extends Controller
     {
         $user = auth()->user();
 
-        // Validierung
+        // Wenn der Benutzer ein Mitarbeiter ist, setzen wir den employee_id automatisch
+        if ($user->isEmployee()) {
+            $request->merge(['employee_id' => $user->employee_id]);
+        }
+
+        // Wenn der Benutzer ein Manager ist, setzen wir employee_id aus dem Form
+        if ($user->isManager() && ! $request->has('employee_id')) {
+            return redirect()->back()->withErrors('Mitarbeiter muss ausgewählt werden.');
+        }
+
+        // Validierung der Eingaben
         $validated = $request->validate([
             'employee_id' => $user->isManager() ? 'required|exists:employees,id' : 'nullable',
             'date' => 'required|date',
@@ -71,11 +81,6 @@ class TimeEntryController extends Controller
             'break_duration' => 'nullable|integer|min:0',
             'activity_type' => 'required|string',
         ]);
-
-        // Mitarbeiter können nur für sich selbst Einträge erstellen
-        if ($user->isEmployee()) {
-            $validated['employee_id'] = $user->employee_id;
-        }
 
         // Zeiteintrag speichern
         TimeEntry::create($validated);
