@@ -36,6 +36,9 @@ class TimeEntry extends Model
     /**
      * Accessor für die berechnete Nettoarbeitszeit in Stunden.
      */
+    /**
+     * Accessor für die berechnete Nettoarbeitszeit in Stunden.
+     */
     public function getNetWorkHoursAttribute(): float
     {
         if (! $this->time_start || ! $this->time_end) {
@@ -44,9 +47,13 @@ class TimeEntry extends Model
 
         $start = strtotime($this->time_start);
         $end = strtotime($this->time_end);
-        $break = ($this->break_duration ?? 0) * 60; // Standardwert: 0 Minuten
+        $break = ($this->break_duration ?? 0) * 60; // Pausenzeit in Minuten
 
-        return max(0, ($end - $start - $break) / 3600); // Sicherstellen, dass kein negativer Wert entsteht
+        // Berechnung der Nettoarbeitszeit in Stunden
+        $workHours = ($end - $start - $break) / 3600; // Umrechnung in Stunden
+
+        // Rückgabe auf 2 Dezimalstellen gerundet
+        return round($workHours, 2);
     }
 
     /**
