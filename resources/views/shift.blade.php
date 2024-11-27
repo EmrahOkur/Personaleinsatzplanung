@@ -66,6 +66,12 @@
 <script>
     let userId = document.getElementById("shift-header").dataset.loggeduserid;
 
+    function formateDate(laravelDate){
+        let formattedDate = moment(laravelDate).format('DD.MM.YYYY');
+        console.log(formattedDate);  
+        return formattedDate;
+    }
+
     function loadAllEmployeesNames(employees){
         let shift_tbody = document.getElementById("shift-tbody");
         employees.forEach(employee => {
@@ -116,17 +122,17 @@
                 const dataDate = button.getAttribute('data-date');
                 const dataUserId = button.getAttribute('data-id');
                 // Falls das Date Format verwendet wird
-                // let dataDateDateForLaravel = formatDateForLaravel(dataDate);
                 // Suche nach dem Benutzer, dessen Schicht mit dem data-date übereinstimmt
                 users.forEach(user => {
         
                     if (Array.isArray(user.shifts)) {
                     user.shifts.forEach(shift => {
                         // Datum trifft zu
-                        console.log("user.id ",user.id," ",dataUserId," shift.date_shift",shift.date_shift, " ",dataDate)
-                        if(user.id == dataUserId && shift.date_shift == dataDate ){
+                        let formattedDate = formateDate(shift.date_shift);
+                        console.log("user.id ",user.id," ",dataUserId," formattedDate",formattedDate, " ",dataDate)
+                        if(user.id == dataUserId && formattedDate == dataDate ){
                             button.innerHTML += `${shift.start_time} - ${shift.end_time} <br>`;
-                            console.log('assignedUser ' + user.id + ' shift.date_shift ' + shift.date_shift)
+                            console.log('assignedUser ' + user.id + ' formattedDate ' + formattedDate)
                         }
                         
                     });
@@ -143,27 +149,12 @@
     .catch(error => console.error('Fehler:', error));
     }
 
-    function formatDateForLaravel(dateString) {
-    // Zerlege das Datum im Format 'DD.MM.YYYY'
-    const parts = dateString.split('.');
-    if (parts.length !== 3) {
-        console.error('Invalid date format:', dateString);
-        return null; // Beenden, wenn das Datum ungültig ist
-    }
 
-    const day = parts[0].padStart(2, '0'); // Tag
-    const month = parts[1].padStart(2, '0'); // Monat
-    const year = parts[2]; // Jahr
-
-    // Formatiere das Datum in 'YYYY-MM-DD'
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-    }
     
     function shiftModal(event,user_id){
         let data_date = event.target.dataset.date;
 
-        const laravelDate = formatDateForLaravel(data_date);
+
 
         document.getElementById('date_shift').value = laravelDate;
         document.getElementById('user_id').value = user_id;

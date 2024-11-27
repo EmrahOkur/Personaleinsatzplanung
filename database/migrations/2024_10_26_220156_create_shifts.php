@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
-            $table->string('date_shift');
+            $table->date('date_shift');
             $table->string('start_time');
             $table->string('end_time');
             $table->integer('amount_employees');

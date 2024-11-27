@@ -117,6 +117,12 @@
     
     <script>
         let userId = document.getElementById("schedule-header").dataset.loggeduserid;
+
+        function formateDate(laravelDate){
+            let formattedDate = moment(laravelDate).format('DD.MM.YYYY');
+            console.log(formattedDate);  
+            return formattedDate;
+        }
         function loadEmployeesFromDepartment(){
             fetch(`/departments/getEmployeesFromDepartmentByUser/${userId}`)
                 .then(response => response.json())
@@ -183,7 +189,7 @@
                 dateElement.textContent = `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`;
 
                 // Schicht wird für den Tag angezeigt, falls vorhanden
-                let shiftsForDay = data.filter(shift => shift.date_shift === dateElement.textContent);
+                let shiftsForDay = data.filter(shift => formateDate(shift.date_shift) === dateElement.textContent);
 
                 shiftsForDay.forEach(shift => {
                     const shiftDiv = document.createElement('div');
@@ -420,7 +426,9 @@
                 type: 'POST',
                 data:{start_time:start_time, end_time:end_time, amount_employees:amount_employees, date:date },
                 success: function(data) {
-                    let shift_list = document.getElementById(data.date_shift);
+                    console.log("date ",data.date_shift)
+                    let formattedDate = formateDate(data.date_shift);
+                    let shift_list = document.getElementById(formattedDate);
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);

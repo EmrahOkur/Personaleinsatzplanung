@@ -7,6 +7,8 @@ use App\Models\Shift;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\User;
+use Carbon\Carbon;
+
 
 class SchedulingController extends Controller
 {
@@ -20,10 +22,13 @@ class SchedulingController extends Controller
         $employees = Employee::all();
         $shifts = Shift::all();
         $shift = new Shift;
+        // Umwandlung des Strings in das Format 'HH:MM:SS'
+        //$formattedStartTime = Carbon::createFromFormat('H:i', $request->start_time)->format('H:i:s');
+        //$formattedEndTime = Carbon::createFromFormat('H:i', $request->end_time)->format('H:i:s');
         $shift->start_time = $request->start_time;
         $shift->end_time = $request->end_time;
         $shift->amount_employees = $request->amount_employees;
-        $shift->date_shift = $request->date;
+        $shift->date_shift = Carbon::createFromFormat('d.m.Y', $request->date)->toDateString(); 
         $shift->save();
 
         return response()->json($shift);
