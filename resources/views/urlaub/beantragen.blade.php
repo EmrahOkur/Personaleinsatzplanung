@@ -25,6 +25,7 @@
         </form>
     
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales-all.min.js'></script>
     
         <style>
             #calendar {
@@ -34,7 +35,7 @@
                 margin: 0 auto;
             }
         </style>
-    
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const calendarEl = document.getElementById('calendar');
@@ -42,31 +43,47 @@
                 const form = document.querySelector('form');
                 const selectedDatesInput = document.getElementById('selectedDatesInput');
                 const saveFormBtn = document.getElementById('saveForm');
-    
+                const vacationEvents ={!! json_encode($events) !!};
+
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     themeSystem: 'bootstrap',
                     initialView: 'dayGridMonth',
+                    locale: 'de',
+                    firstDay: 2,
                     headerToolbar: {
-                        left: 'prev,next today',
+                        left: 'today',
                         center: 'title',
-                        right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                        right: 'prev,next'
                     },
                     selectable: true,
+                    selectConstraint: { // Prevent selecting days with events
+                        start: '0000-01-01',
+                        end: '9999-12-31',
+                        startTime: '00:00',
+                        endTime: '24:00',
+                        daysOfWeek: [0,1,2,3,4,5,6]
+                    },
+                    // selectOverlap: false, // Prevent selecting days that overlap with events                    
                     select: function(info) {
                         const date = info.startStr;
-                        if (!selectedDates.includes(date)) {
+                        const existingEvent = calendar.getEvents().filter(event => {
+                            return event.startStr === date && event.title.trim() === 'Urlaub'
+                        })[0];
+                        // Check if date is in vacationEvents
+                        const isVacationEvent = vacationEvents.some(event => event.start === date);                  
+                        
+                        if (existingEvent && !isVacationEvent) {                           
+                            existingEvent.remove();
+                            const index = selectedDates.indexOf(date);
+                            if (index > -1) selectedDates.splice(index, 1);
+                        } else if (!existingEvent && !isVacationEvent) {
                             selectedDates.push(date);
                             calendar.addEvent({
-                                title: 'Abwesend',
+                                title: 'Urlaub',
                                 start: date,
                                 allDay: true,
                                 color: 'blue'
                             });
-                        } else {
-                            const index = selectedDates.indexOf(date);
-                            selectedDates.splice(index, 1);
-                            const event = calendar.getEvents().find(event => event.startStr === date);
-                            event?.remove();
                         }
                     },
                     events: function(fetchInfo, successCallback, failureCallback) {
@@ -79,10 +96,10 @@
                                     color: 'red',
                                     textColor: 'white'
                                 }));
-                                successCallback(events);
+                                successCallback([...vacationEvents,...events]);
                             })
                             .catch(error => failureCallback(error));
-                    }
+                    },
                 });
     
                 calendar.render();

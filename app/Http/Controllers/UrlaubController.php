@@ -23,6 +23,7 @@ class UrlaubController extends Controller
         $urlaubs = DB::table('urlaubs')
             ->select('datum', 'status', 'id')
             ->where('employee_id', $employee->id)
+            ->orderBy('datum', 'desc')
             ->get();
 
         // Initialisierung von Werten
@@ -31,7 +32,7 @@ class UrlaubController extends Controller
         $heute = date('Y-m-d');
 
         foreach ($urlaubs as $urlaub) {
-            if ($urlaub <= $heute) {
+            if ($urlaub->datum <= $heute) {
                 // Liegt in der Vergangenheit: `genommene_tage`
                 $genommene_tage++;
             } else {
@@ -44,16 +45,55 @@ class UrlaubController extends Controller
         $verfügbare_tage = $employee->vacation_days;
         $verbleibende_tage = $verfügbare_tage - $genommene_tage - $verplante_tage;
 
+        // Konvertiere die `selectedDates`-Einträge in ein Array
+        $events = [];
+        foreach ($urlaubs as $urlaub) {
+            $events[] = [
+                'title' => 'Urlaub', // Beschriftung des Events
+                'start' => $urlaub->datum,
+                'allDay' => true, // Ganztägiges Event
+            ];
+        }
+
         // Daten an die Ansicht übergeben
-        return view('urlaub', compact('verfügbare_tage', 'genommene_tage', 'verplante_tage', 'verbleibende_tage', 'urlaubs', 'employee'));
+        return view('urlaub', compact('verfügbare_tage', 'genommene_tage', 'verplante_tage', 'verbleibende_tage', 'urlaubs', 'employee', 'events'));
     }
 
     public function beantragen()
     {
-        $urlaubs = Urlaub::all();
-        $verbleibende_tage = 10;
+        $employee = Employee::findOrFail(Auth::user()->employee->id);
+        $verplante_tage = 0;
+        $genommene_tage = 0;
+        $heute = date('Y-m-d');
 
-        return view('urlaub.beantragen', compact('verbleibende_tage'));
+        $urlaubs = DB::table('urlaubs')
+            ->select('datum', 'status', 'id')
+            ->where('employee_id', $employee->id)
+            ->orderBy('datum', 'desc')
+            ->get();
+
+        foreach ($urlaubs as $urlaub) {
+            if ($urlaub->datum <= $heute) {
+                // Liegt in der Vergangenheit: `genommene_tage`
+                $genommene_tage++;
+            } else {
+                // Liegt in der Zukunft: `verplante_tage`
+                $verplante_tage++;
+            }
+
+            $events[] = [
+                'title' => 'Urlaub', // Beschriftung des Events
+                'start' => $urlaub->datum,
+                'allDay' => true, // Ganztägiges Event
+                'color' => 'red',
+            ];
+        }
+
+        // Rufe die verbleibenden Tage aus der Datenbank ab
+        $verfügbare_tage = $employee->vacation_days;
+        $verbleibende_tage = $verfügbare_tage - $genommene_tage - $verplante_tage;
+
+        return view('urlaub.beantragen', compact('verbleibende_tage', 'events'));
     }
 
     public function destroy($id)
@@ -75,21 +115,20 @@ class UrlaubController extends Controller
 
     public function übersicht()
     {
+        $id = Auth::user()->employee->id;
         $urlaubs = DB::table('urlaubs')
-            ->select('selectedDates')
-            ->get();
+            ->select('datum')
+            ->where('employee_id', '=', $id)
+            ->get()->toArray();
 
         // Konvertiere die `selectedDates`-Einträge in ein Array
         $events = [];
         foreach ($urlaubs as $urlaub) {
-            $dates = json_decode($urlaub->selectedDates, true);
-            foreach ($dates as $date) {
-                $events[] = [
-                    'title' => 'Urlaub', // Beschriftung des Events
-                    'start' => $date,
-                    'allDay' => true, // Ganztägiges Event
-                ];
-            }
+            $events[] = [
+                'title' => 'Urlaub', // Beschriftung des Events
+                'start' => $urlaub->datum,
+                'allDay' => true, // Ganztägiges Event
+            ];
         }
 
         return view('urlaub.übersicht', compact('events'));

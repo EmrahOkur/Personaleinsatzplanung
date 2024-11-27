@@ -21,7 +21,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
-
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales-all.min.js'></script>
         <!-- Kalender-Container -->
         <div id="calendar"></div>
 
@@ -31,11 +31,11 @@
 
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth', // Startansicht (Monatsansicht)
+                    firstDay: 2,
                     locale: 'de',                // Deutsche Lokalisierung
                     headerToolbar: {
                         left: 'prev,next today',  // Navigationsbuttons
                         center: 'title',         // Kalender-Titel
-                        right: 'dayGridMonth,timeGridWeek', // Umschaltmöglichkeiten
                     },
                     events: @json($events),      // Events aus dem Backend
                     eventSources: [
