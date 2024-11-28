@@ -180,7 +180,7 @@
                 tdwrapper.setAttribute("class", "td-wrapper-flex");
                 const dateElement = document.createElement('span');
                 const addshiftButton = document.createElement('button');
-                addshiftButton.textContent = "Schicht hinzufügen";
+                addshiftButton.textContent = "Hinzufügen";
                 addshiftButton.setAttribute("class", "btn btn-primary padding-5px");
                 addshiftButton.setAttribute("data-bs-target", "#scheduleModal"); 
                 addshiftButton.setAttribute("data-bs-toggle", "modal");
@@ -200,11 +200,10 @@
                         employees_arr.push(employee);
                     })
                     shiftDiv.innerHTML = `
-                        <p class="list-group-item">Start: ${shift.start_time}</p>
-                        <p class="list-group-item">Ende: ${shift.end_time}</p>
+                        <p class="list-group-item">${shift.start_time} - ${shift.end_time}</p>
                         <p class="list-group-item list-employees">Mitarbeiter: ${employees_arr.length}/${shift.amount_employees}</p>
                          <p class="user-list"> ${employees_arr ? employees_arr.map(employee => employee.first_name +" " + employee.last_name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
-                        <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>
+                        <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>
                     `;
                     tddiv.appendChild(shiftDiv);
                 });
@@ -432,7 +431,7 @@
                     let created_shift = document.createElement('div');
                     created_shift.setAttribute("class","list-group");
                     shift_list.appendChild(created_shift);
-                    created_shift.innerHTML = `<p class="list-group-item">Start: ${data.start_time} </p> <p class="list-group-item" >Ende: ${data.end_time} </p> <p class="list-group-item list-employees"> Mitarbeiter: 0/${data.amount_employees} </p> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Schicht bearbeiten </button>`;
+                    created_shift.innerHTML = `<p class="list-group-item">${data.start_time} - ${data.end_time} </p> <p class="list-group-item list-employees"> Mitarbeiter: 0/${data.amount_employees} </p> <p class="user-list">  </p> <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${data.id} data-requiredemployees = ${data.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>`;
                     usersListEqualHeight();
                     amaountEmployeesEqualHeight();
                     showUnfilledShifts();

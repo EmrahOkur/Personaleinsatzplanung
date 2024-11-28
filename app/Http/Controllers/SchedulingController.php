@@ -37,6 +37,17 @@ class SchedulingController extends Controller
     public function getShifts(){
         //$shifts = Shift::all();
         $shifts = Shift::with('employees')->get();
+            // Die Start- und Endzeiten für jede Schicht im gewünschten Format 'H:i' umwandeln
+        $shifts->map(function ($shift) {
+        // Hier gehen wir davon aus, dass es start_time und end_time Spalten gibt.
+        // Wir formatieren beide Zeiten im 'H:i' Format (Stunden:Minuten).
+        if ($shift->start_time) {
+            $shift->start_time = Carbon::parse($shift->start_time)->format('H:i');
+        }
+        if ($shift->end_time) {
+            $shift->end_time = Carbon::parse($shift->end_time)->format('H:i');
+        }
+        });
         return response()->json($shifts);
 
 
