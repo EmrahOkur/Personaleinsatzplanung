@@ -9,6 +9,7 @@ use App\Models\TimeEntry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Log;
 
 class TimeEntryController extends Controller
 {
@@ -93,16 +94,18 @@ class TimeEntryController extends Controller
      */
     public function edit(int $id): View
     {
-        $user = auth()->user();
+        // Zeiteintrag abrufen
         $timeEntry = TimeEntry::findOrFail($id);
 
-        // Mitarbeiter dürfen keine Einträge bearbeiten
-        if ($user->isEmployee()) {
-            return redirect()->route('time_entries.index')->withErrors('Sie können keine Einträge bearbeiten.');
+        // Prüfen, ob der Benutzer berechtigt ist
+        if (! auth()->user()->isManager()) {
+            return redirect()->route('time_entries.index')->withErrors('Keine Berechtigung für diese Aktion.');
         }
 
+        // Liste aller Mitarbeiter (nur für Manager)
         $employees = Employee::all();
 
+        // Bearbeitungsseite zurückgeben
         return view('time_entries.edit', compact('timeEntry', 'employees'));
     }
 
@@ -111,23 +114,25 @@ class TimeEntryController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        $user = auth()->user();
+        $user = auth()->user(); // Der aktuell eingeloggte Benutzer
         $timeEntry = TimeEntry::findOrFail($id);
 
-        // Mitarbeiter dürfen keine Einträge aktualisieren
-        if ($user->isEmployee()) {
-            return redirect()->route('time_entries.index')->withErrors('Sie können keine Einträge aktualisieren.');
+        // Überprüfen, ob der Benutzer ein Manager ist
+        if (! $user->isManager()) {
+            return redirect()->route('time_entries.index')->withErrors('Keine Berechtigung für diese Aktion.');
         }
 
+        // Validierungsregeln
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => 'required|exists:employees,id',  // Manager kann hier den Mitarbeiter auswählen
             'date' => 'required|date',
             'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i|after:time_start',
+            'time_end' => 'required|date_format:H:i',
             'break_duration' => 'nullable|integer|min:0',
             'activity_type' => 'required|string',
         ]);
 
+        // Aktualisieren des Zeiteintrags
         $timeEntry->update($validated);
 
         return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
@@ -139,10 +144,12 @@ class TimeEntryController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $user = auth()->user();
+        Log::info("Versuch, Zeiteintrag zu löschen. Benutzer ID: {$user->id}, Zeiteintrag ID: {$id}");
+
         $timeEntry = TimeEntry::findOrFail($id);
 
-        // Mitarbeiter dürfen keine Einträge löschen
         if ($user->isEmployee()) {
+
             return redirect()->route('time_entries.index')->withErrors('Sie können keine Einträge löschen.');
         }
 
