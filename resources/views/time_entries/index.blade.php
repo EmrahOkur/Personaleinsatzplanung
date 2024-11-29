@@ -24,10 +24,10 @@
                     <label for="employee_id" class="col-form-label">Mitarbeiter:</label>
                 </div>
                 <div class="col-auto">
-                    <select name="employee_id" id="employee_id" class="form-control">
+                    <select name="employee_id" id="employee_id" class="form-control" onchange="this.form.submit()">
                         <option value="">Alle Mitarbeiter</option>
                         @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}" {{ request('employee_id') == $employee->id ? 'selected' : '' }}>
+                            <option value="{{ $employee->id }}" {{ request()->input('employee_id') == $employee->id ? 'selected' : '' }}>
                                 {{ $employee->full_name }}
                             </option>
                         @endforeach
@@ -102,7 +102,7 @@
 
     <!-- Paginierung -->
     <div class="d-flex justify-content-center mt-4">
-        {{ $timeEntries->links() }}
+        {{ $timeEntries instanceof \Illuminate\Pagination\LengthAwarePaginator ? $timeEntries->links() : '' }}
     </div>
 </div>
 @endsection
