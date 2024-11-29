@@ -54,6 +54,14 @@
 </li>  
 @endif
 
+@if(Auth::user()->isManager())
+<li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}" href="{{ route('orders') }}">
+        <i class="fas fa-users"></i> {{ __('Aufträge') }}
+    </a>
+</li>  
+@endif
+
 @if(Auth::user()->isAdmin())
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#settingsSubmenu" aria-expanded="false">
