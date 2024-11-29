@@ -19,23 +19,27 @@ class TimeEntryController extends Controller
     public function index(Request $request): View
     {
         $user = auth()->user();
-        $query = TimeEntry::with('employee'); // Laden der Beziehung zum Mitarbeiter
 
-        // Mitarbeiter sehen nur ihre eigenen Einträge
-        if ($user->isEmployee()) {
-            $query->where('employee_id', $user->employee_id);
-        }
+        // wenn employee, dann dessen Id, sonst aus dem request oder ggf. null
+        $employeeId = $user->isEmployee() ? $user->employee->id : $request->input('employee_id');
 
-        // Filteroptionen für Manager
-        if ($request->filled('date')) {
-            $query->whereDate('date', $request->input('date'));
-        }
-        if ($request->filled('employee_id') && $user->isManager()) {
-            $query->where('employee_id', $request->input('employee_id'));
-        }
+        $timeEntries = [];
 
-        // Zeiteinträge abrufen
-        $timeEntries = $query->paginate(10)->withQueryString();
+        if ($employeeId) {
+            $query = TimeEntry::with('employee'); // Laden der Beziehung zum Mitarbeiter
+            $query->where('employee_id', $employeeId);
+
+            // Filteroptionen für Manager
+            if ($request->filled('date')) {
+                $query->whereDate('date', $request->input('date'));
+            }
+            if ($request->filled('employee_id') && $user->isManager()) {
+                $query->where('employee_id', $request->input('employee_id'));
+            }
+
+            // Zeiteinträge abrufen
+            $timeEntries = $query->paginate(10)->withQueryString();
+        }
 
         // Mitarbeiterliste für Manager
         $employees = $user->isManager() ? Employee::all() : [$user->employee];
@@ -86,7 +90,7 @@ class TimeEntryController extends Controller
         // Zeiteintrag speichern
         TimeEntry::create($validated);
 
-        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich erstellt.');
+        return redirect()->route('time_entries.index', ['employee_id' => request('employee_id')])->with('success', 'Zeiteintrag erfolgreich erstellt.');
     }
 
     /**
