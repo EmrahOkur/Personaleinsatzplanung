@@ -7,7 +7,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -51,7 +50,8 @@ class User extends Authenticatable
 
     public function isEmployee()
     {
-        return $this->employee_id !== null;
+        //return $this->employee_id !== null;
+        return $this->role === 'employee';
     }
 
     public function isManager()
@@ -116,6 +116,7 @@ class User extends Authenticatable
 
         return $this->nachname;
     }
+
     public function shifts(): BelongsToMany
     {
         return $this->belongsToMany(Shift::class);
