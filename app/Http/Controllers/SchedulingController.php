@@ -29,6 +29,7 @@ class SchedulingController extends Controller
         $shift->end_time = $request->end_time;
         $shift->amount_employees = $request->amount_employees;
         $shift->date_shift = Carbon::createFromFormat('d.m.Y', $request->date)->toDateString(); 
+        $shift->shift_hours = $request->shift_hours;
         $shift->save();
 
         return response()->json($shift);

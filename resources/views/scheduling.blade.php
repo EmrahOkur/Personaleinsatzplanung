@@ -118,39 +118,69 @@
     <script>
         let userId = document.getElementById("schedule-header").dataset.loggeduserid;
 
+        function calculateShiftHours(startTime,endTime) {
+            // Wandle die Zeiten in Minuten um
+            let startTimeParts = startTime.split(":");
+            let endTimeParts = endTime.split(":");
+
+            // Berechne die Gesamtminuten für Startzeit und Endzeit
+            let startMinutes = parseInt(startTimeParts[0]) * 60 + parseInt(startTimeParts[1]);
+            let endMinutes = parseInt(endTimeParts[0]) * 60 + parseInt(endTimeParts[1]);
+
+            // Berechne die Differenz in Minuten
+            let differenceInMinutes = endMinutes - startMinutes;
+
+            // Wandle Minuten in Dezimalstunden um
+            let shiftHours = differenceInMinutes / 60;
+
+            // Ausgabe der berechneten Stunden (zum Beispiel 2.5 Stunden)
+            console.log(shiftHours);
+
+            return shiftHours;
+        }
+
         function formateDate(laravelDate){
-            let formattedDate = moment(laravelDate).format('DD.MM.YYYY');
-            console.log(formattedDate);  
+            let formattedDate = moment(laravelDate).format('D.MM.YYYY'); 
             return formattedDate;
         }
-        function loadEmployeesFromDepartment(){
-            fetch(`/departments/getEmployeesFromDepartmentByUser/${userId}`)
+        function showEmployeesFromDepartment(){
+            let week = document.getElementById('week-label').textContent;
+            const regex = /^(.+?)\s*-\s*(.+)$/;
+            let startAndEndDate = week.match(regex);
+            let startDate = startAndEndDate[1];
+            let endDate = startAndEndDate[2];
+            
+            fetch(`/departments/getEmployeesFromDepartmentByUser/${userId}/${startDate}/${endDate}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("schedule-h2").textContent = "Abteilung: " + data.department.name;
-                    console.log("data.departmentEmployees ",data.departmentEmployees)
                     let departmentEmployees = data.departmentEmployees;
                     let sidebar = document.getElementById('schedule-employee-sidebar');
+                    sidebar.innerHTML = "";
                     let sidebarEmployees;
                     departmentEmployees.forEach(employee => {
+                        let countTime = 0;
+                        employee.shifts.forEach(shift =>{
+                            countTime += parseFloat(shift.shift_hours);
+                        })
                         sidebarEmployees = document.createElement("p");
-                        sidebarEmployees.innerHTML = employee.first_name + " " + employee.last_name;
+                        sidebarEmployees.innerHTML = employee.first_name + " " + employee.last_name + " "+countTime+ "/" +  employee.working_hours;
                         sidebar.appendChild(sidebarEmployees);
                     });
+                    console.log(data.endOfWeek," ",data.startOfWeek)
 
                     
                 })
         }
-        loadEmployeesFromDepartment();
         let currentDate = new Date();
                 // Diese Funktion aktualisiert die Woche und zeigt die richtigen Daten an
         function updateWeek() {
+            console.log("triggered")
             const weekLabel = document.getElementById('week-label');
 
             // Berechne den ersten Tag der Woche
             const startOfWeek = new Date(currentDate);
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Setze auf Montag der aktuellen Woche
-
             // Zeigt den Zeitraum der Woche an
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(startOfWeek.getDate() + 6); // Sonntag der aktuellen Woche
@@ -158,7 +188,7 @@
             // Formatierung der Woche
             let formattedWeek = `${startOfWeek.toLocaleDateString('de-DE')} - ${endOfWeek.toLocaleDateString('de-DE')}`;
             weekLabel.textContent = formattedWeek;
-
+            showEmployeesFromDepartment();
             // Schichten werden geladen
             fetch('/scheduling/getShifts')
                 .then(response => response.json())
@@ -187,7 +217,6 @@
                 addshiftButton.setAttribute("data-date", `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`);
                 addshiftButton.setAttribute("onclick", "firstScheduleModalDate(event)");
                 dateElement.textContent = `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`;
-
                 // Schicht wird für den Tag angezeigt, falls vorhanden
                 let shiftsForDay = data.filter(shift => formateDate(shift.date_shift) === dateElement.textContent);
 
@@ -284,16 +313,12 @@
             formContainer.innerHTML = ''; 
 
         // Lade Mitarbeiter für diese Schicht
-        console.log(`/scheduling/getEmployeesForShift/${shiftId}/${userId}`)
         fetch(`/scheduling/getEmployeesForShift/${shiftId}/${userId}`)
             .then(response => response.json())
             .then(data => {
                 data.employees.forEach(employee => {
-                    console.log("employees ",employee)
                     let checkboxDiv = document.createElement('div');
                     checkboxDiv.classList.add('form-check');
-                    console.log("employeesInShift ",data.employeesInShift)
-                    console.log("the employee ",employee)
                     // Falls user in der Schicht enthalten ist
                     if(data.employeesInShift.includes(employee.id) ){
                         checkboxDiv.innerHTML =
@@ -304,7 +329,6 @@
                         </label>
                     `;
                     }else{
-                        console.log("not checked")
                     checkboxDiv.innerHTML = `
                         <input class="form-check-input" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}">
                         <label class="form-check-label" for="employee_${employee.id}">
@@ -322,7 +346,6 @@
             let selectedEmployees = [];
             document.querySelectorAll('input[name="employee_ids[]"]:checked').forEach(checkbox => {
                 selectedEmployees.push(checkbox.value);
-                console.log(selectedEmployees)
             });
 
             // Mitarbeiter zuweisen oder entfernen
@@ -411,9 +434,8 @@
             let start_time = document.getElementById("start_shift").value;
             let end_time = document.getElementById("end_shift").value;
             let amount_employees = document.getElementById("employee_schedule").value;
-            console.log('amount_employees '+amount_employees);
-            console.log('amount_employees '+ document.querySelector('[name="_token"]').getAttribute('content'));
             let date = document.getElementById("schedule-date").textContent;
+            let shift_hours = calculateShiftHours(start_time,end_time);
             $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -423,9 +445,8 @@
             $.ajax({
                 url: `/scheduling/addshifts`,
                 type: 'POST',
-                data:{start_time:start_time, end_time:end_time, amount_employees:amount_employees, date:date },
+                data:{start_time:start_time, end_time:end_time, amount_employees:amount_employees, date:date, shift_hours:shift_hours },
                 success: function(data) {
-                    console.log("date ",data.date_shift)
                     let formattedDate = formateDate(data.date_shift);
                     let shift_list = document.getElementById(formattedDate);
                     let created_shift = document.createElement('div');

@@ -67,7 +67,7 @@
     let userId = document.getElementById("shift-header").dataset.loggeduserid;
 
     function formateDate(laravelDate){
-        let formattedDate = moment(laravelDate).format('DD.MM.YYYY');
+        let formattedDate = moment(laravelDate).format('D.MM.YYYY');
         console.log(formattedDate);  
         return formattedDate;
     }
