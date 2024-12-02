@@ -116,12 +116,9 @@ class User extends Authenticatable
 
         return $this->nachname;
     }
-<<<<<<< HEAD
-=======
 
     public function shifts(): BelongsToMany
     {
         return $this->belongsToMany(Shift::class);
     }
->>>>>>> e4ed44f (User isEmployee fix)
 }
