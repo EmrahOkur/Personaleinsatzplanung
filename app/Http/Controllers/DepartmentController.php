@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Employee;
 
 class DepartmentController extends Controller
 {
@@ -112,5 +114,12 @@ class DepartmentController extends Controller
                 ->withInput()
                 ->with('error', 'Fehler beim Anlegen des Mitarbeiters. Bitte versuchen Sie es erneut.');
         }
+    }
+    public function getEmployeesFromDepartmentByUser(Request $request, $userId)
+    {
+        $user = User::findorfail($userId);
+        $department = $user->employee->department;
+        $departmentEmployees = Employee::where('department_id', $department->id)->get();
+        return response()->json([ 'departmentEmployees' => $departmentEmployees,'department' => $department ]);
     }
 }

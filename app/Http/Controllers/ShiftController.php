@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shift;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class ShiftController extends Controller
 {
     public function index(){
-        $users = User::with('shifts')->get();
+
+        $employees = Employee::with('shifts')->get();
         $shifts = Shift::all();
-        return view('shift',compact('users','shifts'));
+        return view('shift',compact('employees','shifts'));
     }
     public function edit(Request $request){
-        $users = User::all();
+        $employees = Employee::all();
         $shifts = Shift::all();
         $shift = new Shift;
         $shift->start_time = $request->start_shift;
@@ -24,19 +26,22 @@ class ShiftController extends Controller
         $shift->save();
 
         // Benutzer zu der Schicht hinzufügen (Many-to-Many)
-        $shift->users()->attach($request->user_id);
+        $shift->employees()->attach($request->employee_id);
     
-        return redirect()->route('shifts',compact('users','shifts'));
+        return redirect()->route('shifts',compact('employees','shifts'));
     }
-    public function getUsersWithShifts()
+    public function getUsersWithShifts($userId)
     {
-        $users = User::with('shifts.users')->get(); // Alle Benutzer mit ihren Schichten
-        return response()->json($users);
+        $user = User::findorfail($userId);
+        $department = $user->employee->department;
+        $departmentEmployees = Employee::where('department_id', $department->id)->get();
+        $employees = Employee::with('shifts.employees')->whereIn('id', $departmentEmployees->pluck('id'))->get();; // Alle Benutzer mit ihren Schichten
+        return response()->json($employees);
     }
     public function getShiftsWithUsers()
     {
-        $shifts_with_users = Shift::with('users')->get(); // Alle Schichten mit ihren Benutzern
-        return response()->json($shifts_with_users);
+        $shifts_with_employees = Shift::with('employees')->get(); // Alle Schichten mit ihren Benutzern
+        return response()->json($shifts_with_employees);
     }
 
 }

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TimeEntrySeeder::class, // TimeEntrySeeder hinzugefügt
             UserSeeder::class,
             ResponsibilitySeeder::class,
+            UrlaubSeeder::class,
         ]);
     }
 }

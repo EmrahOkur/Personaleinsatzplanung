@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -45,6 +46,11 @@ class Employee extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function availabilities()
+    {
+        return $this->hasMany(Availability::class);
+    }
+
     public function responsibilities()
     {
         return $this->belongsToMany(Department::class, 'responsibilities');
@@ -58,6 +64,11 @@ class Employee extends Model
     public function user()
     {
         return $this->hasOne(User::class);
+    }
+
+    public function shifts(): BelongsToMany
+    {
+        return $this->belongsToMany(Shift::class);
     }
 
     public function getFullNameAttribute()

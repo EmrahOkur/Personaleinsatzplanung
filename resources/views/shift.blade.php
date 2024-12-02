@@ -1,57 +1,23 @@
 @extends('layouts.app')
 
-@section('main')
-    <section name="header">
-        <div class="shift-header" id="shift-header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Schichten') }}
-                <div class="">
+@section('header')
+    <section class=" header shift-header d-flex flex-column align-items-center" id="shift-header" data-loggeduserid = "{{Auth::id()}}">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Schichten') }}
+            <div class="">
 
-            </h2>
-            <div class="week-navigation">
-                <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
-                <span id="week-label" class="mx-2"></span>
-                <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
-            </div>
+        </h2>
+        <div class="week-navigation">
+            <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
+            <span id="week-label" class="mx-2"></span>
+            <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
         </div>
     </section>
-     <!-- Modal Schicht bearbeiten-->
-     <div class="modal fade" id="shiftModal" tabindex="-1" aria-labelledby="shiftModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="customerModalLabel">Schicht bearbeiten</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form method="POST" action="{{ route('shifts.edit') }}" id="edit-shift">
-        @csrf
-        <div class="modal-body"> 
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                    <label for="start_shift"> Beginn</label>
-                        <input type="time" id="start_shift" name="start_shift" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="end_shift"> Ende</label>
-                        <input type="time" id="end_shift" name="end_shift" class="form-control">
-                    </div>
-                    <input type="hidden" name="date_shift" id="date_shift" >
-                    <input type="hidden" name="user_id" id="user_id" >
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-            <button type="submit" form="edit-shift" class="btn btn-primary">Speichern</button>
-        </div>
-        </form>
-        </div>
-    </div>
-    </div>
+@endsection
+@section('main')
     <div class="container-fluid" style="position:relative;">
     <table class="table table-bordered">
-    <div class="spinner-border" role="status">
+    <div class="spinner-border" id="shift-spinner" role="status">
         <span class="sr-only">Loading...</span>
     </div>
         <thead>
@@ -80,23 +46,50 @@
             </th>
             </tr>
         </thead>
-  <tbody>
-    @foreach ( $users as $user )
-        <tr>
-            <th scope="row">{{$user->name}}</th>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowMonday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowTuesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowWednesday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowThursday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowFriday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSaturday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
-            <td style="position:relative"><button  onclick="shiftModal(event,'{{$user->id}}')" id="rowSunday" data-id ="{{$user->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></button></td>
+  <tbody id="shift-tbody">
+<!--    @foreach ( $employees as $employee )
+        <tr id="shift-tr">
+            <th scope="row">{{$employee->first_name}} {{$employee->last_name}}</th>
+            <td style="position:relative"><p  id="rowMonday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowTuesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowWednesday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowThursday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowFriday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowSaturday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            <td style="position:relative"><p  id="rowSunday" data-id ="{{$employee->id}}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
         </tr>
     @endforeach
+-->
   </tbody>
 </table>
 </div>
 <script>
+    let userId = document.getElementById("shift-header").dataset.loggeduserid;
+
+    function formateDate(laravelDate){
+        let formattedDate = moment(laravelDate).format('DD.MM.YYYY');
+        console.log(formattedDate);  
+        return formattedDate;
+    }
+
+    function loadAllEmployeesNames(employees){
+        let shift_tbody = document.getElementById("shift-tbody");
+        employees.forEach(employee => {
+            const shift_tr = document.createElement("tr"); 
+            shift_tr.innerHTML = `
+                <th scope="row">${employee.first_name} ${employee.last_name}</th>
+                <td style="position:relative"><p  id="rowMonday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowTuesday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowWednesday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowThursday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowFriday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowSaturday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+                <td style="position:relative"><p  id="rowSunday" data-id ="${employee.id}" class="shiftDay" data-bs-toggle="modal" data-bs-target="#shiftModal" style=position:relative;width:100%;height:100%;left:0;top:0;></p></td>
+            `;
+            shift_tbody.appendChild(shift_tr);
+        })
+        updateDateLabels();
+    }
 
     function resetAllButtons(){
         const buttons = document.querySelectorAll('.shiftDay');
@@ -106,14 +99,15 @@
     }
 
     function updateShift(){
+        // test
         resetAllButtons();
         let table = document.getElementsByClassName('table-bordered')[0];
         let header = document.getElementById('shift-header');
-        let spinner = document.getElementsByClassName('spinner-border')[0];
+        let spinner = document.getElementById('shift-spinner');
         spinner.style.display = "block";
         table.style.display = "none";
         header.style.display ="none";
-        fetch('/shifts/getUsersWithShifts')
+        fetch(`/shifts/getUsersWithShifts/${userId}`)
         .then(response => {
             if(!response.ok){
                 throw new Error('Netzwerkantowrt war nicht ok');
@@ -121,63 +115,50 @@
             return response.json()
         })
         .then(users => {
-            console.log("users "+ users)
+            loadAllEmployeesNames(users)
+            console.log("users ", users)
             const buttons = document.querySelectorAll('.shiftDay');
             buttons.forEach(button => {
                 const dataDate = button.getAttribute('data-date');
                 const dataUserId = button.getAttribute('data-id');
                 // Falls das Date Format verwendet wird
-                // let dataDateDateForLaravel = formatDateForLaravel(dataDate);
                 // Suche nach dem Benutzer, dessen Schicht mit dem data-date übereinstimmt
                 users.forEach(user => {
-                    table.style.display = "table";
-                    spinner.style.display = "none";
-                    header.style.display = "block";
         
                     if (Array.isArray(user.shifts)) {
                     user.shifts.forEach(shift => {
                         // Datum trifft zu
-                        if(user.id == dataUserId && shift.date_shift == dataDate ){
+                        let formattedDate = formateDate(shift.date_shift);
+                        console.log("user.id ",user.id," ",dataUserId," formattedDate",formattedDate, " ",dataDate)
+                        if(user.id == dataUserId && formattedDate == dataDate ){
                             button.innerHTML += `${shift.start_time} - ${shift.end_time} <br>`;
-                            console.log('assignedUser ' + user.id + ' shift.date_shift ' + shift.date_shift)
+                            console.log('assignedUser ' + user.id + ' formattedDate ' + formattedDate)
                         }
                         
                     });
-                }else{console.log("Schichten " + user.shifts)}
+                }else{console.log("Schichten ", user.shifts)}
                 });
                 
             });
+            // Schicht wurde geladen, Spinner soll nicht mehr sichtbar sein
+            table.style.display = "table";
+            spinner.style.display = "none";
+            header.style.display = "block";
+            
         })
     .catch(error => console.error('Fehler:', error));
     }
 
-    function formatDateForLaravel(dateString) {
-    // Zerlege das Datum im Format 'DD.MM.YYYY'
-    const parts = dateString.split('.');
-    if (parts.length !== 3) {
-        console.error('Invalid date format:', dateString);
-        return null; // Beenden, wenn das Datum ungültig ist
-    }
 
-    const day = parts[0].padStart(2, '0'); // Tag
-    const month = parts[1].padStart(2, '0'); // Monat
-    const year = parts[2]; // Jahr
-
-    // Formatiere das Datum in 'YYYY-MM-DD'
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-    }
     
     function shiftModal(event,user_id){
         let data_date = event.target.dataset.date;
 
-        const laravelDate = formatDateForLaravel(data_date);
+
 
         document.getElementById('date_shift').value = laravelDate;
         document.getElementById('user_id').value = user_id;
     }
-    // Schicht wird geupdatet 
-    updateShift()
 
 
     let currentDate = new Date();
@@ -284,8 +265,10 @@
     });
 
     // Initialisiere die Anzeige
+    // Schicht wird geupdatet 
     updateWeekLabel();
     updateDateLabels();
+    updateShift()
     //updateShifts();
 
 </script>

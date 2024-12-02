@@ -46,9 +46,9 @@
 </li>
 @endif
 
-@if(Auth::user()->isEmployee())
+@if(Auth::user()->isEmployee()|| Auth::user()->isManager())
 <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('urlaubs') ? 'active' : '' }}" href="#">
+    <a class="nav-link {{ request()->routeIs('urlaubs') ? 'active' : '' }}" href="{{ route('urlaubs') }}">
         <i class="fas fa-users"></i> {{ __('Urlaubsantrag') }}
     </a>
 </li>  

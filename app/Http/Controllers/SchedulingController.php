@@ -4,25 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shift;
+use App\Models\Employee;
+use App\Models\Department;
 use App\Models\User;
+use Carbon\Carbon;
 
 
 class SchedulingController extends Controller
 {
     //
     public function index(){
-        $users = User::all();
-        return view('scheduling',compact('users'));
+        $employees = Employee::all();
+        return view('scheduling',compact('employees'));
     }
 
     public function addshifts(Request $request){
-        $users = User::all();
+        $employees = Employee::all();
         $shifts = Shift::all();
         $shift = new Shift;
+        // Umwandlung des Strings in das Format 'HH:MM:SS'
+        //$formattedStartTime = Carbon::createFromFormat('H:i', $request->start_time)->format('H:i:s');
+        //$formattedEndTime = Carbon::createFromFormat('H:i', $request->end_time)->format('H:i:s');
         $shift->start_time = $request->start_time;
         $shift->end_time = $request->end_time;
         $shift->amount_employees = $request->amount_employees;
-        $shift->date_shift = $request->date;
+        $shift->date_shift = Carbon::createFromFormat('d.m.Y', $request->date)->toDateString(); 
         $shift->save();
 
         return response()->json($shift);
@@ -30,7 +36,7 @@ class SchedulingController extends Controller
 
     public function getShifts(){
         //$shifts = Shift::all();
-        $shifts = Shift::with('users')->get();
+        $shifts = Shift::with('employees')->get();
         return response()->json($shifts);
 
 
@@ -54,9 +60,9 @@ class SchedulingController extends Controller
             return response()->json(['error' => 'Es können nur maximal ' .$shift->amount_employees .' Mitarbeiter zugewiesen werden.'] );
         }
         // $request->users ist ein Array der User-IDs, die zugewiesen werden sollen
-        $shift->users()->sync($employeeIds);  // sync entfernt nicht mehr ausgewählte User und fügt neue hinzu
+        $shift->employees()->sync($employeeIds);  // sync entfernt nicht mehr ausgewählte Mitarbeiter und fügt neue hinzu
         //dd($request->selectedEmployees);
-        return response()->json(['assigned_employees' => $shift->users->count()]);
+        return response()->json(['assigned_employees' => $shift->employees->count()]);
     }
 
     // Mitarbeiter aus einer Schicht entfernen
@@ -65,7 +71,7 @@ class SchedulingController extends Controller
         $validated = $request->validate([
             'shift_id' => 'required|exists:shifts,id',
             'employee_ids' => 'required|array',
-            'employee_ids.*' => 'exists:users,id',
+            //'employee_ids.*' => 'exists:users,id',
         ]);
 
         $shift = Shift::findOrFail($validated['shift_id']);
@@ -75,18 +81,21 @@ class SchedulingController extends Controller
     }
 
     // Alle Mitarbeiter für eine bestimmte Schicht abrufen
-    public function getEmployeesForShift($shiftId)
+    public function getEmployeesForShift($shiftId,$userId)
     {
-        $users = User::all();
+        $user = User::findorfail($userId);
+        $department = $user->employee->department;
+        $departmentEmployees = Employee::where('department_id', $department->id)->get();
+
         $shift = Shift::findorfail($shiftId);
-        $userInShift = $shift->users()->pluck('name');
-        return response()->json(['users' =>$users, 'usersInShift' => $userInShift]);
+        $employeesInShift = $shift->employees()->pluck('employee_id');
+        return response()->json(['employees' =>$departmentEmployees, 'employeesInShift' => $employeesInShift]);
     } 
 
     public function deleteShift($shiftId)
     {
         $shift = Shift::findorfail($shiftId);
-        $shift->users()->detach();
+        $shift->employees()->detach();
         $shift->delete();
         return response()->json(['message' => 'Schicht wurde erfolgreich gelöscht']);
     }
