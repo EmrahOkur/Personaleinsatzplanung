@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(OrdersController::class)->group(function () {
         Route::get('/orders', 'index')->name('orders');
+        Route::get('/orders/distance',  'distance')->name('orders.distance');
+
     });
 
     Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');
