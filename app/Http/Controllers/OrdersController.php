@@ -21,11 +21,14 @@ class OrdersController extends Controller
         $departmentId = Department::where('name', 'Extern')->first()->id;
         $employees = Employee::where('department_id', $departmentId);
 
-        
-
         return view('orders.index', compact(
             'employees'
         ));
+    }
+
+    public function create(Request $request)
+    {
+        return view('orders.create');
     }
 
     public function distance(Request $request, AddressService $addressService)
