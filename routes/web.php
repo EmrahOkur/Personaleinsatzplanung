@@ -76,7 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/departments/store', 'store')->name('departments.store');
         Route::get('/departments/edit/{id}', 'edit')->name('departments.edit');
         Route::post('/departments/update/{id}', 'update')->name('departments.update');
-        Route::get('/departments/getEmployeesFromDepartmentByUser/{id}', 'getEmployeesFromDepartmentByUser')->name('departments.getEmployeesFromDepartmentByUser');
+        Route::get('/departments/getEmployeesFromDepartmentByUser/{id}/{startOfWeek}/{endOfWeek}', 'getEmployeesFromDepartmentByUser')->name('departments.getEmployeesFromDepartmentByUser');
     });
 
     // Time Entry Routes

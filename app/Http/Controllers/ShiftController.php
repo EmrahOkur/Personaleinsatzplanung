@@ -6,6 +6,7 @@ use App\Models\Shift;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ShiftController extends Controller
 {
@@ -36,7 +37,23 @@ class ShiftController extends Controller
         $department = $user->employee->department;
         $departmentEmployees = Employee::where('department_id', $department->id)->get();
         $employees = Employee::with('shifts.employees')->whereIn('id', $departmentEmployees->pluck('id'))->get();; // Alle Benutzer mit ihren Schichten
-        return response()->json($employees);
+
+
+        // Formatierung der Zeit in jeder Schicht
+        $formattedEmployees = $employees->map(function ($employee) {
+            // Für jede Schicht des Mitarbeiters, die Start- und Endzeit im gewünschten Format ändern
+            $employee->shifts->map(function ($shift) {
+                if ($shift->start_time) {
+                    $shift->start_time = Carbon::parse($shift->start_time)->format('H:i');
+                }
+                if ($shift->end_time) {
+                    $shift->end_time = Carbon::parse($shift->end_time)->format('H:i');
+                }
+            });
+            return $employee;
+        });
+
+        return response()->json($formattedEmployees);
     }
     public function getShiftsWithUsers()
     {

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->date('date_shift');
-            $table->string('start_time');
-            $table->string('end_time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->integer('amount_employees');
+            $table->decimal('shift_hours');
             //$table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

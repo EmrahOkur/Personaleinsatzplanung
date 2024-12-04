@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->string('position')->nullable();
             $table->integer('vacation_days')->default(30);
             $table->enum('status', ['active', 'inactive', 'on_leave'])->default('active');
+            $table->integer('working_hours')->default(40);
 
             // System
             $table->timestamps();
