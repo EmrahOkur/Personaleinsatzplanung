@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Orders;
 use App\Services\AddressService;
 use App\Services\GeocodingService;
 use App\Services\OSRMService;
@@ -53,6 +54,21 @@ class OrdersController extends Controller
 
         // dd($employees);
         return response()->json($av);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'employee_id' => 'required|exists:employees,id',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required',
+        ]);
+
+        $order = Orders::create($validated);
+
+        return redirect()->route('orders.show', $order)
+            ->with('success', 'Auftrag erfolgreich erstellt');
     }
 
     public function distance(Request $request, AddressService $addressService)

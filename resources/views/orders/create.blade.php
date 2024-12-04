@@ -43,6 +43,9 @@
                                     </div>
 
                                     <input type="hidden" id="customer_id" name="customer_id">
+                                    <input type="hidden" id="employee_id" name="employee_id">
+                                    <input type="hidden" id="appointment_date" name="appointment_date">
+                                    <input type="hidden" id="appointment_time" name="appointment_time">
                                 </div>
 
                                 <!-- Buttons -->

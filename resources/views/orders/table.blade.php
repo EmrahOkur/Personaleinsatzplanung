@@ -94,7 +94,7 @@ function showEmployeeDetails(element) {
         const modalBody = modal.querySelector('.modal-body');
         
         const formattedDate = new Date(date).toLocaleDateString('de-DE');
-        const formattedHour = `${String(hour).padStart(2, '0')}:00 - ${String(parseInt(hour) + 1).padStart(2, '0')}:00`;
+        const formattedHour = `${String(hour).padStart(2, '0')}:00`;
         
         modalTitle.textContent = `${weekday}, ${formattedDate} (${formattedHour})`;
         
@@ -102,7 +102,8 @@ function showEmployeeDetails(element) {
         if (Array.isArray(employees)) {
             employees.forEach(emp => {
                 employeeList += `
-                    <div class="border-bottom py-2">
+                    <div class="border-bottom py-2" style="cursor: pointer;" 
+                         onclick="selectEmployee('${date}', '${formattedHour}', '${emp.employee_id}', '${emp.employee_name}')">
                         <strong>${emp.employee_name}</strong><br>
                         <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
                     </div>
@@ -118,5 +119,22 @@ function showEmployeeDetails(element) {
         console.error('Error parsing employees data:', error);
         console.log('Raw data:', element.dataset.employees);
     }
+}
+
+function selectEmployee(date, time, employeeId, employeeName) {
+    console.log("selecting");
+    // Setze das Datum
+    document.getElementById('appointment_date').value = date;
+    
+    // Setze die Zeit
+    document.getElementById('appointment_time').value = time;
+    
+    // Setze den Mitarbeiter
+    document.getElementById('employee_id').value = employeeId;
+    document.getElementById('employee_name').value = employeeName;
+    
+    // Schließe das Modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
+    modal.hide();
 }
 </script>
