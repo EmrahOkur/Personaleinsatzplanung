@@ -87,4 +87,61 @@ class Employee extends Model
 
         return self::where('department_id', $departmentId)->get()->toArray();
     }
+
+    public static function getNextWeekAvailabilities()
+    {
+        // Get external employees
+        $employees = self::getExternalEmployees();
+
+        // Get next week's dates
+        $nextWeek = collect();
+        $startOfNextWeek = now()->addWeek()->startOfWeek();
+
+        // Build array of next week's dates (Monday to Friday)
+        for ($i = 0; $i < 5; $i++) {
+            $date = $startOfNextWeek->copy()->addDays($i);
+            $nextWeek->push([
+                'date' => $date->format('Y-m-d'),
+                'weekday' => $date->dayOfWeekIso, // 1 = Monday, 7 = Sunday
+            ]);
+        }
+
+        // Get availabilities for each employee
+        $availabilities = [];
+        foreach ($employees as $employee) {
+            $employeeAvailabilities = Availability::where('employee_id', $employee['id'])
+                ->whereIn('weekday', range(1, 5))
+                ->get();
+
+            // Map availabilities to actual dates
+            foreach ($nextWeek as $day) {
+                $dayAvailability = $employeeAvailabilities
+                    ->where('weekday', $day['weekday'])
+                    ->first();
+
+                if ($dayAvailability) {
+                    $availabilities[] = [
+                        'employee_id' => $employee['id'],
+                        'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                        'employee_number' => $employee['employee_number'],
+                        'date' => $day['date'],
+                        'weekday' => $dayAvailability->weekday,
+                        'weekday_name' => [
+                            1 => 'Montag',
+                            2 => 'Dienstag',
+                            3 => 'Mittwoch',
+                            4 => 'Donnerstag',
+                            5 => 'Freitag',
+                        ][$dayAvailability->weekday],
+                        'start_time' => $dayAvailability->start_time->format('H:i'),
+                        'end_time' => $dayAvailability->end_time->format('H:i'),
+                        'hours' => $dayAvailability->start_time->diffInHours($dayAvailability->end_time),
+                    ];
+                }
+            }
+            // dd($availabilities);
+        }
+
+        return collect($availabilities)->sortBy(['date', 'start_time'])->values()->all();
+    }
 }

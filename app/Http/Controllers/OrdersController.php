@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Services\AddressService;
@@ -28,7 +29,31 @@ class OrdersController extends Controller
 
     public function create(Request $request)
     {
-        return view('orders.create');
+        $employees = [];
+        $departments = [];
+
+        return view('orders.create', compact('employees', 'departments'));
+    }
+
+    public function search(Request $request)
+    {
+        $term = $request->input('term');
+
+        return Customer::where('nachname', 'LIKE', "%{$term}%")
+            ->orWhere('vorname', 'LIKE', "%{$term}%")
+            ->orWhere('companyname', 'LIKE', "%{$term}%")
+            ->orWhere('customer_number', 'LIKE', "%{$term}%")
+            ->limit(10)
+            ->get();
+    }
+
+    public function availabilities(Request $request)
+    {
+        $employees = Employee::getExternalEmployees();
+        $av = Employee::getNextWeekAvailabilities();
+
+        // dd($employees);
+        return response()->json($av);
     }
 
     public function distance(Request $request, AddressService $addressService)
