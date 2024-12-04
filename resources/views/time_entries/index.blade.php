@@ -50,8 +50,8 @@ Zeiterfassungen
 
     <!-- Tabelle der Zeiteinträge mit stilisiertem Design -->
     <div class="table-responsive">
-        <table class="table table-hover table-striped align-middle">
-            <thead class="table-dark">
+        <table class="table table-hover table-striped table-borderd align-middle">
+            <thead class="">
                 <tr>
                     <th>ID</th>
                     <th>Mitarbeiter</th>
