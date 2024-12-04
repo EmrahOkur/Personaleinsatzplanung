@@ -37,6 +37,7 @@ class EmployeeFactory extends Factory
             'vacation_days' => 30,
             'status' => 'active',
             'department_id' => $departmentIds[array_rand($departmentIds)],
+            'working_hours' => 40,
         ];
     }
 }

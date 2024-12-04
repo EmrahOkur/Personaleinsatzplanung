@@ -228,6 +228,25 @@
             @enderror
         </div>
     </div>
+
+    <div class="col-md-6">
+        <label for="working_hours" class="form-label">Arbeitsstunden</label>
+        <input type="number" 
+               class="form-control @error('working_hours') is-invalid @enderror" 
+               id="working_hours" 
+               name="working_hours" 
+               value="{{ old('working_hours', $employee->working_hours ?? '') }}" 
+               required
+               min="0"
+               max="60">
+        <div class="invalid-feedback">
+            @error('working_hours')
+                {{ $message }}
+            @else
+                Bitte geben Sie eine gültige Anzahl an Arbeitsstunden ein (0-60).
+            @enderror
+        </div>
+    </div>
     
     <div class="col-12 mt-4">
         <button class="btn btn-primary" type="submit">Speichern</button>

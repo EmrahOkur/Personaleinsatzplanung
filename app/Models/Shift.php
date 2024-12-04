@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Shift extends Model
 {
     use HasFactory;
-    protected $fillable = ['date_shift','start_time','end_time','amount_employees']; // 'user_id',
+    protected $fillable = ['date_shift','start_time','end_time','amount_employees','shift_hours']; // 'user_id',
     public function employees(): BelongsToMany
     {
         return $this->belongsToMany(Employee::class);

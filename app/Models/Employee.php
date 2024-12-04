@@ -28,6 +28,7 @@ class Employee extends Model
         'status',
         'emergency_contact_name',
         'emergency_contact_phone',
+        'working_hours',
     ];
 
     protected $dates = [

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Models\Employee;
+use Carbon\Carbon;
+
 
 class DepartmentController extends Controller
 {
@@ -115,11 +117,24 @@ class DepartmentController extends Controller
                 ->with('error', 'Fehler beim Anlegen des Mitarbeiters. Bitte versuchen Sie es erneut.');
         }
     }
-    public function getEmployeesFromDepartmentByUser(Request $request, $userId)
+    public function getEmployeesFromDepartmentByUser(Request $request, $userId,$startOfWeek, $endOfWeek)
     {
+        
         $user = User::findorfail($userId);
         $department = $user->employee->department;
-        $departmentEmployees = Employee::where('department_id', $department->id)->get();
-        return response()->json([ 'departmentEmployees' => $departmentEmployees,'department' => $department ]);
+        //$departmentEmployees = Employee::where('department_id', $department->id)->get();
+        // Hole alle Mitarbeiter aus der Abteilung mit ihren Schichten innerhalb der Woche
+        $startOfWeek = Carbon::createFromFormat('d.m.Y', $startOfWeek)->toDateString(); 
+        $endOfWeek = Carbon::createFromFormat('d.m.Y', $endOfWeek)->toDateString(); 
+        //$departmentEmployees = Employee::all();
+        // Hole alle Mitarbeiter und lade die Schichten innerhalb des angegebenen Zeitraums
+        $departmentEmployees = Employee::with([
+            'shifts' => function ($query) use ($startOfWeek, $endOfWeek) {
+                $query->whereBetween('date_shift', [$startOfWeek, $endOfWeek]); // Schichten innerhalb des Zeitraums filtern
+            }
+        ])
+        ->where('department_id', $department->id) // Nur Mitarbeiter aus der richtigen Abteilung
+        ->get();
+        return response()->json([ 'departmentEmployees' => $departmentEmployees,'department' => $department,'startOfWeek'=>$startOfWeek,'endOfWeek'=>$endOfWeek ]);
     }
 }
