@@ -129,7 +129,6 @@
                             title: name,
                             date: formateDate(details.datum),
                             color: '#FA8072',
-                            textColor: 'white'
                         });
                     }
                     let shifts = document.querySelectorAll(".shift-button");
