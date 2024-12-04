@@ -1,6 +1,6 @@
 <x-app-layout>
     @section('header')
-        <span class="ls-3 ps-3 fs-4">Urlaubsübersicht</span>   
+        Urlaubsübersicht
     @endsection
 
     @section('main')

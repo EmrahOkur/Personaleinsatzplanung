@@ -1,8 +1,6 @@
 <x-app-layout>
     @section('header')
-        <span class="ms-5 font-bold text-gray-800 leading-tight text-2xl">
-            {{ __('Mitarbeiter') }}
-        </span>
+        Mitarbeiter        
     @endsection
     
     @section('main')

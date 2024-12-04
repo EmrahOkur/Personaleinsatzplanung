@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
+@section('header')
+Zeiterfassungen
+@endsection
 @section('main')
 <div class="container">
     <!-- Überschrift mit einem einladenden Titel und einem Symbol -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5">Zeiterfassungen</h1>
-        <a href="{{ route('time_entries.create') }}" class="btn btn-primary btn-lg">
+    <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
+        
+        <a href="{{ route('time_entries.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Neuer Zeiteintrag
         </a>
     </div>
