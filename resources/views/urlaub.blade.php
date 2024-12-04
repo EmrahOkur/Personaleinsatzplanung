@@ -1,89 +1,112 @@
 <x-app-layout>
     @section('header')
-        <h1>Urlaubsübersicht</h1>
+        <span class="ls-3 ps-3 fs-4">Urlaubsübersicht</span>   
     @endsection
 
     @section('main')
+        @php
+            $status = [
+                'pending' => 'Freigabe ausstehend',
+                'rejected' => 'Urlaub abgelehnt',
+                'rejected' => 'Urlaub abgelehnt',
+            ];
+        @endphp
 
-    <h2>Anspruch</h2>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Verfügbare Urlaubstage</th>
-                <th>Genommene Urlaubstage</th>
-                <th>Verplante Urlaubstage</th>
-                <th>Resturlaubstage</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ $verfügbare_tage }}</td>
-                <td>{{ $genommene_tage }}</td>
-                <td>{{ $verplante_tage }}</td>
-                <td>{{ $verbleibende_tage }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="p-3">    
+            <div class="d-flex justify-content-end fixed-bottom-buttons mb-4">
+                <form action="{{ route('urlaubs.beantragen') }}" method="GET" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Urlaub beantragen</button>
+                </form>
+            </div>
 
-    <h2>Antragsübersicht</h2>
+        <table class="table table-stripe mb-5">
+            <thead>
+                <tr>
+                    <th>Verfügbare Urlaubstage</th>
+                    <th>Genommene Urlaubstage</th>
+                    <th>Verplante Urlaubstage</th>
+                    <th>Resturlaubstage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $verfügbare_tage }}</td>
+                    <td>{{ $genommene_tage }}</td>
+                    <td>{{ $verplante_tage }}</td>
+                    <td>{{ $verbleibende_tage }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Abwesenheitsart</th>
-                <th>Abwesend vom</th>
-                <th>Abwesend bis</th>
-                 <th>Status</th>
-                <th>Genehmigender</th>
-                <th>Kontingentverbrauch</th>
-                <th>ID</th>
-                <th></th>
-               
-                
-            </tr>
-        </thead>
-        <tbody id="urlaubTableBody">
-        @foreach($urlaubs as $urlaub)
-            @php
-                $kontingentverbrauch = null;
-                $startDatum = new DateTime($urlaub->datum_start);
-                $endDatum = new DateTime($urlaub->datum_ende);
-                $difference = $startDatum->diff($endDatum)->days;
-                $kontingentverbrauch = $difference > 0 ? $difference + 1 : 1;
-            @endphp
+        <div class="row">
+            <div id="calendar" class="col-sm" style="width: 100%;"></div>
 
-            <tr>
-                <td>{{ $urlaub->abwesenheitsart }}</td>
-                <td>{{ $urlaub->datum_start }}</td>
-                <td>{{ $urlaub->datum_ende }}</td>
-                <td>{{ $urlaub->status }}</td>
-                <td>{{ $urlaub->genehmigender }}</td>
-                <td>{{ $kontingentverbrauch !== null ? $kontingentverbrauch : 'N/A' }}</td>
-                <td>{{ $urlaub->id }}</td>
-                <td align="right" class="pe-3">
-    <form action="{{ route('urlaubs.loeschen', $urlaub->id) }}" method="POST" style="display: inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')">
-            Löschen
-        </button>
-    </form>
-</td>
-              
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+            <div class="col-sm">
+                <table class="col-sm table table-striped" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Abwesend am</th>
+                            <th>Status</th>
+                            <th></th>                
+                        </tr>
+                    </thead>
+                    <tbody id="urlaubTableBody">
+                        @foreach($urlaubs as $urlaub)
+                            <tr>
+                                <td>{{ $urlaub->datum }}</td>
+                                <td>{{ $status[$urlaub->status] }}</td>
+                                <td class="pe-3">
+                                    <form action="{{ route('urlaubs.loeschen', $urlaub->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')">
+                                            <i class="bi bi-trash" ></i>Löschen 
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
 
-    <div class="fixed-bottom-buttons">
-        <form action="{{ route('urlaubs.beantragen') }}" method="GET" style="display: inline;">
-            <button type="submit" class="btn btn-primary">Urlaub beantragen</button>
-        </form>
-        <form action="{{ route('urlaubs.übersicht') }}" method="GET" style="display: inline;">
-            <button type="submit" class="btn btn-primary">Kalenderübersicht</button>
-        </form>
-    </div>
+    
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script> 
+            <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales-all.min.js'></script>
 
+            <script>      
+                document.addEventListener('DOMContentLoaded', function () {
+                    var calendarEl = document.getElementById('calendar');
+
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth', // Startansicht (Monatsansicht)
+                        locale: 'de',                // Deutsche Lokalisierung
+                        firstDay: 1,
+                        headerToolbar: {
+                            left:  'today',  // Navigationsbuttons
+                            center: 'title',         // Kalender-Titel
+                            right: 'prev,next', // Umschaltmöglichkeiten
+                        },
+                        events: @json($events),      // Events aus dem Backend
+                        eventSources: [
+                            {
+                                url: '/urlaubs/feiertage', // URL zum Abrufen der Feiertage
+                                method: 'GET',
+                                failure: function() {
+                                    alert('Fehler beim Laden der Feiertage.');
+                                },
+                                color: 'red',         // Feiertage in Rot
+                                textColor: 'white',   // Weißer Text
+                            }
+                        ]
+                    });
+
+                    calendar.render();
+                });
+            </script>    
+        </div>
     @endsection
 </x-app-layout>

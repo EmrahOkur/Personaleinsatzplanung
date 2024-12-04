@@ -18,13 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
+
         return redirect()->route('home');
     }
 
     return view('welcome');
 });
-
-
 
 Route::get('/dashboard', function () {
     return view('layouts/app');
@@ -44,16 +43,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/employees/store', 'store')->name('employees.store');
         Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
         Route::post('/employees/update/{id}', 'update')->name('employees.update');
+        Route::post('/employees/{id}/availabilities', 'saveAvailabilities')->name('employees.availabilities');
     });
-  
+
     Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');
     Route::get('/urlaubs/beantragen', [UrlaubController::class, 'beantragen'])->name('urlaubs.beantragen');
     Route::post('/urlaubs/speichern', [UrlaubController::class, 'speichern'])->name('urlaubs.speichern');
+
     Route::get('/urlaubs/übersicht', [UrlaubController::class, 'übersicht'])->name('urlaubs.übersicht');
     Route::get('/urlaubs/feiertage', [UrlaubController::class, 'feiertage'])->name('urlaubs.feiertage');
     Route::delete('/urlaub/{id}/loeschen', [UrlaubController::class, 'destroy'])->name('urlaubs.loeschen');
-   
-    
 
     // User Routes
     Route::controller(UserController::class)->group(function () {

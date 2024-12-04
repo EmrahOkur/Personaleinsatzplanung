@@ -4,149 +4,101 @@
     @endsection
     
     @section("main")
-        <!-- Zugangsdaten -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
+
+    
+<div class="card">
+    <div class="card-body">
+        {{-- Tab Navigation --}}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" 
+                        id="personal-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#personal" 
+                        type="button" 
+                        role="tab">
+                    Persönliche Daten
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="employment-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#employment" 
+                        type="button" 
+                        role="tab">
                     Zugangsdaten
                     @if($employee->user)
-                        <span class="badge bg-success ms-2">
-                            <i class="bi bi-check-circle"></i> Eingerichtet
+                        <span class="badge bg-success" title="Benutzeraccount aktiv">
+                            <i class="bi bi-check-lg">&#10003;</i>
                         </span>
                     @else
-                        <span class="badge bg-warning ms-2">
-                            <i class="bi bi-exclamation-triangle"></i> Nicht eingerichtet
+                        <span class="badge bg-danger" title="Kein Benutzeraccount">
+                            <i class="bi bi-x-lg">&#10060;</i>
                         </span>
                     @endif
-                </h5>
-            </div>
-            <div class="card-body">
-                @if($employee->user)
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div>
-                            <strong>Aktueller Benutzername:</strong>
-                            <span class="ms-2">{{ $employee->user->email }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="documents-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#documents" 
+                        type="button" 
+                        role="tab">
+                    Verfügbarkeiten
+                </button>
+            </li>
+        </ul>
+
+        {{-- Tab Content --}}
+        <div class="tab-content pt-4" id="myTabContent">
+            {{-- Tab 1: Persönliche Daten --}}
+            <div class="tab-pane fade show active" 
+                 id="personal" 
+                 role="tabpanel">
+                 <div class="">
+                    <!-- Stammdaten -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Stammdaten</h5>
                         </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateCredentialsModal">
-                            <i class="bi bi-pencil me-2"></i>Zugangsdaten ändern
-                        </button>
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation" novalidate>
+                                @csrf
+                                <x-employee-form-fields :employee="$employee" :departments="$departments" />
+                            </form>
+                        </div>
                     </div>
-                @else
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-muted">Keine Zugangsdaten vorhanden</div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCredentialsModal">
-                            <i class="bi bi-plus-circle me-2"></i>Zugangsdaten einrichten
-                        </button>
-                    </div>
-                @endif
+                </div>    
+            </div>
+                
+                {{-- Tab 2: Beschäftigung --}}
+            <div class="tab-pane fade" 
+                id="employment" 
+                role="tabpanel">
+                @include('employees.partials.edit-creds-modal', ['employee' => $employee])
+                 @include('employees.partials.creds', ['employee' => $employee])
+                 @include('employees.partials.new-creds-modal', ['employee' => $employee])
+            </div>
+            
+            {{-- Tab 3: Dokumente --}}
+            <div class="tab-pane fade" 
+                 id="documents" 
+                 role="tabpanel">
+                 @include('employees.availabilities.index', [
+                     'employee' => $employee,
+                     'timeOptions' => $timeOptions
+                     ])
             </div>
         </div>
+    </div>
+</div>
+@endsection
+
     
-        <div class="">
-            <!-- Stammdaten -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Stammdaten</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('employees.update', $employee->id) }}" class="needs-validation" novalidate>
-                        @csrf
-                        <x-employee-form-fields :employee="$employee" :departments="$departments" />
-                    </form>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Modal für neue Zugangsdaten -->
-        <div class="modal fade" id="createCredentialsModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Neue Zugangsdaten einrichten</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form id="createCredsForm" onsubmit="return handleCreateCreds(event)">
-                        <div class="modal-body">
-                            <div id="createCredsAlert" class="alert d-none"></div>
-                            
-                            <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                            
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Benutzername</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-    
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Passwort</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-    
-                            <div class="mb-3">
-                                <label for="password_confirmation" class="form-label">Passwort bestätigen</label>
-                                <input type="password" class="form-control" id="password_confirmation" 
-                                       name="password_confirmation" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                            <button type="submit" class="btn btn-primary">Speichern</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Modal für Zugangsdaten ändern -->
-        <div class="modal fade" id="updateCredentialsModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Zugangsdaten ändern</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form id="updateCredsForm" onsubmit="return handleUpdateCreds(event)">
-                        <div class="modal-body">
-                            <div id="updateCredsAlert" class="alert d-none"></div>
-                            
-                            <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                            
-                            <div class="mb-3">
-                                <label for="update_email" class="form-label">Benutzername</label>
-                                <input type="email" class="form-control" id="update_email" name="email" 
-                                       value="{{ $employee->user->email ?? '' }}" required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-    
-                            <div class="mb-3">
-                                <label for="update_password" class="form-label">Neues Passwort</label>
-                                <input type="password" class="form-control" id="update_password" name="password">
-                                <div class="form-text">Leer lassen, wenn das Passwort nicht geändert werden soll.</div>
-                                <div class="invalid-feedback"></div>
-                            </div>
-    
-                            <div class="mb-3">
-                                <label for="update_password_confirmation" class="form-label">Passwort bestätigen</label>
-                                <input type="password" class="form-control" id="update_password_confirmation" 
-                                       name="password_confirmation">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                            <button type="submit" class="btn btn-primary">Speichern</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    
-    @endsection
-    
-    @push('scripts')
-    <script>
+@push('scripts')
+<script>
         // Javascript für die AJAX-Calls
 async function handleCreateCreds(event) {
     event.preventDefault();
@@ -272,9 +224,8 @@ async function handleUpdateCreds(event) {
     }
     
     return false;
-}   
-    
-   
-    </script>
-    @endpush
-    </x-app-layout>
+} 
+</script>
+@endpush
+
+</x-app-layout>
