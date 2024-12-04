@@ -102,12 +102,14 @@ class Employee extends Model
             $date = $startOfNextWeek->copy()->addDays($i);
             $nextWeek->push([
                 'date' => $date->format('Y-m-d'),
-                'weekday' => $date->dayOfWeekIso, // 1 = Monday, 7 = Sunday
+                'weekday' => $date->dayOfWeekIso,
             ]);
         }
 
+        // Initialize structured array
+        $structuredAvailabilities = [];
+
         // Get availabilities for each employee
-        $availabilities = [];
         foreach ($employees as $employee) {
             $employeeAvailabilities = Availability::where('employee_id', $employee['id'])
                 ->whereIn('weekday', range(1, 5))
@@ -120,28 +122,53 @@ class Employee extends Model
                     ->first();
 
                 if ($dayAvailability) {
-                    $availabilities[] = [
-                        'employee_id' => $employee['id'],
-                        'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
-                        'employee_number' => $employee['employee_number'],
-                        'date' => $day['date'],
-                        'weekday' => $dayAvailability->weekday,
-                        'weekday_name' => [
-                            1 => 'Montag',
-                            2 => 'Dienstag',
-                            3 => 'Mittwoch',
-                            4 => 'Donnerstag',
-                            5 => 'Freitag',
-                        ][$dayAvailability->weekday],
-                        'start_time' => $dayAvailability->start_time->format('H:i'),
-                        'end_time' => $dayAvailability->end_time->format('H:i'),
-                        'hours' => $dayAvailability->start_time->diffInHours($dayAvailability->end_time),
-                    ];
+                    $date = $day['date'];
+                    $startHour = (int) $dayAvailability->start_time->format('H');
+                    $endHour = (int) $dayAvailability->end_time->format('H');
+
+                    // Initialize date in array if not exists
+                    if (! isset($structuredAvailabilities[$date])) {
+                        $structuredAvailabilities[$date] = [
+                            'date' => $date,
+                            'weekday' => $dayAvailability->weekday,
+                            'weekday_name' => [
+                                1 => 'Montag',
+                                2 => 'Dienstag',
+                                3 => 'Mittwoch',
+                                4 => 'Donnerstag',
+                                5 => 'Freitag',
+                            ][$dayAvailability->weekday],
+                            'hours' => [],
+                        ];
+                    }
+
+                    // Add availability for each hour in the range
+                    for ($hour = $startHour; $hour < $endHour; $hour++) {
+                        if (! isset($structuredAvailabilities[$date]['hours'][$hour])) {
+                            $structuredAvailabilities[$date]['hours'][$hour] = [];
+                        }
+
+                        $structuredAvailabilities[$date]['hours'][$hour][] = [
+                            'employee_id' => $employee['id'],
+                            'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                            'employee_number' => $employee['employee_number'],
+                            'start_time' => sprintf('%02d:00', $hour),
+                            'end_time' => sprintf('%02d:00', $hour + 1),
+                        ];
+                    }
                 }
             }
-            // dd($availabilities);
         }
 
-        return collect($availabilities)->sortBy(['date', 'start_time'])->values()->all();
+        // Sort by date and convert to array
+        ksort($structuredAvailabilities);
+
+        // Convert hours arrays to sorted arrays
+        foreach ($structuredAvailabilities as &$day) {
+            ksort($day['hours']);
+            $day['hours'] = array_values($day['hours']);
+        }
+
+        return array_values($structuredAvailabilities);
     }
 }

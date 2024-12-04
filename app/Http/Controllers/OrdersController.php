@@ -23,16 +23,15 @@ class OrdersController extends Controller
         $employees = Employee::where('department_id', $departmentId);
 
         return view('orders.index', compact(
-            'employees'
+            'employees',
         ));
     }
 
     public function create(Request $request)
     {
-        $employees = [];
-        $departments = [];
+        $av = Employee::getNextWeekAvailabilities();
 
-        return view('orders.create', compact('employees', 'departments'));
+        return view('orders.create', compact('av'));
     }
 
     public function search(Request $request)
