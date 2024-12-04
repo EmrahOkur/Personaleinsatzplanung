@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ResponsibilitySeeder::class,
             UrlaubSeeder::class,
-            CustomerSeeder::class
+            CustomerSeeder::class,
+            AvailabilitySeeder::class,
         ]);
     }
 }

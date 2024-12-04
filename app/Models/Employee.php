@@ -80,4 +80,11 @@ class Employee extends Model
     {
         return "{$this->first_name} {$this->last_name}" . ($this->department ? " ({$this->department->name})" : '');
     }
+
+    public static function getExternalEmployees()
+    {
+        $departmentId = Department::where('name', 'Extern')->first()->id;
+
+        return self::where('department_id', $departmentId)->get()->toArray();
+    }
 }
