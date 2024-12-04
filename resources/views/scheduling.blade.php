@@ -118,6 +118,38 @@
     <script>
         let userId = document.getElementById("schedule-header").dataset.loggeduserid;
 
+        function markHolidays(){
+            fetch('/urlaubs/feiertage')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("update")
+                    let events = [];
+                    for (const [name, details] of Object.entries(data)) {
+                        events.push({
+                            title: name,
+                            date: formateDate(details.datum),
+                            color: '#FA8072',
+                            textColor: 'white'
+                        });
+                    }
+                    let shifts = document.querySelectorAll(".shift-button");
+                    let shift_dates = [];
+                    console.log("events",events)
+                    console.log("shifts: ",shifts)
+                    shifts.forEach(shift => {
+                        shift_dates.push(shift.getAttribute("data-date"));
+                        console.log("in for each ",shift.getAttribute("data-date"))
+                    })
+                    events.forEach(event => {
+                        if(shift_dates.includes(event.date)){
+                            document.getElementById(event.date).closest("td").style.backgroundColor = event.color;
+                            console.log("found",document.getElementById(event.date).closest(".td-wrapper-flex"))
+                        }
+                    })
+                })
+                .catch(error => console.log(error));
+        }
+
         function calculateShiftHours(startTime,endTime) {
             // Wandle die Zeiten in Minuten um
             let startTimeParts = startTime.split(":");
@@ -134,7 +166,6 @@
             let shiftHours = differenceInMinutes / 60;
 
             // Ausgabe der berechneten Stunden (zum Beispiel 2.5 Stunden)
-            console.log(shiftHours);
 
             return shiftHours;
         }
@@ -167,7 +198,6 @@
                         sidebarEmployees.innerHTML = employee.first_name + " " + employee.last_name + " "+countTime+ "/" +  employee.working_hours;
                         sidebar.appendChild(sidebarEmployees);
                     });
-                    console.log(data.endOfWeek," ",data.startOfWeek)
 
                     
                 })
@@ -175,7 +205,6 @@
         let currentDate = new Date();
                 // Diese Funktion aktualisiert die Woche und zeigt die richtigen Daten an
         function updateWeek() {
-            console.log("triggered")
             const weekLabel = document.getElementById('week-label');
 
             // Berechne den ersten Tag der Woche
@@ -211,7 +240,7 @@
                 const dateElement = document.createElement('span');
                 const addshiftButton = document.createElement('button');
                 addshiftButton.textContent = "Hinzufügen";
-                addshiftButton.setAttribute("class", "btn btn-primary padding-5px");
+                addshiftButton.setAttribute("class", "btn btn-primary padding-5px shift-button");
                 addshiftButton.setAttribute("data-bs-target", "#scheduleModal"); 
                 addshiftButton.setAttribute("data-bs-toggle", "modal");
                 addshiftButton.setAttribute("data-date", `${dateCounter.getDate()}.${dateCounter.getMonth() + 1}.${dateCounter.getFullYear()}`);
@@ -256,12 +285,11 @@
             // Füge die Zeile der Tabelle hinzu
             scheduleBody.appendChild(row);
 
-            document.querySelectorAll('#secondModalAddEmployees').forEach(button =>{
-                
+
             usersListEqualHeight();
             amaountEmployeesEqualHeight();
             showUnfilledShifts();
-        })
+            markHolidays();
 
         })
         .catch(error => {
