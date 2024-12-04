@@ -1,6 +1,6 @@
 <x-app-layout>
     @section('header')
-        <span class="ms-5 font-bold text-gray-800 leading-tight text-2xl">Urlaub beantragen</span>
+        Urlaub beantragen
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
     @endsection
  

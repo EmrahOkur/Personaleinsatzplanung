@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
@@ -7,11 +9,12 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    //
     public function index()
     {
         $customers = Customer::all();
-        return view('customer',compact('customers'));
+        dd($customers);
+
+        return view('customer', compact('customers'));
     }
 
     public function store(Request $request)
@@ -22,7 +25,8 @@ class CustomerController extends Controller
         $customer->nachname = $request->nachname;
         $customer->ort = $request->ort;
         $customer->save();
-        return redirect()->route('customers',compact('customers'));
+
+        return redirect()->route('customers', compact('customers'));
     }
 
     public function delete($id)
@@ -30,13 +34,15 @@ class CustomerController extends Controller
         $customer = Customer::findorfail($id);
         $customer->delete();
         $customers = Customer::all();
+
         return response()->json(['success' => 'User Deleted Successfully!']);
     }
 
     public function edit($id)
     {
         $customer = Customer::findorfail($id);
-        return view('editcustomer',compact('customer'));
+
+        return view('editcustomer', compact('customer'));
     }
 
     public function update(Request $request, $id)
@@ -47,6 +53,7 @@ class CustomerController extends Controller
         $customer->nachname = $request->editNachname;
         $customer->ort = $request->editOrt;
         $customer->save();
-        return redirect()->route('customers',compact('customers'));
+
+        return redirect()->route('customers', compact('customers'));
     }
 }

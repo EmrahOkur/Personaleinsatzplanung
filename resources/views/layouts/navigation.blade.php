@@ -24,7 +24,7 @@
 @if(Auth::user()->isManager())
     <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('scheduling') ? 'active' : '' }}" href="{{ route('scheduling') }}">
-            <i class="fas fa-users"></i> {{ __('Arbeitsplan erstellen') }}
+            <i class="fas fa-hourglass"></i> {{ __('Arbeitsplan erstellen') }}
         </a>
     </li>
     @endif
@@ -49,7 +49,15 @@
 @if(Auth::user()->isEmployee()|| Auth::user()->isManager())
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('urlaubs') ? 'active' : '' }}" href="{{ route('urlaubs') }}">
-        <i class="fas fa-users"></i> {{ __('Urlaubsantrag') }}
+        <i class="fas fa-plane"></i> {{ __('Urlaubsantrag') }}
+    </a>
+</li>  
+@endif
+
+@if(Auth::user()->isManager())
+<li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}" href="{{ route('orders') }}">
+        <i class="fas fa-box"></i> {{ __('Aufträge') }}
     </a>
 </li>  
 @endif

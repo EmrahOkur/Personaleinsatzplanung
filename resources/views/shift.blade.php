@@ -1,20 +1,17 @@
 @extends('layouts.app')
 
 @section('header')
-    <section class=" header shift-header d-flex flex-column align-items-center" id="shift-header" data-loggeduserid = "{{Auth::id()}}">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Schichten') }}
-            <div class="">
-
-        </h2>
-        <div class="week-navigation">
-            <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
-            <span id="week-label" class="mx-2"></span>
-            <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
-        </div>
-    </section>
+Schichten
 @endsection
 @section('main')
+<section class=" header shift-header d-flex flex-column align-items-center mt-2 mb-3" id="shift-header" data-loggeduserid = "{{Auth::id()}}">
+    
+    <div class="week-navigation">
+        <button id="prev-week"  class="btn btn-primary">Vorherige Woche</button>
+        <span id="week-label" class="mx-2"></span>
+        <button id="next-week"  class="btn btn-primary">Nächste Woche</button>
+    </div>
+</section>
     <div class="container-fluid" style="position:relative;">
     <table class="table table-bordered">
     <div class="spinner-border" id="shift-spinner" role="status">

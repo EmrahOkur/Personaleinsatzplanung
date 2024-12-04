@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResponsibilityController;
 use App\Http\Controllers\SchedulingController;
@@ -44,6 +45,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
         Route::post('/employees/update/{id}', 'update')->name('employees.update');
         Route::post('/employees/{id}/availabilities', 'saveAvailabilities')->name('employees.availabilities');
+    });
+
+    Route::controller(OrdersController::class)->group(function () {
+        Route::get('/orders', 'index')->name('orders');
+        Route::get('/orders/create', 'create')->name('orders.create');
+        Route::get('/orders/distance', 'distance')->name('orders.distance');
+        Route::get('/orders/search', 'search')->name('orders.search');
+        Route::get('/orders/store', 'store')->name('orders.store');
+        Route::get('/orders/availabilities', 'availabilities')->name('orders.availabilities');
     });
 
     Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');

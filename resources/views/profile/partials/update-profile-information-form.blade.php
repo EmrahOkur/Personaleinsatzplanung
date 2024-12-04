@@ -2,16 +2,16 @@
     <div class="card-body">
         <header class="mb-4">
             <h2 class="card-title">
-                Profil Information
+                Benutzer-Information
             </h2>
             <p class="card-text text-muted small">
                 Aktualisieren Sie Ihre Profildaten und E-Mail-Adresse.
             </p>
         </header>
 
-        <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+        {{-- <form id="send-verification" method="post" action="{{ route('verification.send') }}">
             @csrf
-        </form>
+        </form> --}}
 
         <form method="post" action="{{ route('profile.update') }}">
             @csrf

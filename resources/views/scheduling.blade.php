@@ -1,18 +1,19 @@
 
 @extends('layouts.app')
 @section('header')
-    <section class="header d-flex flex-column align-items-center" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" >
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight" id="schedule-h2">
-
-        </h2>
-        <div class="month-navigation">
-            <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
-            <span id="week-label" class="mx-2"></span>
-            <button id="next-week" class="btn btn-primary">Nächste Woche</button>
-        </div>
-    </section>
+    Arbeitsplan erstellen
 @endsection
 @section('main')
+<section class="header d-flex flex-column align-items-center mt-2 mb-3" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" >
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight" id="schedule-h2">
+
+    </h2>
+    <div class="month-navigation">
+        <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
+        <span id="week-label" class="mx-2"></span>
+        <button id="next-week" class="btn btn-primary">Nächste Woche</button>
+    </div>
+</section>
     <!-- 2. Modalfenster -->
     <div class="modal fade" id="secondModalSchedule" tabindex="-1" aria-labelledby="secondModalScheduleLabel" aria-hidden="true">
     <div class="modal-dialog">

@@ -1,9 +1,6 @@
 <x-app-layout>
     @section('header')
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Benutzerdaten ändern') }}
-        </h2>
-    @endsection
+       Benutzerdaten ändern
 
     @section('main')
     <div class="py-12">
