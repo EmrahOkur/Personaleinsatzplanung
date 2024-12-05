@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Orders;
 use App\Services\AddressService;
@@ -20,12 +19,12 @@ class OrdersController extends Controller
         GeocodingService $geocoder,
         OSRMService $osrm)
     {
-        $departmentId = Department::where('name', 'Extern')->first()->id;
-        $employees = Employee::where('department_id', $departmentId);
+        $orders = Orders::with(['customer', 'employee'])
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
+            ->paginate(15);
 
-        return view('orders.index', compact(
-            'employees',
-        ));
+        return view('orders.index', compact('orders'));
     }
 
     public function create(Request $request)
