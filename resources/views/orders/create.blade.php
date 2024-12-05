@@ -5,19 +5,15 @@
 
     @section('main')
         <div class="container-fluid">
+            <div class="card mb-1">
+                <div class="card-body">
             <div class="row">
                 <!-- Linke Spalte -->
-                <div class="col-md-4">
+                <div class="col-md-4 mb-3 pb-3">
                     <!-- Suchfeld Card -->
-                    <div class="card mb-3">
-                        <div class="card-body">
+                   
                             @include('components.customer-search')
-                        </div>
-                    </div>
-
-                    <!-- Kundeninformationen Card -->
-                    <div class="card mb-3">
-                        <div class="card-body">
+                        
                             <form id="orderForm" method="POST" action="{{ route('orders.store') }}">
                                 @csrf
                                 <!-- Customer Form Fields -->
@@ -42,10 +38,23 @@
                                         <input type="text" class="form-control" id="nachname" name="nachname" readonly>
                                     </div>
 
+                                    <div class="col-12">
+                                        <label for="appointment_date" class="form-label">Datum</label>
+                                        <input type="date" class="form-control" id="appointment_date" name="appointment_date" readonly>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="appointment_time" class="form-label">Startzeit</label>
+                                        <input type="time" class="form-control" id="appointment_time" name="appointment_time" readonly>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="employee_name" class="form-label">Mitarbeiter</label>
+                                        <input type="text" class="form-control" id="employee_name" name="employee_name" readonly>
+                                    </div>
+                                    
                                     <input type="hidden" id="customer_id" name="customer_id">
                                     <input type="hidden" id="employee_id" name="employee_id">
-                                    <input type="hidden" id="appointment_date" name="appointment_date">
-                                    <input type="hidden" id="appointment_time" name="appointment_time">
                                 </div>
 
                                 <!-- Buttons -->
@@ -54,18 +63,15 @@
                                     <a href="{{ route('orders') }}" class="btn btn-secondary">Abbrechen</a>
                                 </div>
                             </form>
-                        </div>
-                    </div>
+                        
                 </div>
 
                 <!-- Rechte Spalte: Tabelle -->
                 <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            @include('orders.table', ['av' => $av])
-                        </div>
-                    </div>
+                     @include('orders.table', ['av' => $av])                        
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     @endsection

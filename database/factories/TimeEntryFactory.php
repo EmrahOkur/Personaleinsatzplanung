@@ -19,7 +19,7 @@ class TimeEntryFactory extends Factory
         $breakDuration = $this->faker->numberBetween(0, 60); // Pausenzeit in Minuten
 
         return [
-            'employee_id' => Employee::factory(), // Erzeugt automatisch einen neuen Mitarbeiter
+            'employee_id' => Employee::inRandomOrder()->first()->id, // Erzeugt automatisch einen neuen Mitarbeiter
             'date' => $this->faker->date(),
             'time_start' => $start,
             'time_end' => $end,

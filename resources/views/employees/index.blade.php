@@ -17,12 +17,14 @@
                                 <a href="{{ route('employees.new')}}" class="btn btn-primary">Mitarbeiter anlegen</a>
                             </div>
                         </div>
+                        {{-- {{dd($departments);}} --}}
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>E-Mail</th>
                                     <th>Personalnummer</th>
+                                    <th>Abteilung</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -32,6 +34,7 @@
                                     <td>{{ $employee->full_name }}</td>
                                     <td>{{ $employee->email }}</td>
                                     <td>{{ $employee->employee_number }}</td>
+                                    <td>{{ $departments[$employee->department_id - 1]['name'] }}</td>
                                     <td align="right" class="pe-3">
                                         <a href="{{ route('employees.edit', ['id' =>  $employee->id]) }}" 
                                             class="btn btn-primary"

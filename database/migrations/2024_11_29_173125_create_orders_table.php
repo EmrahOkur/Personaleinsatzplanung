@@ -25,7 +25,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            // Index für häufige Abfragen
             $table->index('appointment_date');
             $table->index('appointment_time');
         });
