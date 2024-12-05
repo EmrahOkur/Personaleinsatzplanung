@@ -24,9 +24,10 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        $departments = Department::all()->toArray();
         $employees = Employee::paginate(20);
 
-        return view('employees.index', compact('employees'));
+        return view('employees.index', compact('employees', 'departments'));
     }
 
     public function new(): View
