@@ -166,7 +166,6 @@ class EmployeeController extends Controller
     public function saveAvailabilities(Request $request, $id)
     {
         foreach ($request->availabilities as $availability) {
-
             $existingAvailability = Availability::where([
                 'employee_id' => $id,
                 'weekday' => $availability['weekday'],
@@ -185,6 +184,8 @@ class EmployeeController extends Controller
                 Availability::create($availabilityData);
             }
         }
+
+        return response()->json('okay');
     }
 
     /**
