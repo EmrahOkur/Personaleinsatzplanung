@@ -10,8 +10,12 @@
                     <label class="form-label">Startzeit</label>
                     <select class="form-select" name="{{ $dayKey }}_start">
                         <option value="">Bitte wählen</option>
+                        
                         @foreach ($timeOptions as $time)
-                            <option value="{{ $time }}">{{ $time }} Uhr</option>
+                            <option value="{{ $time }}" 
+                                {{ isset($availabilities[$dayKey]['start_time']) && $availabilities[$dayKey]['start_time'] === $time ? 'selected' : '' }}>
+                                {{ $time }} Uhr
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -20,7 +24,10 @@
                     <select class="form-select" name="{{ $dayKey }}_end">
                         <option value="">Bitte wählen</option>
                         @foreach ($timeOptions as $time)
-                            <option value="{{ $time }}">{{ $time }} Uhr</option>
+                            <option value="{{ $time }}"
+                                {{ isset($availabilities[$dayKey]['end_time']) && $availabilities[$dayKey]['end_time'] === $time ? 'selected' : '' }}>
+                                {{ $time }} Uhr
+                            </option>
                         @endforeach
                     </select>
                 </div>
