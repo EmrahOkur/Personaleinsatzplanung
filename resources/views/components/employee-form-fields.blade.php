@@ -13,7 +13,7 @@
                value="{{ old('first_name', $employee?->first_name ?? '') }}"
                required
                maxlength="255"
-               pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+        >
         <div class="invalid-feedback">
             @error('first_name')
                 {{ $message }}
@@ -32,7 +32,7 @@
                value="{{ old('last_name', $employee->last_name ?? '') }}" 
                required
                maxlength="255"
-               pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+        >
         <div class="invalid-feedback">
             @error('last_name')
                 {{ $message }}
@@ -51,7 +51,7 @@
                value="{{ old('email', $employee->email ?? '') }}" 
                required
                maxlength="255"
-               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+           >
         <div class="invalid-feedback">
             @error('email')
                 {{ $message }}
@@ -70,7 +70,7 @@
                value="{{ old('phone', $employee->phone ?? '') }}" 
                required
                maxlength="20"
-               pattern="^[+]?[0-9\s\-()]+$">
+           >
         <div class="invalid-feedback">
             @error('phone')
                 {{ $message }}
@@ -111,8 +111,7 @@
                id="employee_number" 
                name="employee_number" 
                value="{{ old('employee_number', $employee->employee_number ?? '') }}" 
-               required
-               pattern="^[A-Z0-9\-]+$"
+               required           
                maxlength="20">
         <div class="invalid-feedback">
             @error('employee_number')
