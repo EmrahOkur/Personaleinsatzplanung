@@ -67,7 +67,7 @@ class OrdersController extends Controller
 
         $order = Orders::create($validated);
 
-        return redirect()->route('orders.show', $order)
+        return redirect()->route('orders', $order)
             ->with('success', 'Auftrag erfolgreich erstellt');
     }
 

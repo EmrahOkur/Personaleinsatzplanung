@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders/create', 'create')->name('orders.create');
         Route::get('/orders/distance', 'distance')->name('orders.distance');
         Route::get('/orders/search', 'search')->name('orders.search');
-        Route::get('/orders/store', 'store')->name('orders.store');
+        Route::post('/orders/store', 'store')->name('orders.store');
         Route::get('/orders/availabilities', 'availabilities')->name('orders.availabilities');
     });
 
