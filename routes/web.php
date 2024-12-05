@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
@@ -29,6 +30,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('layouts/app');
 })->middleware(['auth', 'verified'])->name('layout.app');
+
+Route::group(['prefix' => 'api', 'middleware' => 'api_key'], function () {
+    Route::get('/employees', [ApiController::class, 'index']);
+    Route::post('/employees/store', [ApiController::class, 'store']);
+});
 
 Route::middleware('auth')->group(function () {
 

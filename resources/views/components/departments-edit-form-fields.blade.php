@@ -13,7 +13,7 @@
                 value="{{ old('name', $department?->name ?? '') }}"
                 required
                 maxlength="255"
-                pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+            >
             <div class="invalid-feedback">
                 @error('name')
                     {{ $message }}
@@ -32,7 +32,7 @@
                 value="{{ old('short_name', $department->short_name ?? '') }}" 
                 required
                 maxlength="255"
-                pattern="^[A-Za-zÄäÖöÜüß\s\-]+$">
+            >
             <div class="invalid-feedback">
                 @error('short_name')
                     {{ $message }}

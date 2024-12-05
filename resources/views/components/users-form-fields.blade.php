@@ -47,7 +47,7 @@
                value="{{ old('email', $user?->email ?? '') }}"
                required
                maxlength="255"
-               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+              >
         <div class="invalid-feedback">
             @error('email')
                 {{ $message }}

@@ -12,9 +12,11 @@
                             @foreach(['monday' => 'Montag', 'tuesday' => 'Dienstag', 'wednesday' => 'Mittwoch', 
                                     'thursday' => 'Donnerstag', 'friday' => 'Freitag', 'saturday' => 'Samstag', 
                                     'sunday' => 'Sonntag'] as $dayKey => $dayName)
+
                                 @include('employees.availabilities.partials.day-input', [
                                     'dayKey' => $dayKey,
                                     'dayName' => $dayName,
+                                    'availabilities' => $availabilities,
                                     'timeOptions' => $timeOptions
                                 ])
                     

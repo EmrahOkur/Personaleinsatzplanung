@@ -88,7 +88,8 @@
                  role="tabpanel">
                  @include('employees.availabilities.index', [
                      'employee' => $employee,
-                     'timeOptions' => $timeOptions
+                     'timeOptions' => $timeOptions,
+                     'availabilities' => $availabilities
                      ])
             </div>
         </div>
