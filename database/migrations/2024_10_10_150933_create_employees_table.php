@@ -18,7 +18,7 @@ return new class extends Migration {
             // Persönliche Daten
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
             $table->date('birth_date')->nullable();
