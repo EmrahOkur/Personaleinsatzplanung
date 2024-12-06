@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class UrlaubController extends Controller
 {
@@ -30,12 +31,16 @@ class UrlaubController extends Controller
         $verplante_tage = 0;
         $genommene_tage = 0;
         $heute = date('Y-m-d');
+        $jetzige_jahr = date('Y');
 
         foreach ($urlaubs as $urlaub) {
-            if ($urlaub->datum <= $heute) {
+            // Muss genehmigt sein
+            $jahr = Carbon::parse($urlaub->datum)->year;
+            if ($urlaub->datum <= $heute && $urlaub->status == 'accepted' && $jahr == $jetzige_jahr) {
                 // Liegt in der Vergangenheit: `genommene_tage`
                 $genommene_tage++;
-            } else {
+            // Muss genehmigt sein
+            } elseif($urlaub->status == 'accepted' && $jahr == $jetzige_jahr) {
                 // Liegt in der Zukunft: `verplante_tage`
                 $verplante_tage++;
             }

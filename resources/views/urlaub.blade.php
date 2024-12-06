@@ -23,6 +23,7 @@
         <table class="table table-stripe mb-5">
             <thead>
                 <tr>
+                    <th>Jahr</th>
                     <th>Verfügbare Urlaubstage</th>
                     <th>Genommene Urlaubstage</th>
                     <th>Verplante Urlaubstage</th>
@@ -31,6 +32,7 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>{{ now()->year }}</td>
                     <td>{{ $verfügbare_tage }}</td>
                     <td>{{ $genommene_tage }}</td>
                     <td>{{ $verplante_tage }}</td>
