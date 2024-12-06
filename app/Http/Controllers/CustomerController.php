@@ -12,7 +12,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        dd($customers);
+        //dd($customers);
 
         return view('customer', compact('customers'));
     }
@@ -23,7 +23,14 @@ class CustomerController extends Controller
         $customer = new Customer;
         $customer->vorname = $request->vorname;
         $customer->nachname = $request->nachname;
-        $customer->ort = $request->ort;
+        $customer->companyname = $request->companyname;
+
+        $customer->street = $request->street;
+        $customer->house_number = $request->house_number;
+        $customer->zip_code = $request->zip_code;
+        $customer->city = $request->city;
+        $customer->customer_number = $request->customer_number;
+
         $customer->save();
 
         return redirect()->route('customers', compact('customers'));
@@ -51,7 +58,12 @@ class CustomerController extends Controller
         $customer = Customer::findorfail($id);
         $customer->vorname = $request->editVorname;
         $customer->nachname = $request->editNachname;
-        $customer->ort = $request->editOrt;
+        $customer->companyname = $request->editCompanyname;
+
+        $customer->street = $request->editStreet;
+        $customer->house_number = $request->editHousenumber;
+        $customer->zip_code = $request->editZip;
+        $customer->city = $request->editCity;
         $customer->save();
 
         return redirect()->route('customers', compact('customers'));

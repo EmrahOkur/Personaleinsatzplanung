@@ -1,10 +1,8 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Kunden') }}
-        </h2>
-    </x-slot>
-
+    @section('header')
+        {{ __('Kunden') }}
+    @endsection
+    @section('main')
     <!-- Modal Kunden hinzufügen-->
     <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -18,15 +16,32 @@
         <div class="modal-body"> 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6 mb-7">
+                    <div class="col-md-6 ">
                         <input type="text" id="vorname" name="vorname" class="form-control" placeholder="Vorname">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-2">
                         <input type="text" id="nachname" name="nachname" class="form-control" placeholder="Nachname">
                     </div>
-                    <div class="col-md-12">
-                        <input type="text" id="ort" name="ort" class="form-control" placeholder="Ort">
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="companyname" name="companyname" class="form-control" placeholder="Unternehmen">
                     </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="street" name="street" class="form-control" placeholder="Straße">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="house_number" name="house_number" class="form-control" placeholder="Hausnummer">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="zip_code" name="zip_code" class="form-control" placeholder="PLZ">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="city" name="city" class="form-control" placeholder="Stadt">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <input type="text" id="customer_number" name="customer_number" class="form-control" placeholder="Kundennummer">
+                    </div>
+
+                    
                 </div>
             </div>
         </div>
@@ -79,7 +94,11 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Ort</th>
+                                    <th>Straße</th>
+                                    <th>Hausnummer</th>
+                                    <th>Postleitzahl</th>
+                                    <th>Stadt</th>
+                                    <th>Kundennummer</th>
                                     <th>Aktionen</th>
                                     <th>Löschen</th>
                                 </tr>
@@ -88,7 +107,11 @@
                                 @foreach($customers as $customer)
                                 <tr>
                                     <td>{{ $customer->vorname }} {{ $customer->nachname }}</td>
-                                    <td>{{ $customer->ort }}</td>
+                                    <td>{{ $customer->steet }}</td>
+                                    <td>{{ $customer->house_number }}</td>
+                                    <td>{{ $customer->zip_code }}</td>
+                                    <td>{{ $customer->city }}</td>
+                                    <td>{{ $customer->customer_number }}</td>
                                     <td>
                                         <a href="{{ route('customers.edit',$customer->id) }}" class="btn btn-primary btn-sm">Bearbeiten</a>
                                     </td>
@@ -139,4 +162,5 @@
             });
         }
     </script>
+    @endsection
 </x-app-layout>
