@@ -90,7 +90,7 @@
                                     <td>${employee.email}</td>
                                     <td>${employee.employee_number}</td>
                                     <td>
-                                        <a href="/employees/${employee.id}/edit" class="btn btn-primary btn-sm">Bearbeiten</a>
+                                        <a href="/employees/edit/${employee.id}" class="btn btn-primary btn-sm">Bearbeiten</a>
                                     </td>
                                 </tr>
                             `;

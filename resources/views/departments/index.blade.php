@@ -87,7 +87,7 @@
                                     <td>${department.email}</td>
                                     <td>${department.department_number}</td>
                                     <td>
-                                        <a href="/departments/${department.id}/edit" class="btn btn-primary btn-sm">Bearbeiten</a>
+                                        <a href="/departments/edit/${department.id}" class="btn btn-primary btn-sm">Bearbeiten</a>
                                     </td>
                                 </tr>
                             `;
