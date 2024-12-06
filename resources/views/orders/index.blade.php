@@ -36,16 +36,11 @@
                             <td>{{  $order->employee->first_name .' ' .$order->employee->last_name }}</td>
                            
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('orders', $order) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('orders', $order) }}" 
-                                       class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                </div>
+                                
+                                    <button variant="primary" class="btn btn-primary">
+                                        <i class="bi bi-pencil me-2"></i> Bearbeiten
+                                 </button>
+                               
                             </td>
                         </tr>
                     @empty
