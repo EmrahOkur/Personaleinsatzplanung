@@ -56,6 +56,14 @@
 
 @if(Auth::user()->isManager())
 <li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('managerUrlaubs') ? 'active' : '' }}" href="{{ route('managerUrlaubs') }}">
+        <i class="fas fa-plane"></i> {{ __('Urlaubsanträge verwalten') }}
+    </a>
+</li>  
+@endif
+
+@if(Auth::user()->isManager())
+<li class="nav-item">
     <a class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}" href="{{ route('orders') }}">
         <i class="fas fa-box"></i> {{ __('Aufträge') }}
     </a>
