@@ -8,7 +8,7 @@
             $status = [
                 'pending' => 'Freigabe ausstehend',
                 'rejected' => 'Urlaub abgelehnt',
-                'rejected' => 'Urlaub abgelehnt',
+                'accepted' => 'Urlaub erlaubt',
             ];
         @endphp
 
@@ -57,6 +57,7 @@
                                 <td>{{ $urlaub->datum }}</td>
                                 <td>{{ $status[$urlaub->status] }}</td>
                                 <td class="pe-3">
+                                    @if($urlaub->status != 'accepted')
                                     <form action="{{ route('urlaubs.loeschen', $urlaub->id) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
@@ -64,6 +65,7 @@
                                             <i class="bi bi-trash" ></i>Löschen 
                                         </button>
                                     </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

@@ -15,6 +15,7 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\UrlaubController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ManagerUrlaubController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +70,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/urlaubs/übersicht', [UrlaubController::class, 'übersicht'])->name('urlaubs.übersicht');
     Route::get('/urlaubs/feiertage', [UrlaubController::class, 'feiertage'])->name('urlaubs.feiertage');
     Route::delete('/urlaub/{id}/loeschen', [UrlaubController::class, 'destroy'])->name('urlaubs.loeschen');
+
+    Route::get('/urlaubs/genehmigen', [UrlaubController::class, 'genehmigen'])->name('urlaubs.genehmigen');
 
     // User Routes
     Route::controller(UserController::class)->group(function () {
@@ -132,6 +135,14 @@ Route::middleware('auth')->group(function () {
     Route::controller(ResponsibilityController::class)->group(function () {
         Route::delete('/responsibilities/delete', 'delete')->name('responsibilities.delete');
         Route::post('/responsibilities/{id}/department/{department_id}', 'create')->name('responsibilities.create');
+    });
+
+    Route::controller(ManagerUrlaubController::class)->group(function () {
+        Route::get('/managerurlaub', [ManagerUrlaubController::class, 'index'])->name('managerUrlaubs');
+        Route::post('/managerurlaub/genehmigen', [ManagerUrlaubController::class, 'genehmigen'])->name('managerUrlaubs.genehmigen');
+        Route::post('/managerurlaub/ablehnen', [ManagerUrlaubController::class, 'ablehnen'])->name('managerUrlaubs.ablehnen');
+        Route::delete('/managerurlaub/{id}/loeschen', [ManagerUrlaubController::class, 'destroy'])->name('managerUrlaubs.loeschen');
+
     });
 });
 
