@@ -1,23 +1,26 @@
-<div class="input-group mb-3">
-    <span class="input-group-text">
-        <i class="bi bi-search"></i>
-    </span>
-    <input 
-        type="text" 
-        class="form-control" 
-        id="customerSearch" 
-        placeholder="Kunde suchen (Name, Firma oder Kundennummer)" 
-        autocomplete="off"
-    >
-</div>
-
-<div id="searchLoading" class="text-center d-none">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+<div class="position-relative">
+    <div class="input-group mb-3">
+        <span class="input-group-text">
+            <i class="bi bi-search"></i>
+        </span>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="customerSearch" 
+            placeholder="Kunde suchen (Name, Firma oder Kundennummer)" 
+            autocomplete="off"
+        >
     </div>
-</div>
 
-<div id="searchResults" class="list-group d-none mb-3">
+    <div id="searchLoading" class="text-center d-none position-absolute w-100" style="top: 100%; z-index: 1000;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div id="searchResults" class="list-group d-none position-absolute w-100" 
+         style="top: 100%; z-index: 1000; max-height: 300px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    </div>
 </div>
 
 <template id="customer-result-template">
