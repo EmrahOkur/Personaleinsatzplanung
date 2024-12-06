@@ -65,7 +65,7 @@
 @if(Auth::user()->isManager())
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('customers') ? 'active' : '' }}" href="{{ route('customers') }}">
-        <i class="fas fa-plane"></i> {{ __('Kunden verwalten') }}
+        <i class="fas fa-user"></i> {{ __('Kunden verwalten') }}
     </a>
 </li>  
 @endif
