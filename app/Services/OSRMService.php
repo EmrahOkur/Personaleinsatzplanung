@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class OSRMService
 {
-    protected $baseUrl = 'http://osrm:5000'; // Docker service name
+    protected $baseUrl = 'http://osrm-schleswig-holstein:5000'; // Docker service name
 
     public function getDistance($fromLat, $fromLng, $toLat, $toLng)
     {
@@ -26,7 +26,10 @@ class OSRMService
         }
 
         if ($response->successful()) {
-            $data = $response->json();
+            return $data = [
+                $url,
+                $response->json(),
+            ];
 
             return [
                 'distance' => $data['routes'][0]['distance'], // in meters

@@ -10,8 +10,8 @@ use App\Models\Orders;
 use App\Services\AddressService;
 use App\Services\GeocodingService;
 use App\Services\OSRMService;
+use Exception;
 use Illuminate\Http\Request;
-use Symfony\Component\Process\Process;
 
 class OrdersController extends Controller
 {
@@ -70,96 +70,53 @@ class OrdersController extends Controller
             ->with('success', 'Auftrag erfolgreich erstellt');
     }
 
-    public function distance(Request $request, AddressService $addressService)
+    public function test(AddressService $addressService, GeocodingService $geocoder, OSRMService $osrm)
     {
-        return response()->stream(function () use ($addressService) {
-            ob_start();
-
+        try {
+            // Get random addresses
             $address1 = $addressService->getRandom();
             $address2 = $addressService->getRandom();
 
-            while ($address1 === $address2) {
-                $address2 = $addressService->getRandom();
-            }
+            // Get coordinates for both addresses
+            $coords1 = $geocoder->getCoordinates($address1['street'], $address1['zip_code'], $address1['city']);
+            $coords2 = $geocoder->getCoordinates($address2['street'], $address2['zip_code'], $address2['city']);
 
-            echo 'data: ' . json_encode([
-                'status' => 'addresses',
-                'data' => [
-                    'address1' => $address1,
-                    'address2' => $address2,
-                ],
-            ]) . "\n\n";
-            ob_end_flush();
-            flush();
-
-            $process = new Process([
-                'php',
-                'artisan',
-                'calculate:distance',
-                '--address1=' . base64_encode(serialize($address1)),
-                '--address2=' . base64_encode(serialize($address2)),
+            // Get route from OSRM
+            $route = $osrm->getDistance(
+                $coords1['lon'],
+                $coords1['lat'],
+                $coords2['lon'],
+                $coords2['lat']
+            );
+            dd([
+                $coords1['lat'],
+                $coords1['lon'],
+                $coords2['lat'],
+                $coords2['lon'],
+                // 'address1' => $address1,
+                // 'address2' => $address2,
+                // 'distance' => round($route['distance'] / 1000, 2), // Convert to km
+                // 'duration' => round($route['duration'] / 60, 2),   // Convert to minutes
+                // 'success' => true,
+                'route' => $route,
             ]);
 
-            $process->start();
+            return view('orders.distance', [
+                'address1' => $address1,
+                'address2' => $address2,
+                'distance' => round($route['distance'] / 1000, 2), // Convert to km
+                'duration' => round($route['duration'] / 60, 2),   // Convert to minutes
+                'success' => true,
+                'route' => $route,
+            ]);
 
-            while ($process->isRunning()) {
-                ob_start();
-                echo 'data: ' . json_encode(['status' => 'processing']) . "\n\n";
-                ob_end_flush();
-                flush();
-                usleep(100000);
-            }
-
-            ob_start();
-            $result = unserialize(base64_decode($process->getOutput()));
-            echo 'data: ' . json_encode(['status' => 'result', 'data' => $result]) . "\n\n";
-            ob_end_flush();
-            flush();
-        }, 200, [
-            'Cache-Control' => 'no-cache',
-            'Content-Type' => 'text/event-stream',
-        ]);
-    }
-
-    public function calculateDistance(
-        array $fromAddress,
-        array $toAddress,
-        GeocodingService $geocoder,
-        OSRMService $osrm
-    ) {
-        // Get coordinates for first address
-        //var_export($fromAddress['street'] .
-        // $fromAddress['zip_code'] .
-        // $fromAddress['city');
-        $from = $geocoder->getCoordinates(
-            $fromAddress['street'],
-            $fromAddress['zip_code'],
-            $fromAddress['city']
-        );
-        // dd($from);
-        // Get coordinates for second address
-        $to = $geocoder->getCoordinates(
-            $toAddress['street'],
-            $toAddress['zip_code'],
-            $toAddress['city']
-        );
-
-        if (! $from || ! $to) {
-            return response()->json(['error' => 'Could not geocode addresses'], 422);
+        } catch (Exception $e) {
+            return view('orders.distance', [
+                'address1' => $address1 ?? null,
+                'address2' => $address2 ?? null,
+                'error' => 'Fehler bei der Routenberechnung: ' . $e->getMessage() . $e->getLine(),
+                'success' => false,
+            ]);
         }
-        // dd($from);
-        // Calculate route
-        $route = $osrm->getDistance(
-            $from['lat'],
-            $from['lon'],
-            $to['lat'],
-            $to['lon']
-        );
-        // dd($route);
-
-        return response()->json([
-            'distance_km' => round($route['distance'] / 1000, 2),
-            'duration_minutes' => round($route['duration'] / 60, 2),
-        ]);
     }
 }
