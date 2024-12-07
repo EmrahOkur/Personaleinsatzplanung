@@ -71,6 +71,32 @@ class OrdersController extends Controller
             ->with('success', 'Auftrag erfolgreich erstellt');
     }
 
+    public function distance(Request $request, GeocodingService $geocoder, OSRMService $osrm)
+    {
+
+        $customer = Customer::where('id', $request->customer_id)->first();
+
+        $employee = Employee::with('address')->find($request->employee_id)->first();
+
+        $coords1 = $geocoder->getCoordinates($employee->address['street'], $employee->address['zip_code'], $employee->address['city']);
+        $coords2 = $geocoder->getCoordinates($customer['street'], $customer['zip_code'], $customer['city']);
+
+        // Call OSRM with longitude first, then latitude
+        $route = $osrm->getDistance(
+            $coords1['lon'],
+            $coords1['lat'],
+            $coords2['lon'],
+            $coords2['lat']
+        );
+
+        return response()->json([
+
+            'distance' => round($route['distance'] / 1000, 2), // Convert meters to km
+            'duration' => round($route['duration'] / 60, 2),   // Convert seconds to minutes
+
+        ]);
+    }
+
     public function test(AddressService $addressService, GeocodingService $geocoder, OSRMService $osrm)
     {
         try {

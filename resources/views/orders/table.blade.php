@@ -103,9 +103,19 @@ function showEmployeeDetails(element) {
             employees.forEach(emp => {
                 employeeList += `
                     <div class="border-bottom py-2" style="cursor: pointer;" 
+                         id="employee-${emp.employee_id}"
                          onclick="selectEmployee('${date}', '${formattedHour}', '${emp.employee_id}', '${emp.employee_name}')">
-                        <strong>${emp.employee_name}</strong><br>
-                        <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${emp.employee_name}</strong><br>
+                                <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
+                            </div>
+                            <div class="distance-info-${emp.employee_id} text-end" style="min-width: 100px">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
@@ -113,11 +123,60 @@ function showEmployeeDetails(element) {
         
         modalBody.innerHTML = employeeList || 'Keine Mitarbeiter gefunden';
         
+        // Show modal first
         const bsModal = new bootstrap.Modal(modal);
         bsModal.show();
+        
+        // Then fetch distances for all employees
+        if (Array.isArray(employees)) {
+            employees.forEach(emp => {
+                fetchDistance(emp.employee_id);
+            });
+        }
     } catch (error) {
         console.error('Error parsing employees data:', error);
         console.log('Raw data:', element.dataset.employees);
+    }
+}
+
+async function fetchDistance(employeeId) {
+    try {
+        const customerId = document.querySelector('input[name="customer_id"]').value;
+        
+        const response = await fetch('/orders/distance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                customer_id: customerId,
+                employee_id: employeeId
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        
+        // Update the distance info in the modal
+        const distanceInfo = document.querySelector(`.distance-info-${employeeId}`);
+        if (distanceInfo) {
+            distanceInfo.innerHTML = `
+                <small class="d-block text-muted">${data.distance} km</small>
+                <small class="d-block text-muted">${data.duration} min</small>
+            `;
+        }
+    } catch (error) {
+        console.error('Error fetching distance:', error);
+        const distanceInfo = document.querySelector(`.distance-info-${employeeId}`);
+        if (distanceInfo) {
+            distanceInfo.innerHTML = `
+                <small class="text-danger">Fehler bei der Berechnung</small>
+            `;
+        }
     }
 }
 

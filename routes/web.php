@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(OrdersController::class)->group(function () {
         Route::get('/orders', 'index')->name('orders');
         Route::get('/orders/create', 'create')->name('orders.create');
-        Route::get('/orders/distance', 'distance')->name('orders.distance');
+        Route::post('/orders/distance', 'distance')->name('orders.distance');
         Route::get('/orders/search', 'search')->name('orders.search');
         Route::get('/orders/test', 'test')->name('orders.test');
         Route::post('/orders/store', 'store')->name('orders.store');
