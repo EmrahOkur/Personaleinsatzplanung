@@ -12,6 +12,7 @@ use App\Services\GeocodingService;
 use App\Services\OSRMService;
 use Exception;
 use Illuminate\Http\Request;
+use Log;
 
 class OrdersController extends Controller
 {
@@ -77,44 +78,48 @@ class OrdersController extends Controller
             $address1 = $addressService->getRandom();
             $address2 = $addressService->getRandom();
 
-            // Get coordinates for both addresses
+            // Get coordinates
             $coords1 = $geocoder->getCoordinates($address1['street'], $address1['zip_code'], $address1['city']);
             $coords2 = $geocoder->getCoordinates($address2['street'], $address2['zip_code'], $address2['city']);
 
-            // Get route from OSRM
+            // Call OSRM with longitude first, then latitude
             $route = $osrm->getDistance(
                 $coords1['lon'],
                 $coords1['lat'],
                 $coords2['lon'],
                 $coords2['lat']
             );
-            dd([
-                $coords1['lat'],
-                $coords1['lon'],
-                $coords2['lat'],
-                $coords2['lon'],
-                // 'address1' => $address1,
-                // 'address2' => $address2,
-                // 'distance' => round($route['distance'] / 1000, 2), // Convert to km
-                // 'duration' => round($route['duration'] / 60, 2),   // Convert to minutes
-                // 'success' => true,
-                'route' => $route,
-            ]);
 
             return view('orders.distance', [
                 'address1' => $address1,
                 'address2' => $address2,
-                'distance' => round($route['distance'] / 1000, 2), // Convert to km
-                'duration' => round($route['duration'] / 60, 2),   // Convert to minutes
+                'distance' => round($route['distance'] / 1000, 2), // Convert meters to km
+                'duration' => round($route['duration'] / 60, 2),   // Convert seconds to minutes
+                'coordinates' => [
+                    'start' => [
+                        'lon' => $coords1['lon'],
+                        'lat' => $coords1['lat'],
+                    ],
+                    'end' => [
+                        'lon' => $coords2['lon'],
+                        'lat' => $coords2['lat'],
+                    ],
+                ],
                 'success' => true,
-                'route' => $route,
             ]);
 
         } catch (Exception $e) {
+            Log::error('Route calculation error: ' . $e->getMessage(), [
+                'address1' => $address1 ?? null,
+                'address2' => $address2 ?? null,
+                'coords1' => $coords1 ?? null,
+                'coords2' => $coords2 ?? null,
+            ]);
+
             return view('orders.distance', [
                 'address1' => $address1 ?? null,
                 'address2' => $address2 ?? null,
-                'error' => 'Fehler bei der Routenberechnung: ' . $e->getMessage() . $e->getLine(),
+                'error' => 'Fehler bei der Routenberechnung: ' . $e->getMessage(),
                 'success' => false,
             ]);
         }

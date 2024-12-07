@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/employees/{id}/availabilities', 'saveAvailabilities')->name('employees.availabilities');
     });
 
+    // Orders
     Route::controller(OrdersController::class)->group(function () {
         Route::get('/orders', 'index')->name('orders');
         Route::get('/orders/create', 'create')->name('orders.create');
