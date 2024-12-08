@@ -16,7 +16,7 @@
 </section>
     <!-- 2. Modalfenster -->
     <div class="modal fade" id="secondModalSchedule" tabindex="-1" aria-labelledby="secondModalScheduleLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" >
         <div class="modal-content">
         <div class="modal-header">
             <h1 class="modal-title fs-5" id="secondModalScheduleLabel">Mitarbeiter auswählen</h1>
@@ -33,6 +33,37 @@
             <form id="scheduleFormModal2" action="" method="POST">
             <!-- Dynamische Checkboxes hier -->
             </form>
+            <div class="mehrere-Schichten" id="multiple_shifts">
+                <label for="shifts_start_date"></label>
+                <input type="date" name="shifts_start_date" for="shifts_start_date" id="shifts_start_date" required>
+                <label for="shifts_end_date"></label>
+                <input type="date" name="shifts_end_date" for="shifts_end_date" id="shifts_end_date" required>
+                <br>
+
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_monday">Montag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_monday" id="shifts_monday" >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_tuesday">Dienstag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_tuesday"  >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_wednesday">Mittwoch
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_wednesday"  >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_thursday">Donnerstag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_thursday"  >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_friday">Freitag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_friday"  >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_saturday">Samstag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_saturday"  >
+                </label>
+                <label class="multiple-shifts-workdays-checkbox" for="shifts_sunday">Sonntag
+                <input class="form-check-input mr-2" type="checkbox" name="shifts_sunday"  >
+                </label>
+
+            </div>
+            
         </div>
         </div>
         <div class="modal-footer">
@@ -115,8 +146,24 @@
             </div>
         </div>
     </div>
+    <style>
+            #calendar {
+                width: 100%;
+                height: 600px;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            .multiple-shifts-workdays-checkbox {
+                padding: 2px;
+                border: 1px solid grey;
+                border-radius: 4px;
+                margin-top: 10px;
+                min-width: 100px;
+            }
+        </style>
     
     <script>
+        
         let userId = document.getElementById("schedule-header").dataset.loggeduserid;
 
         function markHolidays(){
@@ -328,6 +375,7 @@
 
                 // Inhalt für das zweite Modalfenster
         function secondScheduleModal(e){
+            document.getElementById("multiple_shifts").style.display = 'none';
             document.getElementById("modal-error-message-2").innerHTML = '';
             let shiftId = e.target.dataset.shiftid;
             let requiredEmployees = e.target.dataset.requiredemployees;
@@ -376,6 +424,27 @@
                     }
                     formContainer.appendChild(checkboxDiv);
                 });
+                let checkboxForCalendar = document.createElement('div');
+                checkboxForCalendar.classList.add('form-check');
+                checkboxForCalendar.innerHTML = `
+                    <br>
+                    <input class="form-check-input" name="checkbox_for_calender" id="checkbox_for_calender" type="checkbox">
+                    <label class="form-check-label" for="checkbox_for_calender">
+                    Mehrere Schichten erstellen?
+                    </label>
+                `;
+                formContainer.appendChild(checkboxForCalendar);
+
+                let checkbox_for_calender = document.getElementById("checkbox_for_calender");
+                let element = document.getElementById('multiple_shifts');
+                checkbox_for_calender.addEventListener("change", function () {
+                if(this.checked){
+                    element.style.display = "block";
+                }
+                else{
+                    element.style.display = "none";
+                }
+            });
             })
             .catch(error => console.error('Fehler beim Laden der Mitarbeiter:', error));
 
