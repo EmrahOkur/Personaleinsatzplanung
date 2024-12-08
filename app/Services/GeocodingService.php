@@ -35,7 +35,7 @@ class GeocodingService
         // $street = str_replace(' ', '+', $street);
         // Format and encode address
         $address = urldecode("{$street}+{$zip}+{$city}+Germany");
-
+        // var_dump($address);
         // Generate cache key
         $cacheKey = 'geocoding_' . md5($address);
 
@@ -54,7 +54,7 @@ class GeocodingService
                 'limit' => 1,
                 'addressdetails' => 1,
             ]);
-
+            //dd($response);
             if (! $response->successful()) {
                 throw new Exception("Geocoding API request failed: {$response->status()}");
             }

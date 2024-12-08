@@ -6,12 +6,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Urlaub;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Carbon\Carbon;
 
 class UrlaubController extends Controller
 {
@@ -39,8 +39,8 @@ class UrlaubController extends Controller
             if ($urlaub->datum <= $heute && $urlaub->status == 'accepted' && $jahr == $jetzige_jahr) {
                 // Liegt in der Vergangenheit: `genommene_tage`
                 $genommene_tage++;
-            // Muss genehmigt sein
-            } elseif($urlaub->status == 'accepted' && $jahr == $jetzige_jahr) {
+                // Muss genehmigt sein
+            } elseif ($urlaub->status == 'accepted' && $jahr == $jetzige_jahr) {
                 // Liegt in der Zukunft: `verplante_tage`
                 $verplante_tage++;
             }

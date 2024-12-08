@@ -31,12 +31,14 @@ class OrdersController extends Controller
     public function create(Request $request)
     {
         $av = Employee::getNextWeekAvailabilities();
+        // dd($av);
 
         return view('orders.create', compact('av'));
     }
 
     public function search(Request $request)
     {
+        // Such-String
         $term = $request->input('term');
 
         return Customer::where('nachname', 'LIKE', "%{$term}%")
@@ -49,10 +51,9 @@ class OrdersController extends Controller
 
     public function availabilities(Request $request)
     {
-        $employees = Employee::getExternalEmployees();
+        //$employees = Employee::getExternalEmployees();
         $av = Employee::getNextWeekAvailabilities();
 
-        // dd($employees);
         return response()->json($av);
     }
 
@@ -73,10 +74,8 @@ class OrdersController extends Controller
 
     public function distance(Request $request, GeocodingService $geocoder, OSRMService $osrm)
     {
-
         $customer = Customer::where('id', $request->customer_id)->first();
-
-        $employee = Employee::with('address')->find($request->employee_id)->first();
+        $employee = Employee::with('address')->where('id', $request->employee_id)->first();
 
         $coords1 = $geocoder->getCoordinates($employee->address['street'], $employee->address['zip_code'], $employee->address['city']);
         $coords2 = $geocoder->getCoordinates($customer['street'], $customer['zip_code'], $customer['city']);
@@ -90,10 +89,8 @@ class OrdersController extends Controller
         );
 
         return response()->json([
-
             'distance' => round($route['distance'] / 1000, 2), // Convert meters to km
             'duration' => round($route['duration'] / 60, 2),   // Convert seconds to minutes
-
         ]);
     }
 

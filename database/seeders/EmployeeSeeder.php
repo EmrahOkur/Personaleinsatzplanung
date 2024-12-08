@@ -29,7 +29,7 @@ class EmployeeSeeder extends Seeder
                         })
                 )
                 ->create([
-                    'department_id' => Department::inRandomOrder()->first()->id,
+                    'department_id' => Department::where('id', '<', 7)->inRandomOrder()->first()->id,
                 ]);
             User::factory()->create([
                 'vorname' => $employee->first_name,
@@ -49,7 +49,6 @@ class EmployeeSeeder extends Seeder
         collect(range(1, 5))->each(function () use ($externDepartment, $addresses) {
             $employee = Employee::factory()
                 ->has(
-
                     Address::factory()
                         ->state(function () use ($addresses) {
                             return $addresses[array_rand($addresses)];
