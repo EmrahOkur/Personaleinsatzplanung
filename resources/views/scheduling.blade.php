@@ -171,7 +171,7 @@
         }
 
         function formateDate(laravelDate){
-            let formattedDate = moment(laravelDate).format('D.MM.YYYY'); 
+            let formattedDate = moment(laravelDate).format('D.M.YYYY'); 
             return formattedDate;
         }
         function showEmployeesFromDepartment(){

@@ -102,7 +102,7 @@ class SchedulingController extends Controller
         $shift = Shift::findorfail($shiftId);
         $employeesInShift = $shift->employees()->pluck('employee_id');
 
-        // Abfrage mit Eloquent und Joins
+        // Abfrage ob Mitarbeiter Urlaub hat
         $employeesWithVacation = Employee::join('urlaubs', 'employees.id', '=', 'urlaubs.employee_id')
         ->join('departments', 'employees.department_id', '=', 'departments.id')
         ->where('urlaubs.datum', '=', $shift->date_shift)
