@@ -344,11 +344,21 @@
         fetch(`/scheduling/getEmployeesForShift/${shiftId}/${userId}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data.employeesWithVacation);
                 data.employees.forEach(employee => {
                     let checkboxDiv = document.createElement('div');
                     checkboxDiv.classList.add('form-check');
                     // Falls user in der Schicht enthalten ist
-                    if(data.employeesInShift.includes(employee.id) ){
+                    if(data.employeesWithVacation.includes(employee.id)){
+                        checkboxDiv.innerHTML =
+                        `
+                        <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}" disabled>
+                        <label class="form-check-label" for="employee_${employee.id}">
+                            ${employee.first_name} - ${employee.last_name}
+                        </label>
+                    `;
+                    }
+                    else if(data.employeesInShift.includes(employee.id) ){
                         checkboxDiv.innerHTML =
                         `
                         <input class="form-check-input checked" name="employee_ids[]" type="checkbox" value="${employee.id}" id="employee_${employee.id}" checked="true">

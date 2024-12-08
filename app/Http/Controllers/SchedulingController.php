@@ -101,7 +101,16 @@ class SchedulingController extends Controller
 
         $shift = Shift::findorfail($shiftId);
         $employeesInShift = $shift->employees()->pluck('employee_id');
-        return response()->json(['employees' =>$departmentEmployees, 'employeesInShift' => $employeesInShift]);
+
+        // Abfrage mit Eloquent und Joins
+        $employeesWithVacation = Employee::join('urlaubs', 'employees.id', '=', 'urlaubs.employee_id')
+        ->join('departments', 'employees.department_id', '=', 'departments.id')
+        ->where('urlaubs.datum', '=', $shift->date_shift)
+        ->where('departments.id', '=', $department->id)
+        ->where('urlaubs.status', '=', 'accepted')
+        ->pluck('employees.id');
+
+        return response()->json(['employees' =>$departmentEmployees, 'employeesInShift' => $employeesInShift, 'employeesWithVacation' => $employeesWithVacation]);
     } 
 
     public function deleteShift($shiftId)
