@@ -46,9 +46,15 @@ class EmployeeSeeder extends Seeder
                 'short_name' => 'Ex',
             ]);
 
-        collect(range(1, 5))->each(function () use ($externDepartment) {
+        collect(range(1, 5))->each(function () use ($externDepartment, $addresses) {
             $employee = Employee::factory()
-                ->has(Address::factory())
+                ->has(
+
+                    Address::factory()
+                        ->state(function () use ($addresses) {
+                            return $addresses[array_rand($addresses)];
+                        })
+                )
                 ->create([
                     'department_id' => $externDepartment->id,
                 ]);
