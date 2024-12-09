@@ -15,6 +15,6 @@ class TimeEntrySeeder extends Seeder
     public function run(): void
     {
         // Erstellen von 50 zufälligen Zeiteinträgen
-        TimeEntry::factory()->count(50)->create();
+        TimeEntry::factory()->count(500)->create();
     }
 }

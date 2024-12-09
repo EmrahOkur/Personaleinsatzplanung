@@ -72,17 +72,32 @@ class TimeEntryController extends Controller
             $request->merge(['employee_id' => $user->employee_id]);
         }
 
-        // Wenn der Benutzer ein Manager ist, setzen wir employee_id aus dem Form
-        if ($user->isManager() && ! $request->has('employee_id')) {
-            return redirect()->back()->withErrors('Mitarbeiter muss ausgewählt werden.');
-        }
-
         // Validierung der Eingaben
         $validated = $request->validate([
-            'employee_id' => $user->isManager() ? 'required|exists:employees,id' : 'nullable',
+            'employee_id' => 'required|exists:employees,id',
             'date' => 'required|date',
-            'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i|after:time_start',
+            'time_start' => [
+                'required',
+                'date_format:H:i',
+                function ($attribute, $value, $fail) {
+                    $startHour = (int) explode(':', $value)[0];
+                    if ($startHour < 7 || $startHour > 9) {
+                        $fail('Die Startzeit muss zwischen 07:00 und 09:59 Uhr liegen.');
+                    }
+                },
+            ],
+            'time_end' => [
+                'required',
+                'date_format:H:i',
+                'after:time_start',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startTime = strtotime($request->input('time_start'));
+                    $endTime = strtotime($value);
+                    if (($endTime - $startTime) / 3600 > 8) {
+                        $fail('Die Arbeitszeit darf nicht länger als 8 Stunden sein.');
+                    }
+                },
+            ],
             'break_duration' => 'nullable|integer|min:0',
             'activity_type' => 'required|string',
         ]);
@@ -90,7 +105,8 @@ class TimeEntryController extends Controller
         // Zeiteintrag speichern
         TimeEntry::create($validated);
 
-        return redirect()->route('time_entries.index', ['employee_id' => request('employee_id')])->with('success', 'Zeiteintrag erfolgreich erstellt.');
+        return redirect()->route('time_entries.index', ['employee_id' => $request->input('employee_id')])
+            ->with('success', 'Zeiteintrag erfolgreich erstellt.');
     }
 
     /**
@@ -118,25 +134,39 @@ class TimeEntryController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        $user = auth()->user(); // Der aktuell eingeloggte Benutzer
         $timeEntry = TimeEntry::findOrFail($id);
-
-        // Überprüfen, ob der Benutzer ein Manager ist
-        if (! $user->isManager()) {
-            return redirect()->route('time_entries.index')->withErrors('Keine Berechtigung für diese Aktion.');
-        }
 
         // Validierungsregeln
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',  // Manager kann hier den Mitarbeiter auswählen
+            'employee_id' => 'required|exists:employees,id',
             'date' => 'required|date',
-            'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i',
+            'time_start' => [
+                'required',
+                'date_format:H:i',
+                function ($attribute, $value, $fail) {
+                    $startHour = (int) explode(':', $value)[0];
+                    if ($startHour < 7 || $startHour > 9) {
+                        $fail('Die Startzeit muss zwischen 07:00 und 09:59 Uhr liegen.');
+                    }
+                },
+            ],
+            'time_end' => [
+                'required',
+                'date_format:H:i',
+                'after:time_start',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startTime = strtotime($request->input('time_start'));
+                    $endTime = strtotime($value);
+                    if (($endTime - $startTime) / 3600 > 8) {
+                        $fail('Die Arbeitszeit darf nicht länger als 8 Stunden sein.');
+                    }
+                },
+        ],
             'break_duration' => 'nullable|integer|min:0',
             'activity_type' => 'required|string',
         ]);
 
-        // Aktualisieren des Zeiteintrags
+        // Zeiteintrag aktualisieren
         $timeEntry->update($validated);
 
         return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
