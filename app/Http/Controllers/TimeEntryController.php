@@ -56,6 +56,7 @@ class TimeEntryController extends Controller
 
         // Manager können alle Mitarbeiter sehen, Mitarbeiter sehen nur sich selbst
         $employees = $user->isManager() ? Employee::all() : [$user->employee];
+        $date = $user->isEmployee() ? now()->format('Y-m-d') : null;
 
         return view('time_entries.create', compact('employees'));
     }
@@ -69,7 +70,7 @@ class TimeEntryController extends Controller
 
         // Wenn der Benutzer ein Mitarbeiter ist, setzen wir den employee_id automatisch
         if ($user->isEmployee()) {
-            $request->merge(['employee_id' => $user->employee_id]);
+            $request->merge(['employee_id' => $user->employee_id, 'date' => now()->format('Y-m-d')]);
         }
 
         // Validierung der Eingaben
@@ -161,7 +162,7 @@ class TimeEntryController extends Controller
                         $fail('Die Arbeitszeit darf nicht länger als 8 Stunden sein.');
                     }
                 },
-        ],
+            ],
             'break_duration' => 'nullable|integer|min:0',
             'activity_type' => 'required|string',
         ]);
