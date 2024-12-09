@@ -136,6 +136,10 @@ class TimeEntryController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         $timeEntry = TimeEntry::findOrFail($id);
+        $request->merge([
+            'time_start' => date('H:i', strtotime($request->input('time_start'))),
+            'time_end' => date('H:i', strtotime($request->input('time_end'))),
+        ]);
 
         // Validierungsregeln
         $validated = $request->validate([
