@@ -18,11 +18,9 @@ return new class extends Migration {
             $table->string('companyname');
             $table->string('vorname');
             $table->string('nachname');
-            $table->string('street');
-            $table->string('house_number');
-            $table->string('zip_code');
-            $table->string('city');
             $table->string('customer_number')->unique();
+            // Beziehung
+            $table->foreignId('address_id');
             $table->timestamps();
         });
 

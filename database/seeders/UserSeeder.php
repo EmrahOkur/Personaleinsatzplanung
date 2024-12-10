@@ -17,6 +17,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // all ids from addresses as Collection
+        $addressIds = Address::pluck('id');
+
         // Beispiel-Benutzer
         $employee = Employee::factory()
             ->has(Address::factory())
@@ -24,6 +27,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Patrik',
                 'last_name' => 'Wendt',
                 'department_id' => Department::inRandomOrder()->first()->id,
+                'address_id' => $addressIds->random(),
             ]);
         $patrik = User::factory()->create([
             'name' => 'Wendt',
@@ -40,6 +44,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Malte',
                 'last_name' => 'Albig',
                 'department_id' => Department::inRandomOrder()->first()->id,
+                'address_id' => $addressIds->random(),
             ]);
         $malte = User::factory()->create([
             'name' => 'Albig',
@@ -64,6 +69,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Ein',
                 'last_name' => 'Mitarbeiter',
                 'department_id' => Department::inRandomOrder()->first()->id,
+                'address_id' => $addressIds->random(),
             ]);
         User::factory()->create([
             'name' => 'Mitarbeiter',
@@ -79,6 +85,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Ein',
                 'last_name' => 'Manager',
                 'department_id' => Department::inRandomOrder()->first()->id,
+                'address_id' => $addressIds->random(),
             ]);
         User::factory()->create([
             'name' => 'Manager',

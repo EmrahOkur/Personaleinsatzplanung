@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,10 +22,10 @@ class Address extends Model
         'country',
     ];
 
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class);
-    }
+    // public function employees()
+    // {
+    //     return $this->hasMany(Employee::class);
+    // }
 
     // Vollständige Adresse als Accessor
     public function getFullAddressAttribute()

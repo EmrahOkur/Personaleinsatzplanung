@@ -40,6 +40,9 @@ return new class extends Migration {
             $table->index('email');
             $table->index('employee_number');
 
+            // Beziehung
+            $table->foreignId('address_id');
+
             $table->foreignId('department_id')
                 ->nullable()
                 ->constrained()

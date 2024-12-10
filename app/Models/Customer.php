@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,5 +11,10 @@ class Customer extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['vorname','nachname','ort'];
+    protected $fillable = ['vorname', 'nachname'];
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
 }

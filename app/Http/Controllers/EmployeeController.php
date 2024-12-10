@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Address;
 use App\Models\Availability;
 use App\Models\Department;
 use App\Models\Employee;
@@ -39,7 +40,13 @@ class EmployeeController extends Controller
 
     public function create(CreateEmployeeRequest $request)
     {
-        Employee::insert($request->except(['_token']));
+
+        Employee::insert(
+            array_merge(
+                $request->except(['_token']),
+                ['address_id' => Address::inRandomOrder()->first()->id]
+            )
+        );
 
         return redirect()
             ->route('employees');
