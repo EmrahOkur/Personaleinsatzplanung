@@ -105,6 +105,7 @@ class TimeEntryController extends Controller
 
         // Zeiteintrag speichern
         TimeEntry::create($validated);
+        $employeeId = $request->input('employee_id', $user->isEmployee() ? $user->employee->id : null);
 
         return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
             ->with('success', 'Zeiteintrag erfolgreich erstellt.');

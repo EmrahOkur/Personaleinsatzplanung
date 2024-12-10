@@ -75,7 +75,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Zeiteintrag speichern</button>
-        <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">Abbrechen</a>
+        <a href="{{ route('time_entries.index', ['employee_id' => request('employee_id') ?? $employeeId]) }}" class="btn btn-danger">
+            Abbrechen
+        </a>
     </form>
 </div>
 @endsection

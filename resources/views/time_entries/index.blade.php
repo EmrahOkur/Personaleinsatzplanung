@@ -94,7 +94,7 @@ Zeiterfassungen
                                     <form action="{{ route('time_entries.destroy', $entry->id) }}" method="POST" onsubmit="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class=" btn btn-danger">
                                             Löschen
                                         </button>
                                     </form>
