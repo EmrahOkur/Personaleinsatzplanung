@@ -106,8 +106,9 @@ class TimeEntryController extends Controller
         // Zeiteintrag speichern
         TimeEntry::create($validated);
 
-        return redirect()->route('time_entries.index', ['employee_id' => $request->input('employee_id')])
+        return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
             ->with('success', 'Zeiteintrag erfolgreich erstellt.');
+
     }
 
     /**
@@ -174,7 +175,9 @@ class TimeEntryController extends Controller
         // Zeiteintrag aktualisieren
         $timeEntry->update($validated);
 
-        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
+        return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
+            ->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
+
     }
 
     /**
@@ -194,6 +197,8 @@ class TimeEntryController extends Controller
 
         $timeEntry->delete();
 
-        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich gelöscht.');
+        return redirect()->route('time_entries.index', ['employee_id' => $timeEntry->employee_id])
+            ->with('success', 'Zeiteintrag erfolgreich gelöscht.');
+
     }
 }

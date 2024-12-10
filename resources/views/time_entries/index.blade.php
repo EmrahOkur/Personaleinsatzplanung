@@ -85,17 +85,17 @@ Zeiterfassungen
                         <td>{{ ucfirst($entry->activity_type) }}</td>
                         @if(auth()->user()->isManager())
                             <td class="text-center">
-                                <div class="btn-group" role="group">
+                                <div class="d-flex justify-content-center gap-2">
                                     <!-- Bearbeiten Button -->
-                                    <a href="{{ route('time_entries.edit', $entry->id) }}" class="btn btn-sm btn-link text-primary">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="{{ route('time_entries.edit', $entry->id) }}" class="btn btn-primary">
+                                        Bearbeiten
                                     </a>
                                     <!-- Löschen Button -->
                                     <form action="{{ route('time_entries.destroy', $entry->id) }}" method="POST" onsubmit="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-link text-danger">
-                                            <i class="fas fa-trash-alt"></i>
+                                        <button type="submit" class="btn btn-primary">
+                                            Löschen
                                         </button>
                                     </form>
                                 </div>

@@ -75,6 +75,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Zeiteintrag speichern</button>
+        <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">Abbrechen</a>
     </form>
 </div>
 @endsection
