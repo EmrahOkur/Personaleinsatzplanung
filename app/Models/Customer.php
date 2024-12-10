@@ -11,7 +11,7 @@ class Customer extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['vorname', 'nachname'];
+    protected $fillable = ['vorname', 'nachname', 'address_id'];
 
     public function address()
     {
