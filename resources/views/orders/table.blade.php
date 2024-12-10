@@ -42,6 +42,7 @@
                     {{ sprintf('%02d:00', $hour) }} - {{ sprintf('%02d:00', $hour + 1) }}
                 </td>
                 @foreach($av as $day)
+               
                     @php
                         $hourEmployees = collect($day['hours'])
                             ->flatten(1)
@@ -58,6 +59,7 @@
                         };
 
                         $employeesJson = json_encode($hourEmployees->values()->all());
+                        // var_dump($employeesJson)
                     @endphp
 
                     <td class="{{ $colorClass }} text-center align-middle" 
@@ -66,6 +68,7 @@
                             data-weekday="{{ $day['weekday_name'] }}"
                             data-date="{{ $day['date'] }}"
                             data-hour="{{ $hour }}"
+                            data-maxEndtime="{{  $day['max_end_time']}}"
                             onclick="showEmployeeDetails(this)"
                         @endif
                     >
@@ -88,7 +91,6 @@ function showEmployeeDetails(element) {
         const weekday = element.dataset.weekday;
         const date = element.dataset.date;
         const hour = element.dataset.hour;
-        
         const modal = document.getElementById('employeeModal');
         const modalTitle = modal.querySelector('.modal-title');
         const modalBody = modal.querySelector('.modal-body');
@@ -101,6 +103,7 @@ function showEmployeeDetails(element) {
         let employeeList = '';
         if (Array.isArray(employees)) {
             employees.forEach(emp => {
+                console.log(emp)
                 const uniqueId = `emp-${emp.employee_id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
                 employeeList += `
                     <div class="border-bottom py-2" style="cursor: pointer;" 
@@ -110,6 +113,8 @@ function showEmployeeDetails(element) {
                             <div>
                                 <strong>${emp.employee_name}</strong><br>
                                 <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
+                                <br>
+                                <small class="text-muted">Mitarbeiter verfügbar bis: ${emp.max_end_time}</small>
                             </div>
                             <div id="${uniqueId}" class="text-end" style="min-width: 100px">
                                 <div class="spinner-border spinner-border-sm" role="status">
