@@ -74,24 +74,37 @@ class OrdersController extends Controller
 
     public function distance(Request $request, GeocodingService $geocoder, OSRMService $osrm)
     {
-        $customer = Customer::where('id', $request->customer_id)->first();
-        $employee = Employee::with('address')->where('id', $request->employee_id)->first();
+        try {
+            $customer = Customer::where('id', $request->customer_id)->first()->load('address');
+            $employee = Employee::where('id', $request->employee_id)->first()->load('address');
 
-        $coords1 = $geocoder->getCoordinates($employee->address['street'], $employee->address['zip_code'], $employee->address['city']);
-        $coords2 = $geocoder->getCoordinates($customer['street'], $customer['zip_code'], $customer['city']);
+            $coords1 = $geocoder->getCoordinates(
+                $employee->address['street'] . ' ' . $employee->address['house_number'],
+                $employee->address['zip_code'],
+                $employee->address['city']
+            );
+            $coords2 = $geocoder->getCoordinates(
+                $customer->address['street'] . ' ' . $customer->address['house_number'],
+                $customer->address['zip_code'],
+                $customer->address['city']
+            );
 
-        // Call OSRM with longitude first, then latitude
-        $route = $osrm->getDistance(
-            $coords1['lon'],
-            $coords1['lat'],
-            $coords2['lon'],
-            $coords2['lat']
-        );
+            // Call OSRM with longitude first, then latitude
+            $route = $osrm->getDistance(
+                $coords1['lon'],
+                $coords1['lat'],
+                $coords2['lon'],
+                $coords2['lat']
+            );
 
-        return response()->json([
-            'distance' => round($route['distance'] / 1000, 2), // Convert meters to km
-            'duration' => round($route['duration'] / 60, 2),   // Convert seconds to minutes
-        ]);
+            return response()->json([
+                'distance' => round($route['distance'] / 1000, 2), // Convert meters to km
+                'duration' => round($route['duration'] / 60, 2),   // Convert seconds to minutes
+            ]);
+        } catch (Exception $ex) {
+            dd($ex->getMessage());
+        }
+
     }
 
     public function test(AddressService $addressService, GeocodingService $geocoder, OSRMService $osrm)
