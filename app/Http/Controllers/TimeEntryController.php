@@ -50,15 +50,16 @@ class TimeEntryController extends Controller
     /**
      * Zeigt das Formular zur Erstellung eines neuen Zeiteintrags.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         $user = auth()->user();
 
         // Manager können alle Mitarbeiter sehen, Mitarbeiter sehen nur sich selbst
         $employees = $user->isManager() ? Employee::all() : [$user->employee];
         $date = $user->isEmployee() ? now()->format('Y-m-d') : null;
+        $employeeId = $request->input('employee_id', $user->isEmployee() ? $user->employee->id : null);
 
-        return view('time_entries.create', compact('employees'));
+        return view('time_entries.create', compact('employees', 'employeeId'));
     }
 
     /**
@@ -105,7 +106,6 @@ class TimeEntryController extends Controller
 
         // Zeiteintrag speichern
         TimeEntry::create($validated);
-        $employeeId = $request->input('employee_id', $user->isEmployee() ? $user->employee->id : null);
 
         return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
             ->with('success', 'Zeiteintrag erfolgreich erstellt.');
