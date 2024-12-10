@@ -13,40 +13,48 @@ Zeiterfassungen
         </a>
     </div>
 
-    <!-- Filterleiste für Zeiteinträge -->
     @if(auth()->user()->isManager())
-        <form action="{{ route('time_entries.index') }}" method="GET" class="mb-4">
-            <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="date" class="col-form-label">Datum:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="date" name="date" id="date" class="form-control" placeholder="Datum auswählen" value="{{ request('date') }}">
-                </div>
-                <div class="col-auto">
-                    <label for="employee_id" class="col-form-label">Mitarbeiter:</label>
-                </div>
-                <div class="col-auto">
-                    <select name="employee_id" id="employee_id" class="form-control" onchange="this.form.submit()">
-                        <option value="">Alle Mitarbeiter</option>
-                        @foreach($employees as $employee)
-                            <option value="{{ $employee->id }}" {{ request()->input('employee_id') == $employee->id ? 'selected' : '' }}>
-                                {{ $employee->full_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-filter"></i>
-                    </button>
-                    <a href="{{ route('time_entries.index') }}" class="btn btn-link">
-                        <i class="fas fa-redo"></i>
-                    </a>
-                </div>
+    <!-- Filterleiste für Manager -->
+    <form action="{{ route('time_entries.index') }}" method="GET" class="mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="date" class="col-form-label">Datum:</label>
             </div>
-        </form>
-    @endif
+            <div class="col-auto">
+                <input type="date" name="date" id="date" class="form-control" placeholder="Datum auswählen" value="{{ request('date') }}">
+            </div>
+            <div class="col-auto">
+                <label for="employee_id" class="col-form-label">Mitarbeiter:</label>
+            </div>
+            <div class="col-auto">
+                <select name="employee_id" id="employee_id" class="form-control" onchange="this.form.submit()">
+                    <option value="">Alle Mitarbeiter</option>
+                    @foreach($employees as $employee)
+                        <option value="{{ $employee->id }}" {{ request()->input('employee_id') == $employee->id ? 'selected' : '' }}>
+                            {{ $employee->full_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <a href="{{ route('time_entries.index') }}" class="btn btn-link">
+                    <i class="fas fa-redo"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+@elseif(auth()->user()->isEmployee())
+    <!-- Für Mitarbeiter: Automatisches Datum -->
+    <form action="{{ route('time_entries.index') }}" method="GET" class="mb-4">
+        <input type="hidden" name="date" value="{{ now()->format('Y-m-d') }}">
+        <!-- Optional: Du kannst eine Nachricht anzeigen, dass das Datum automatisch gesetzt ist -->
+        <p class="text-muted">Das Datum wird automatisch auf den heutigen Tag gesetzt.</p>
+    </form>
+@endif
+
 
     <!-- Tabelle der Zeiteinträge mit stilisiertem Design -->
     <div class="table-responsive">

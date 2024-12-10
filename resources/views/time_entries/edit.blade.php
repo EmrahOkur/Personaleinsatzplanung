@@ -48,28 +48,37 @@
             @endif
 
             <!-- Datum -->
-            <div class="mb-3">
-                <label for="date" class="form-label">Datum</label>
-                <input type="date" name="date" id="date" class="form-control" value="{{ old('date', $timeEntry->date) }}" required>
-            </div>
+            @if(auth()->user()->isEmployee())
+                <!-- Mitarbeiter: Datum kann nicht bearbeitet werden -->
+                <input type="hidden" name="date" value="{{ $timeEntry->date }}">
+            @else
+                <!-- Manager: Datumsauswahl -->
+                <div class="mb-3">
+                    <label for="date" class="form-label">Datum</label>
+                    <input type="date" name="date" id="date" class="form-control" value="{{ old('date', $timeEntry->date) }}" required>
+                </div>
+            @endif
 
             <!-- Startzeit -->
             <div class="mb-3">
                 <label for="time_start" class="form-label">Startzeit</label>
-                <input type="time" name="time_start" id="time_start" class="form-control" value="{{ old('time_start', $timeEntry->time_start) }}" required>
+                <input type="time" name="time_start" id="time_start" class="form-control" 
+                       value="{{ old('time_start', $timeEntry->time_start) }}" required>
             </div>
 
             <!-- Endzeit -->
             <div class="mb-3">
                 <label for="time_end" class="form-label">Endzeit</label>
-                <input type="time" name="time_end" id="time_end" class="form-control" value="{{ old('time_end', $timeEntry->time_end) }}" required>
+                <input type="time" name="time_end" id="time_end" class="form-control" 
+                       value="{{ old('time_end', $timeEntry->time_end) }}" required>
             </div>
 
             <!-- Pausendauer -->
             <div class="mb-3">
                 <label for="break_duration" class="form-label">Pausendauer (Minuten)</label>
                 <input type="number" name="break_duration" id="break_duration" class="form-control" min="0" 
-                       value="{{ old('break_duration', $timeEntry->break_duration ?? 0) }}" placeholder="Geben Sie die Pausendauer in Minuten an">
+                       value="{{ old('break_duration', $timeEntry->break_duration ?? 0) }}" 
+                       placeholder="Geben Sie die Pausendauer in Minuten an">
             </div>
 
             <!-- Aktivitätstyp -->
@@ -83,8 +92,12 @@
 
             <!-- Buttons -->
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary">Änderungen speichern</button>
-                <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">Abbrechen</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Änderungen speichern
+                </button>
+                <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Abbrechen
+                </a>
             </div>
         </form>
     </div>
