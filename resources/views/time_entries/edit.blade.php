@@ -95,8 +95,8 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Änderungen speichern
                 </button>
-                <a href="{{ route('time_entries.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Abbrechen
+                <a href="{{ route('time_entries.index', ['employee_id' => $timeEntry->employee_id]) }}" class="btn btn-danger">
+                    Abbrechen
                 </a>
             </div>
         </form>

@@ -50,15 +50,16 @@ class TimeEntryController extends Controller
     /**
      * Zeigt das Formular zur Erstellung eines neuen Zeiteintrags.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         $user = auth()->user();
 
         // Manager können alle Mitarbeiter sehen, Mitarbeiter sehen nur sich selbst
         $employees = $user->isManager() ? Employee::all() : [$user->employee];
         $date = $user->isEmployee() ? now()->format('Y-m-d') : null;
+        $employeeId = $request->input('employee_id', $user->isEmployee() ? $user->employee->id : null);
 
-        return view('time_entries.create', compact('employees'));
+        return view('time_entries.create', compact('employees', 'employeeId'));
     }
 
     /**
@@ -106,8 +107,9 @@ class TimeEntryController extends Controller
         // Zeiteintrag speichern
         TimeEntry::create($validated);
 
-        return redirect()->route('time_entries.index', ['employee_id' => $request->input('employee_id')])
+        return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
             ->with('success', 'Zeiteintrag erfolgreich erstellt.');
+
     }
 
     /**
@@ -174,7 +176,9 @@ class TimeEntryController extends Controller
         // Zeiteintrag aktualisieren
         $timeEntry->update($validated);
 
-        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
+        return redirect()->route('time_entries.index', ['employee_id' => $validated['employee_id']])
+            ->with('success', 'Zeiteintrag erfolgreich aktualisiert.');
+
     }
 
     /**
@@ -194,6 +198,8 @@ class TimeEntryController extends Controller
 
         $timeEntry->delete();
 
-        return redirect()->route('time_entries.index')->with('success', 'Zeiteintrag erfolgreich gelöscht.');
+        return redirect()->route('time_entries.index', ['employee_id' => $timeEntry->employee_id])
+            ->with('success', 'Zeiteintrag erfolgreich gelöscht.');
+
     }
 }
