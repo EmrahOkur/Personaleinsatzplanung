@@ -41,7 +41,8 @@ class OrdersController extends Controller
         // Such-String
         $term = $request->input('term');
 
-        return Customer::where('nachname', 'LIKE', "%{$term}%")
+        return Customer::with('address')
+            ->where('nachname', 'LIKE', "%{$term}%")
             ->orWhere('vorname', 'LIKE', "%{$term}%")
             ->orWhere('companyname', 'LIKE', "%{$term}%")
             ->orWhere('customer_number', 'LIKE', "%{$term}%")

@@ -27,6 +27,6 @@ class Address extends Model
     // Vollständige Adresse als Accessor
     public function getFullAddressAttribute()
     {
-        return "{$this->street} {$this->house_number}, {$this->zip_code} {$this->city}";
+        return "{$this->street} {$this->house_number} {$this->zip_code} {$this->city}";
     }
 }

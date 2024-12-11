@@ -17,4 +17,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function getFullAddressAttribute()
+    {
+        return $this->address->fullAddress();
+    }
 }
