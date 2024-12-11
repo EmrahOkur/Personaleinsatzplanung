@@ -11,10 +11,6 @@ class CreateEmployeeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (! Auth::user()->isManager()) {
-            return false;
-        }
-
         return true;
     }
 

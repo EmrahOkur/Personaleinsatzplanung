@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Address;
-use App\Models\Department;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -17,13 +16,16 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // all ids from addresses as Collection
+        $addressIds = Address::pluck('id');
+
         // Beispiel-Benutzer
         $employee = Employee::factory()
-            ->has(Address::factory())
             ->create([
                 'first_name' => 'Patrik',
                 'last_name' => 'Wendt',
-                'department_id' => Department::inRandomOrder()->first()->id,
+                'department_id' => 1,
+                'address_id' => $addressIds->random(),
             ]);
         $patrik = User::factory()->create([
             'name' => 'Wendt',
@@ -35,11 +37,11 @@ class UserSeeder extends Seeder
         ]);
 
         $employee = Employee::factory()
-            ->has(Address::factory())
             ->create([
                 'first_name' => 'Malte',
                 'last_name' => 'Albig',
-                'department_id' => Department::inRandomOrder()->first()->id,
+                'department_id' => 1,
+                'address_id' => $addressIds->random(),
             ]);
         $malte = User::factory()->create([
             'name' => 'Albig',
@@ -59,11 +61,11 @@ class UserSeeder extends Seeder
         ]);
 
         $employee = Employee::factory()
-            ->has(Address::factory())
             ->create([
                 'first_name' => 'Ein',
                 'last_name' => 'Mitarbeiter',
-                'department_id' => Department::inRandomOrder()->first()->id,
+                'department_id' => 1,
+                'address_id' => $addressIds->random(),
             ]);
         User::factory()->create([
             'name' => 'Mitarbeiter',
@@ -74,11 +76,11 @@ class UserSeeder extends Seeder
             'employee_id' => $employee->id,
         ]);
         $employee = Employee::factory()
-            ->has(Address::factory())
             ->create([
                 'first_name' => 'Ein',
                 'last_name' => 'Manager',
-                'department_id' => Department::inRandomOrder()->first()->id,
+                'department_id' => 1,
+                'address_id' => $addressIds->random(),
             ]);
         User::factory()->create([
             'name' => 'Manager',

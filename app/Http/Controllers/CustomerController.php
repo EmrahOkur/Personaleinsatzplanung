@@ -4,43 +4,49 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Customer;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::all();
-        //dd($customers);
+        $customers = Customer::all()->load('address');
 
-        return view('customer', compact('customers'));
+        return view('customers.customer', compact('customers'));
     }
 
     public function store(Request $request)
     {
-        $customers = Customer::all();
-        $customer = new Customer;
-        $customer->vorname = $request->vorname;
-        $customer->nachname = $request->nachname;
-        $customer->companyname = $request->companyname;
+        DB::transaction(function () use ($request) {
+            $customer = new Customer;
+            $customer->vorname = $request->vorname;
+            $customer->nachname = $request->nachname;
+            $customer->companyname = $request->companyname;
+            $customer->customer_number = $request->customer_number;
 
-        $customer->street = $request->street;
-        $customer->house_number = $request->house_number;
-        $customer->zip_code = $request->zip_code;
-        $customer->city = $request->city;
-        $customer->customer_number = $request->customer_number;
+            $newAddress = Address::create([
+                'street' => $request->street,
+                'house_number' => $request->house_number,
+                'zip_code' => $request->zip_code,
+                'city' => $request->city,
+            ]);
 
-        $customer->save();
+            $customer->address_id = $newAddress->id;
 
-        return redirect()->route('customers', compact('customers'));
+            $customer->save();
+        });
+
+        return redirect()->route('customers');
     }
 
     public function delete($id)
     {
         $customer = Customer::findorfail($id);
         $customer->delete();
-        $customers = Customer::all();
 
         return response()->json(['success' => 'User Deleted Successfully!']);
     }
@@ -49,23 +55,31 @@ class CustomerController extends Controller
     {
         $customer = Customer::findorfail($id);
 
-        return view('editcustomer', compact('customer'));
+        return view('customers.editcustomer', compact('customer'));
     }
 
     public function update(Request $request, $id)
     {
-        $customers = Customer::all();
-        $customer = Customer::findorfail($id);
-        $customer->vorname = $request->editVorname;
-        $customer->nachname = $request->editNachname;
-        $customer->companyname = $request->editCompanyname;
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $customer = Customer::findorfail($id);
+                $customer->vorname = $request->editVorname;
+                $customer->nachname = $request->editNachname;
+                $customer->companyname = $request->editCompanyname;
 
-        $customer->street = $request->editStreet;
-        $customer->house_number = $request->editHousenumber;
-        $customer->zip_code = $request->editZip;
-        $customer->city = $request->editCity;
-        $customer->save();
+                $address = Address::where('id', $customer->address_id)->first();
+                $address->street = $request->editStreet;
+                $address->house_number = $request->editHousenumber;
+                $address->zip_code = $request->editZip;
+                $address->city = $request->editCity;
 
-        return redirect()->route('customers', compact('customers'));
+                $address->save();
+                $customer->save();
+            });
+        } catch (Exception $ex) {
+            dd($ex->getMessage());
+        }
+
+        return redirect()->route('customers');
     }
 }

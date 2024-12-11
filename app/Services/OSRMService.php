@@ -5,34 +5,31 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Exception;
-use GuzzleHttp\Exception\ConnectException as ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class OSRMService
 {
-    protected $baseUrl = 'http://osrm:5000'; // Docker service name
+    private $baseUrl;
 
-    public function getDistance($fromLat, $fromLng, $toLat, $toLng)
+    public function __construct()
     {
-        $url = "{$this->baseUrl}/route/v1/driving/{$fromLng},{$fromLat};{$toLng},{$toLat}";
+        // Nutze den Container-Namen aus dem Docker-Netzwerk
+        $this->baseUrl = 'http://osrm-schleswig-holstein:5000';
+    }
 
-        try {
-            $response = Http::retry(3, 500, function ($exception) {
-                return $exception instanceof ConnectionException;
-            })->timeout(1)->get($url);
-        } catch (Exception $ex) {
+    public function getDistance($lon1, $lat1, $lon2, $lat2)
+    {
+        $response = Http::get("{$this->baseUrl}/route/v1/driving/{$lon1},{$lat1};{$lon2},{$lat2}");
 
-            return;
+        $data = $response->json();
+
+        if ($data['code'] !== 'Ok' || ! isset($data['routes'][0])) {
+            throw new Exception('Keine Route gefunden');
         }
 
-        if ($response->successful()) {
-            $data = $response->json();
-
-            return [
-                'distance' => $data['routes'][0]['distance'], // in meters
-                'duration' => $data['routes'][0]['duration'],  // in seconds
-            ];
-        }
-
+        return [
+            'distance' => $data['routes'][0]['distance'],
+            'duration' => $data['routes'][0]['duration'],
+        ];
     }
 }

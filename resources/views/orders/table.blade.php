@@ -42,6 +42,7 @@
                     {{ sprintf('%02d:00', $hour) }} - {{ sprintf('%02d:00', $hour + 1) }}
                 </td>
                 @foreach($av as $day)
+               
                     @php
                         $hourEmployees = collect($day['hours'])
                             ->flatten(1)
@@ -58,6 +59,7 @@
                         };
 
                         $employeesJson = json_encode($hourEmployees->values()->all());
+                        // var_dump($employeesJson)
                     @endphp
 
                     <td class="{{ $colorClass }} text-center align-middle" 
@@ -66,6 +68,7 @@
                             data-weekday="{{ $day['weekday_name'] }}"
                             data-date="{{ $day['date'] }}"
                             data-hour="{{ $hour }}"
+                            data-maxEndtime="{{  $day['max_end_time']}}"
                             onclick="showEmployeeDetails(this)"
                         @endif
                     >
@@ -88,7 +91,6 @@ function showEmployeeDetails(element) {
         const weekday = element.dataset.weekday;
         const date = element.dataset.date;
         const hour = element.dataset.hour;
-        
         const modal = document.getElementById('employeeModal');
         const modalTitle = modal.querySelector('.modal-title');
         const modalBody = modal.querySelector('.modal-body');
@@ -101,13 +103,32 @@ function showEmployeeDetails(element) {
         let employeeList = '';
         if (Array.isArray(employees)) {
             employees.forEach(emp => {
+                console.log(emp)
+                const uniqueId = `emp-${emp.employee_id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
                 employeeList += `
                     <div class="border-bottom py-2" style="cursor: pointer;" 
+                         data-employee-id="${emp.employee_id}"
                          onclick="selectEmployee('${date}', '${formattedHour}', '${emp.employee_id}', '${emp.employee_name}')">
-                        <strong>${emp.employee_name}</strong><br>
-                        <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${emp.employee_name}</strong><br>
+                                <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
+                                <br>
+                                <small class="text-muted">Mitarbeiter verfügbar bis: ${emp.max_end_time}</small>
+                            </div>
+                            <div id="${uniqueId}" class="text-end" style="min-width: 100px">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
+                
+                // Schedule the distance fetch for this specific employee
+                setTimeout(() => {
+                    fetchDistanceForEmployee(emp.employee_id, uniqueId);
+                }, 100); // Slight delay to prevent overwhelming the server
             });
         }
         
@@ -115,11 +136,56 @@ function showEmployeeDetails(element) {
         
         const bsModal = new bootstrap.Modal(modal);
         bsModal.show();
+        
     } catch (error) {
         console.error('Error parsing employees data:', error);
         console.log('Raw data:', element.dataset.employees);
     }
 }
+
+async function fetchDistanceForEmployee(employeeId, elementId) {
+    try {
+        const customerId = document.querySelector('input[name="customer_id"]').value;
+        console.log(`Fetching distance for employee ${employeeId}`);
+        
+        const response = await fetch('/orders/distance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                customer_id: customerId,
+                employee_id: employeeId
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        
+        // Update the distance info for this specific employee
+        const distanceElement = document.getElementById(elementId);
+        if (distanceElement) {
+            distanceElement.innerHTML = `
+                <small class="d-block text-muted">${data.distance} km</small>
+                <small class="d-block text-muted">${data.duration} min</small>
+            `;
+        }
+    } catch (error) {
+        console.error(`Error fetching distance for employee ${employeeId}:`, error);
+        const distanceElement = document.getElementById(elementId);
+        if (distanceElement) {
+            distanceElement.innerHTML = `
+                <small class="text-danger">Fehler bei der Berechnung</small>
+            `;
+        }
+    }
+}
+      
+
 
 function selectEmployee(date, time, employeeId, employeeName) {
     console.log("selecting");

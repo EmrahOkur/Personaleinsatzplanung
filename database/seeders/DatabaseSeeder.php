@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         // Andere Seeders aufrufen
         $this->call([
+            AddressSeeder::class,
             DepartmentSeeder::class,
             EmployeeSeeder::class,
             DepartmentHeadSeeder::class,
