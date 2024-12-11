@@ -45,7 +45,8 @@
                             <input type="hidden" id="customer_id" name="customer_id">
                         </div>
 
-                        <div id="table" class="row ">
+                
+                        <div id="table" class="row d-none">
                             <!-- Rechte Spalte: Tabelle -->
                             <div class="col-8 ">
                                 @include('orders.table', ['av' => $av])                        
@@ -98,15 +99,14 @@
                 ['customer_id', 'employee_id'].forEach(id => {
                     document.getElementById(id).addEventListener('change', checkFormValidity);
                 });
-                
+
                 function checkFormValidity() {
                     const customerId = document.getElementById('customer_id').value;
                     const employeeId = document.getElementById('employee_id').value;
                     
-                    document.getElementById('save-btn').disabled = 
-                        !customerId || !employeeId;
-                        console.log(!customerId , !employeeId)
+                    document.getElementById('save-btn').disabled = !customerId || !employeeId;
                 }
+
             });
         </script>
     @endpush

@@ -119,10 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('vorname').value = customer.vorname;
         document.getElementById('nachname').value = customer.nachname;
         document.getElementById('address').value = customer.address.street+' '+customer.address.house_number+' '+customer.address.zip_code+' '+customer.address.city;
-        console.log(customer)
+
         searchInput.value = '';
-        searchResults.classList.add('d-none');
-        
+        searchResults.classList.add('d-none');        
+        document.getElementById('table').classList.remove('d-none');        
     }
 
     document.addEventListener('click', function(e) {
