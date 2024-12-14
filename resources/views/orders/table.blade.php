@@ -113,6 +113,8 @@ function showEmployeeDetails(element) {
                                 <strong>${emp.employee_name}</strong><br>
                                 <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
                                 <br>
+                                <small class="text-muted">Standort: ${emp.full_address}</small>
+                                <br>
                                 <small class="text-muted">Mitarbeiter verfügbar bis: ${emp.max_end_time}</small>
                             </div>
                             <div id="${uniqueId}" class="text-end" style="min-width: 100px">

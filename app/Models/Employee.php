@@ -93,11 +93,9 @@ class Employee extends Model
     {
         // Get external employees
         $employees = self::getExternalEmployees();
-        // Get next week's dates
         $nextWeek = collect();
         $startOfNextWeek = now()->addWeek()->startOfWeek();
 
-        // Build array of next week's dates (Monday to Friday)
         for ($i = 0; $i < 5; $i++) {
             $date = $startOfNextWeek->copy()->addDays($i);
             $nextWeek->push([
@@ -106,16 +104,16 @@ class Employee extends Model
             ]);
         }
 
-        // Initialize structured array
         $structuredAvailabilities = [];
 
-        // Get availabilities for each employee
         foreach ($employees as $employee) {
+            // Load the employee with their address relation
+            $employeeWithAddress = self::with('address')->find($employee['id']);
+
             $employeeAvailabilities = Availability::where('employee_id', $employee['id'])
                 ->whereIn('weekday', range(1, 5))
                 ->get();
 
-            // Map availabilities to actual dates
             foreach ($nextWeek as $day) {
                 $dayAvailability = $employeeAvailabilities
                     ->where('weekday', $day['weekday'])
@@ -126,7 +124,6 @@ class Employee extends Model
                     $startHour = (int) $dayAvailability->start_time->format('H');
                     $endHour = (int) $dayAvailability->end_time->format('H');
 
-                    // Initialize date in array if not exists
                     if (! isset($structuredAvailabilities[$date])) {
                         $structuredAvailabilities[$date] = [
                             'date' => $date,
@@ -142,7 +139,6 @@ class Employee extends Model
                         ];
                     }
 
-                    // Add availability for each hour in the range
                     for ($hour = $startHour; $hour < $endHour; $hour++) {
                         if (! isset($structuredAvailabilities[$date]['hours'][$hour])) {
                             $structuredAvailabilities[$date]['hours'][$hour] = [];
@@ -152,19 +148,18 @@ class Employee extends Model
                             'employee_id' => $employee['id'],
                             'employee_name' => $employee['first_name'] . ' ' . $employee['last_name'],
                             'employee_number' => $employee['employee_number'],
+                            'full_address' => $employeeWithAddress->address ? $employeeWithAddress->address->full_address : null,
                             'start_time' => sprintf('%02d:00', $hour),
                             'end_time' => sprintf('%02d:00', $hour + 1),
-                            'max_end_time' => $dayAvailability->end_time->format('H:i'), // Individual employee's end time
+                            'max_end_time' => $dayAvailability->end_time->format('H:i'),
                         ];
                     }
                 }
             }
         }
 
-        // Sort by date and convert to array
         ksort($structuredAvailabilities);
 
-        // Convert hours arrays to sorted arrays
         foreach ($structuredAvailabilities as &$day) {
             ksort($day['hours']);
             $day['hours'] = array_values($day['hours']);
