@@ -55,12 +55,18 @@ class EmployeeController extends Controller
     public function search(Request $request)
     {
         $term = $request->input('term');
+        $departmentId = $request->input('department');
 
-        $employees = Employee::where('first_name', 'LIKE', "%{$term}%")
-            ->orWhere('last_name', 'LIKE', "%{$term}%")
-            ->orWhere('email', 'LIKE', "%{$term}%")
-            ->orWhere('employee_number', 'LIKE', "%{$term}%")
-            ->with('department:name')
+        $employees = Employee::where(function ($query) use ($term) {
+            $query->where('first_name', 'LIKE', "%{$term}%")
+                ->orWhere('last_name', 'LIKE', "%{$term}%")
+                ->orWhere('email', 'LIKE', "%{$term}%")
+                ->orWhere('employee_number', 'LIKE', "%{$term}%");
+        })
+            ->when($departmentId, function ($query) use ($departmentId) {
+                return $query->where('department_id', $departmentId);
+            })
+            ->with(['department', 'address'])
             ->paginate(20);
 
         return response()->json([

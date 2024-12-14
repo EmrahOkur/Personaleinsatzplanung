@@ -36,22 +36,6 @@ class UserSeeder extends Seeder
             'employee_id' => $employee->id,
         ]);
 
-        $employee = Employee::factory()
-            ->create([
-                'first_name' => 'Malte',
-                'last_name' => 'Albig',
-                'department_id' => 1,
-                'address_id' => $addressIds->random(),
-            ]);
-        $malte = User::factory()->create([
-            'name' => 'Albig',
-            'vorname' => 'Malte',
-            'role' => 'manager',
-            'email' => 'alm@alm.de',
-            'password' => '$2y$10$9FCLItMjbuvEgsV745Pxwurm7cx4ldGOJjELTwnirdCPp013y/9dW', // https://onlinephp.io/password-hash
-            'employee_id' => $employee->id,
-        ]);
-
         User::factory()->create([
             'name' => 'Admin',
             'vorname' => 'Ein',
