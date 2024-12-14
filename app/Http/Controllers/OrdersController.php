@@ -31,7 +31,6 @@ class OrdersController extends Controller
     public function create(Request $request)
     {
         $av = Employee::getNextWeekAvailabilities();
-        // dd($av);
 
         return view('orders.create', compact('av'));
     }
@@ -52,7 +51,6 @@ class OrdersController extends Controller
 
     public function availabilities(Request $request)
     {
-        //$employees = Employee::getExternalEmployees();
         $av = Employee::getNextWeekAvailabilities();
 
         return response()->json($av);

@@ -68,7 +68,6 @@
                             data-weekday="{{ $day['weekday_name'] }}"
                             data-date="{{ $day['date'] }}"
                             data-hour="{{ $hour }}"
-                            data-maxEndtime="{{  $day['max_end_time']}}"
                             onclick="showEmployeeDetails(this)"
                         @endif
                     >

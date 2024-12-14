@@ -93,7 +93,6 @@ class Employee extends Model
     {
         // Get external employees
         $employees = self::getExternalEmployees();
-
         // Get next week's dates
         $nextWeek = collect();
         $startOfNextWeek = now()->addWeek()->startOfWeek();
@@ -121,7 +120,6 @@ class Employee extends Model
                 $dayAvailability = $employeeAvailabilities
                     ->where('weekday', $day['weekday'])
                     ->first();
-                $maxEndTime = $dayAvailability->max('end_time');
 
                 if ($dayAvailability) {
                     $date = $day['date'];
@@ -141,8 +139,6 @@ class Employee extends Model
                                 5 => 'Freitag',
                             ][$dayAvailability->weekday],
                             'hours' => [],
-
-                            'max_end_time' => $maxEndTime,
                         ];
                     }
 
@@ -158,8 +154,7 @@ class Employee extends Model
                             'employee_number' => $employee['employee_number'],
                             'start_time' => sprintf('%02d:00', $hour),
                             'end_time' => sprintf('%02d:00', $hour + 1),
-
-                            'max_end_time' => $maxEndTime,
+                            'max_end_time' => $dayAvailability->end_time->format('H:i'), // Individual employee's end time
                         ];
                     }
                 }
