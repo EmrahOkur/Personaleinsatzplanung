@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   db:
     image: mysql:5.7
@@ -11,6 +9,27 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     restart: always
+    networks:
+      default:
+        aliases:
+          - personaleinsatzplanung-db-1
+          - personaleinsatzplanung_db_1
+
+  osrm:
+    image: ghcr.io/project-osrm/osrm-backend
+    container_name: osrm-schleswig-holstein
+    volumes:
+      - ./data:/data
+    ports:
+      - "5000:5000"
+    command: "osrm-routed --algorithm mld /data/schleswig-holstein-latest.osrm"
+    networks:
+      - personaleinsatzplanung_default
+    restart: always
+
+networks:
+  personaleinsatzplanung_default:
+    external: true
 
 volumes:
   dbdata:

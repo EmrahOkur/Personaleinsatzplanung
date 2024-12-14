@@ -29,6 +29,21 @@ Repository clonen mit
 ```git clone git@github.com:verimich/Personaleinsatzplanung.git```
 -> Projekt wird in Verzeichnis Personaleinsatzplanung geklont
 
+
+
+## OSRM einbinden
+#### Karte herunterladen
+```
+mkdir data
+wget https://download.geofabrik.de/europe/germany/schleswig-holstein-latest.osm.pbf -P ./data
+```
+OSRM vorbereiten
+```
+docker run -t -v "${PWD}/data:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/schleswig-holstein-latest.osm.pbf
+docker run -t -v "${PWD}/data:/data" ghcr.io/project-osrm/osrm-backend osrm-partition /data/schleswig-holstein-latest.osrm
+docker run -t -v "${PWD}/data:/data" ghcr.io/project-osrm/osrm-backend osrm-customize /data/schleswig-holstein-latest.osrm
+```
+
 In das Projekt-Verzeichnis wechseln und ausführen:
 ```docker-compose up -d --build```
 -> damit erstellen wir uns einen Datenbank Container
