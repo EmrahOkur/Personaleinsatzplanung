@@ -21,9 +21,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'employee')->paginate(20);
+        $query = User::query();
+
+        // Handle role filtering
+        if ($request->has('role') && $request->role !== 'all') {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->paginate(20);
 
         return view('users.index', compact('users'));
     }
@@ -44,14 +51,38 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $term = $request->input('term');
+        $role = $request->input('role', 'all');
 
-        $users = User::where('vorname', 'LIKE', "%{$term}%")
-            ->where('role', '!=', 'employee')
-            ->orWhere('name', 'LIKE', "%{$term}%")
-            ->paginate(20);
+        $query = User::query();
+
+        // Apply search term
+        $query->where(function ($q) use ($term) {
+            $q->where('vorname', 'LIKE', "%{$term}%")
+                ->orWhere('name', 'LIKE', "%{$term}%");
+        });
+
+        // Apply role filter
+        if ($role !== 'all') {
+            $query->where('role', $role);
+        } else {
+            $query->where('role', '!=', 'employee');
+        }
+
+        $users = $query->paginate(20);
+
+        // Transform the users data to include the role
+        $transformedUsers = collect($users->items())->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'vorname' => $user->vorname,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->getRole(),
+            ];
+        })->all();
 
         return response()->json([
-            'users' => $users->items(),
+            'users' => $transformedUsers,
             'pagination' => [
                 'total' => $users->total(),
                 'per_page' => $users->perPage(),
