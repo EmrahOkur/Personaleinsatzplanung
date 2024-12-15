@@ -7,6 +7,7 @@ use App\Models\Shift;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -16,7 +17,8 @@ class SchedulingController extends Controller
     //
     public function index(){
         $employees = Employee::all();
-        return view('scheduling',compact('employees'));
+        $settings = Setting::first();
+        return view('scheduling',compact('employees','settings'));
     }
 
     public function addshifts(Request $request){
@@ -42,16 +44,25 @@ class SchedulingController extends Controller
 
     // Mehrere Schichten hinzufügen
     public function addMultipleShifts(Request $request){
+        $settings = Setting::first();
+        $max_week_planning = $settings->max_week_planning;
+        $shifts_start_date = Carbon::createFromFormat('Y-m-d', $request->shifts_start_date);
+        $shifts_end_date = Carbon::createFromFormat('Y-m-d', $request->shifts_end_date);
+
+        // Berechne die Differenz in Tagen
+        $days_diff = $shifts_start_date->diffInDays($shifts_end_date);
+        if ($days_diff > $max_week_planning) {
+            // Wenn die Differenz größer ist als der erlaubte Maximalwert
+            return response()->json(['error' => 'Die maximal erlaubte Anzahl an Tagen wurde überschritten.']);
+        }else{
+
         $department = Auth::user()->employee->department;
-        
         $start_time = $request->start_time;
         $end_time = $request->end_time;
         $shift_name = $request->shift_name;
         $shift_hours = $request->shift_hours;
         $amount_employees = $request->amount_employees;
         $checkedWorkDays = $request->checkedWorkdays;
-        $shifts_start_date = Carbon::createFromFormat('Y-m-d', $request->shifts_start_date);
-        $shifts_end_date = Carbon::createFromFormat('Y-m-d', $request->shifts_end_date);
         $created_shifts = [];
 
         // Wochentage für den Vergleich (kann auch dynamisch aus einem Array erzeugt werden)
@@ -85,7 +96,7 @@ class SchedulingController extends Controller
             $current_date->addDay();
         }
         return response()->json($created_shifts);
-
+        }
 
     }
 

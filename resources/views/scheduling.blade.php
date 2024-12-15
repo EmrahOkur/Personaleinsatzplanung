@@ -7,8 +7,7 @@
 </span>
 @endsection
 @section('main')
-<section class="header d-flex flex-column align-items-center mt-2 mb-3" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" >
-
+<section class="header d-flex flex-column align-items-center mt-2 mb-3" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" data-showemployees="{{$settings->show_employees}}" >
     <div class="month-navigation">
         <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
         <span id="week-label" class="mx-2"></span>
@@ -132,11 +131,13 @@
     </div>
     <div class="container-fluid" style="position:relative;">
         <div class="row">
+            @if ($settings->sidebar_visible)
             <div class="col-md-1">
                 <div class="employee-sidebar" id="schedule-employee-sidebar">
                     
                 </div>
             </div>
+            
             <div class="col-md-11">
             <table class="table table-bordered">
                 <thead>
@@ -155,6 +156,26 @@
                 </tbody>
             </table>
             </div>
+            @else
+            <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="col-1">Montag</th>
+                        <th scope="col" class="col-1">Dienstag</th>
+                        <th scope="col" class="col-1">Mittwoch</th>
+                        <th scope="col" class="col-1">Donnerstag</th>
+                        <th scope="col" class="col-1">Freitag</th>
+                        <th scope="col" class="col-1">Samstag</th>
+                        <th scope="col" class="col-1">Sonntag</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Dynamisch generierte Tage werden hier eingefügt -->
+                </tbody>
+            </table>
+            </div>
+            @endif
         </div>
     </div>
     <style>
@@ -291,7 +312,7 @@
                 .then(response => response.json())
                 .then(data => {
             
-            
+            let showingEmployees = document.getElementById('schedule-header').dataset.showemployees;
             const scheduleBody = document.getElementById('schedule-body');
             scheduleBody.innerHTML = ''; // Leere den bestehenden Plan
 
@@ -326,20 +347,35 @@
                     shift.employees.forEach(employee => {
                         employees_arr.push(employee);
                     })
-                    if(shift.name){
-                    shiftDiv.innerHTML = `
-                        <p class="list-group-item">${shift.name}</p>
+                    let employeeInfoWithoutNamesHTML = `
+                        <p class="list-group-item">${shift.start_time} - ${shift.end_time}</p>
+                        <p class="list-group-item list-employees">Mitarbeiter: ${employees_arr.length}/${shift.amount_employees}</p>
+                        <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>
+                    `;
+                    let employeeInfoHTML = `
                         <p class="list-group-item">${shift.start_time} - ${shift.end_time}</p>
                         <p class="list-group-item list-employees">Mitarbeiter: ${employees_arr.length}/${shift.amount_employees}</p>
                          <p class="user-list"> ${employees_arr ? employees_arr.map(employee => employee.first_name +" " + employee.last_name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>
                     `;
-                    }else{ shiftDiv.innerHTML = `
-                        <p class="list-group-item">${shift.start_time} - ${shift.end_time}</p>
-                        <p class="list-group-item list-employees">Mitarbeiter: ${employees_arr.length}/${shift.amount_employees}</p>
-                         <p class="user-list"> ${employees_arr ? employees_arr.map(employee => employee.first_name +" " + employee.last_name).join(', ') : "Keine Mitarbeiter zugewiesen"} </p>
-                        <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>
-                    `;
+                    // Abfrage, ob Mitarbeiter angezeigt werden sollen. Wird in den Settings bestimmt.
+                    console.log("Interessant",showingEmployees ? "true":"false")
+                    if(showingEmployees == true){
+                        if(shift.name){
+                        shiftDiv.innerHTML = `
+                            <p class="list-group-item">${shift.name}</p>
+                            ${employeeInfoHTML}
+                        `;
+                        }else{ shiftDiv.innerHTML = employeeInfoHTML
+                        }
+                    }else{
+                        if(shift.name){
+                        shiftDiv.innerHTML = `
+                            <p class="list-group-item">${shift.name}</p>
+                            ${employeeInfoWithoutNamesHTML}
+                        `;
+                        }else{ shiftDiv.innerHTML = employeeInfoWithoutNamesHTML
+                        }
                     }
                     tddiv.appendChild(shiftDiv);
                 });
@@ -604,8 +640,12 @@
                     type: 'POST',
                     data:{shift_name:shift_name,shifts_start_date:shifts_start_date,shifts_end_date:shifts_end_date,start_time:start_time, end_time:end_time, amount_employees:amount_employees, date:date, shift_hours:shift_hours, checkedWorkdays:checkedWorkdays  },
                     success: function(data) {
-                        console.log("success",data)
-                        updateWeek();
+                        if(data.error){
+                            alert(data.error);
+                        }else{
+                            updateWeek();
+                        }
+
                     },
                     error: function(xhr, status, error) {
                         // Fehlerbehandlung: Logge die Antwort und zeige sie in der Konsole

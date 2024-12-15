@@ -9,15 +9,14 @@ class AdminSettingsController extends Controller
 {
     public function index(){
         $settings = Setting::first();
-
-        if (!$settings) {
+        //if (!$settings) {
             // Falls kein Setting gefunden wird, erstellen wir ein neues mit Standardwerten
-            $settings = new Setting();
-            $settings->sidebar_visible = false; // Standardwert
-            $settings->show_employees = false; // Standardwert
-            $settings->max_week_planning = 100; // Standardwert
-            $settings->save();
-        }
+            //$settings = new Setting();
+            //$settings->sidebar_visible = false; // Standardwert
+            //$settings->show_employees = false; // Standardwert
+            //$settings->max_week_planning = 100; // Standardwert
+            //$settings->save();
+        //}
         return view('adminsettings',compact('settings'));
     }
 
