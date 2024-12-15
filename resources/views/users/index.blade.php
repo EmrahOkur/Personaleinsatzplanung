@@ -21,9 +21,17 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
+                                <select id="departmentFilter" class="form-select">
+                                    <option value="all">Alle Abteilungen</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <input type="text" id="search" class="form-control" placeholder="Benutzer suchen...">
                             </div>
-                            <div class="col-md-6" align="right">
+                            <div class="col-md-3" align="right">
                                 <a href="{{ route('users.new')}}" class="btn btn-primary">Benutzer anlegen</a>
                             </div>
                         </div>
@@ -33,6 +41,7 @@
                                     <th>Name</th>
                                     <th>E-Mail</th>
                                     <th>Rolle</th>
+                                    <th>Abteilung</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -42,6 +51,7 @@
                                     <td>{{ $user->getFullName() }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->getRole() }}</td>
+                                    <td>{{ $user->department_name ?? '-' }}</td>
                                     <td align="right" class="pe-3">
                                         <a href="{{ route('users.edit', ['id' =>  $user->id]) }}" 
                                             class="btn btn-primary">
@@ -69,6 +79,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search');
             const roleFilter = document.getElementById('roleFilter');
+            const departmentFilter = document.getElementById('departmentFilter');
             const tableBody = document.getElementById('userTableBody');
             const csrfToken = document.querySelector('[name="_token"]').getAttribute('content');
             const paginationLinks = document.getElementById('pagination-links');
@@ -77,8 +88,9 @@
             function updateUserList() {
                 const searchTerm = searchInput.value;
                 const selectedRole = roleFilter.value;
+                const selectedDepartment = departmentFilter.value;
                 
-                fetch(`/users/search?term=${searchTerm}&role=${selectedRole}`, {
+                fetch(`/users/search?term=${searchTerm}&role=${selectedRole}&department=${selectedDepartment}`, {
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     }
@@ -94,6 +106,7 @@
                                     <td>${user.vorname} ${user.name}</td>
                                     <td>${user.email}</td>
                                     <td>${user.role}</td>
+                                    <td>${user.department}</td>
                                     <td align="right" class="pe-3">
                                         <a href="/users/edit/${user.id}" 
                                             class="btn btn-primary">
@@ -107,7 +120,7 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.</td></tr>';
                     });
             }
 
@@ -117,6 +130,7 @@
             });
 
             roleFilter.addEventListener('change', updateUserList);
+            departmentFilter.addEventListener('change', updateUserList);
         });
     </script>
     @endpush
