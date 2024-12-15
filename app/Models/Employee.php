@@ -135,6 +135,14 @@ class Employee extends Model
             $startOfNextWeek->copy()->addDays(4)->format('Y-m-d'),
         ])->get();
 
+        // Get all vacation days for next week
+        $vacationDays = Urlaub::whereBetween('datum', [
+            $startOfNextWeek->format('Y-m-d'),
+            $startOfNextWeek->copy()->addDays(4)->format('Y-m-d'),
+        ])
+            ->where('status', 'accepted') // Assuming we only consider approved vacation days
+            ->get();
+
         foreach ($employees as $employee) {
             // Load the employee with their address relation
             $employeeWithAddress = self::with('address')->find($employee['id']);
@@ -143,6 +151,17 @@ class Employee extends Model
                 ->get();
 
             foreach ($nextWeek as $day) {
+                // Check if employee has vacation on this day
+                $hasVacation = $vacationDays
+                    ->where('employee_id', $employee['id'])
+                    ->where('datum', $day['date'])
+                    ->isNotEmpty();
+
+                // Skip this day if employee is on vacation
+                if ($hasVacation) {
+                    continue;
+                }
+
                 $dayAvailability = $employeeAvailabilities
                     ->where('weekday', $day['weekday'])
                     ->first();
@@ -170,7 +189,7 @@ class Employee extends Model
                     for ($hour = $startHour; $hour < $endHour; $hour++) {
                         $timeSlot = sprintf('%02d:00', $hour);
 
-                        // Check availability using the new function
+                        // Check availability using the existing function
                         $isAvailable = self::isTimeSlotAvailable(
                             $employee['id'],
                             $date,
