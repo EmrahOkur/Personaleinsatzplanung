@@ -75,51 +75,40 @@
   </div>
 </div>
 
-    <div class="py-12">
+    <div class="">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg py-5">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="container">
-                        <div class="row mb-4">
+                        <div class="d-flex justify-content-between mb-4 w-100">
                             <div class="col-md-6">
                                 <input type="text" id="search" class="form-control" placeholder="Kunden suchen...">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 d-flex justify-content-end">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
-                                Hinzufügen
+                                    <i class="fas fa-plus"></i> Hinzufügen
                                 </button>
                             </div>
                         </div>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Straße</th>
-                                    <th>Hausnummer</th>
-                                    <th>Postleitzahl</th>
-                                    <th>Stadt</th>
                                     <th>Kundennummer</th>
-                                    <th>Aktionen</th>
-                                    <th>Löschen</th>
+                                    <th>Firma</th>
+                                    <th>Name</th>
+                                    <th>Adresse</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody id="employeeTableBody">
                                 @foreach($customers as $customer)
                                 <tr>
-                                    <td>{{ $customer->vorname }} {{ $customer->nachname }}</td>
-                                    <td>{{ $customer->steet }}</td>
-                                    <td>{{ $customer->house_number }}</td>
-                                    <td>{{ $customer->zip_code }}</td>
-                                    <td>{{ $customer->city }}</td>
                                     <td>{{ $customer->customer_number }}</td>
-                                    <td>
-                                        <a href="{{ route('customers.edit',$customer->id) }}" class="btn btn-primary btn-sm">Bearbeiten</a>
-                                    </td>
-                                    <td>
-                                            <!-- Button trigger modal -->
-                                            {{$space = " "}}
-                                        <button onclick = "deleteCustomerModal(event,'{{$customer->id}}', '{{$customer->vorname  . $space . $customer->nachname}}')" id="deleteCustomerButton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerDeleteModal" >
-                                            Löschen
+                                    <td>{{ $customer->companyname }}</td>
+                                    <td>{{ $customer->vorname }} {{ $customer->nachname }}</td>
+                                    <td class="p-1"><div class="d-flex flex-column p-0 m-0">{{ $customer->address->street }} {{ $customer->address->house_number }}</div><div> {{ $customer->address->zip_code }} {{ $customer->address->city }}</div></td>                              
+                                    <td class="d-flex justify-content-end p-2 pb-3">
+                                        <a href="{{ route('customers.edit',$customer->id) }}" class="btn btn-primary btn"><i class="fas fa-edit"></i> Bearbeiten</a>                                   
                                     </td>
                                 </tr>
                                 @endforeach

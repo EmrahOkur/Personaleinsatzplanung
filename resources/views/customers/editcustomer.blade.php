@@ -24,19 +24,19 @@
                 </div>
                 <div class="col-md-6 mb-4">
                     <label for="editStreet" class="form-label">Straße</label>
-                    <input type="text" value="{{$customer->street}}" name="editStreet" id="editStreet"class="form-control">
+                    <input type="text" value="{{$customer->address->street}}" name="editStreet" id="editStreet"class="form-control">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label for="editHousenumber" class="form-label">Hausnummer</label>
-                    <input type="text" value="{{$customer->house_number}}" name="editHousenumber" id="editHousenumber"class="form-control">
+                    <input type="text" value="{{$customer->address->house_number}}" name="editHousenumber" id="editHousenumber"class="form-control">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label for="editZip" class="form-label">Postleitzahl</label>
-                    <input type="text" value="{{$customer->zip_code}}" name="editZip" id="editZip"class="form-control">
+                    <input type="text" value="{{$customer->address->zip_code}}" name="editZip" id="editZip"class="form-control">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label for="editCity" class="form-label">Stadt</label>
-                    <input type="text" value="{{$customer->city}}" name="editCity" id="editCity"class="form-control">
+                    <input type="text" value="{{$customer->address->city}}" name="editCity" id="editCity"class="form-control">
                 </div>
                 <div class="col-md-6"></div>
                 <div class="col-md-2 ">

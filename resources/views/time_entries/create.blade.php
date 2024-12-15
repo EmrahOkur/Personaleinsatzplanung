@@ -31,13 +31,21 @@
                     @endforeach
                 </select>
             </div>
+        @else
+            <!-- Für Mitarbeiter: Mitarbeiter-ID als verstecktes Feld -->
+            <input type="hidden" name="employee_id" value="{{ auth()->user()->employee->id }}">
         @endif
 
         <!-- Datum -->
-        <div class="mb-3">
-            <label for="date" class="form-label">Datum</label>
-            <input type="date" name="date" id="date" class="form-control" value="{{ old('date') }}" required>
-        </div>
+        @if(auth()->user()->isManager())
+            <div class="mb-3">
+                <label for="date" class="form-label">Datum</label>
+                <input type="date" name="date" id="date" class="form-control" value="{{ old('date') }}" required>
+            </div>
+        @else
+            <!-- Für Mitarbeiter: Automatisches Datum -->
+            <input type="hidden" name="date" value="{{ now()->format('Y-m-d') }}">
+        @endif
 
         <!-- Startzeit -->
         <div class="mb-3">
@@ -67,6 +75,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Zeiteintrag speichern</button>
+        <a href="{{ route('time_entries.index', ['employee_id' => request('employee_id') ?? $employeeId]) }}" class="btn btn-danger">
+            Abbrechen
+        </a>
     </form>
 </div>
 @endsection

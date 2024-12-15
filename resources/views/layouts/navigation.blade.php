@@ -19,7 +19,15 @@
             <i class="fas fa-users"></i> {{ __('Mitarbeiter') }}
         </a>
     </li>
-    @endif
+@endif
+
+@if(Auth::user()->isManager())
+<li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('customers') ? 'active' : '' }}" href="{{ route('customers') }}">
+        <i class="fas fa-user"></i> {{ __('Kunden') }}
+    </a>
+</li>  
+@endif
 
 @if(Auth::user()->isManager())
     <li class="nav-item">
@@ -27,7 +35,7 @@
             <i class="fas fa-hourglass"></i> {{ __('Arbeitsplan erstellen') }}
         </a>
     </li>
-    @endif
+@endif
 
 @if(Auth::user()->isEmployee() || Auth::user()->isManager())  
     <!-- Neuer Menüpunkt für Zeiterfassung -->
@@ -58,14 +66,6 @@
 <li class="nav-item">
     <a class="nav-link {{ request()->routeIs('managerUrlaubs') ? 'active' : '' }}" href="{{ route('managerUrlaubs') }}">
         <i class="fas fa-plane"></i> {{ __('Urlaubsanträge verwalten') }}
-    </a>
-</li>  
-@endif
-
-@if(Auth::user()->isManager())
-<li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('customers') ? 'active' : '' }}" href="{{ route('customers') }}">
-        <i class="fas fa-user"></i> {{ __('Kunden verwalten') }}
     </a>
 </li>  
 @endif

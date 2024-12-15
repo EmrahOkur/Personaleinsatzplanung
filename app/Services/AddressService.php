@@ -263,4 +263,31 @@ class AddressService
     {
         return $this->addresses[array_rand($this->addresses)];
     }
+
+    public function getAddresses(): array
+    {
+        return array_map(
+            fn ($address) => $this->splitStreetAddress($address),
+            $this->addresses
+        );
+    }
+
+    public function splitStreetAddress($address)
+    {
+        if (preg_match('/^(.+?)\s*(\d.*)$/', $address['street'], $matches)) {
+            return [
+                'street' => trim($matches[1]),
+                'house_number' => trim($matches[2]),
+                'city' => $address['city'],
+                'zip_code' => $address['zip_code'],
+            ];
+        }
+
+        return [
+            'street' => $address['street'],
+            'house_number' => '',
+            'city' => $address['city'],
+            'zip_code' => $address['zip_code'],
+        ];
+    }
 }

@@ -20,16 +20,11 @@ class EmployeeSeeder extends Seeder
     {
         $addresses = $addressService->getAll();
 
-        collect(range(1, 500))->each(function () use ($addresses) {
+        collect(range(1, 50))->each(function () {
             $employee = Employee::factory()
-                ->has(
-                    Address::factory()
-                        ->state(function () use ($addresses) {
-                            return $addresses[array_rand($addresses)];
-                        })
-                )
                 ->create([
-                    'department_id' => Department::inRandomOrder()->first()->id,
+                    'department_id' => Department::where('id', '<', 7)->inRandomOrder()->first()->id,
+                    'address_id' => Address::inRandomOrder()->first()->id,
                 ]);
             User::factory()->create([
                 'vorname' => $employee->first_name,
@@ -48,9 +43,9 @@ class EmployeeSeeder extends Seeder
 
         collect(range(1, 5))->each(function () use ($externDepartment) {
             $employee = Employee::factory()
-                ->has(Address::factory())
                 ->create([
                     'department_id' => $externDepartment->id,
+                    'address_id' => Address::inRandomOrder()->first()->id,
                 ]);
 
             User::factory()->create([

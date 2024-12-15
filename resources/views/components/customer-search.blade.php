@@ -118,10 +118,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('companyname').value = customer.companyname;
         document.getElementById('vorname').value = customer.vorname;
         document.getElementById('nachname').value = customer.nachname;
-        
+        document.getElementById('address').value = customer.address.street+' '+customer.address.house_number+' '+customer.address.zip_code+' '+customer.address.city;
+
         searchInput.value = '';
-        searchResults.classList.add('d-none');
-        
+        searchResults.classList.add('d-none');        
+        document.getElementById('table').classList.remove('d-none');        
     }
 
     document.addEventListener('click', function(e) {

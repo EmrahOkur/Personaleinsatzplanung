@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +15,6 @@ return new class extends Migration {
         Schema::create('addresses', function (Blueprint $table) {
             // Primärschlüssel
             $table->id();
-
-            // Beziehung
-            $table->foreignId('employee_id')
-                ->unique()
-                ->constrained()
-                ->onDelete('cascade');
 
             // Adressdaten
             $table->string('street');

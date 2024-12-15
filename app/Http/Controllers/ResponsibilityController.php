@@ -47,7 +47,6 @@ class ResponsibilityController extends Controller
 
         // sollte vor dem Löschen 1 sein
         if ($countResponsibilities === 1) {
-            dd($responsibility->employee->user);
             $responsibility->employee->user->role = 'employee';
         }
 

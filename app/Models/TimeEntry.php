@@ -42,18 +42,17 @@ class TimeEntry extends Model
     public function getNetWorkHoursAttribute(): float
     {
         if (! $this->time_start || ! $this->time_end) {
-            return 0.0; // Rückgabe von 0 Stunden, wenn Zeiten fehlen
+            return 0.0; // Rückgabe von 0 Stunden bei fehlenden Daten
         }
 
         $start = strtotime($this->time_start);
         $end = strtotime($this->time_end);
-        $break = ($this->break_duration ?? 0) * 60; // Pausenzeit in Minuten
+        $break = ($this->break_duration ?? 0) * 60; // Pausenzeit in Sekunden
 
-        // Berechnung der Nettoarbeitszeit in Stunden
-        $workHours = ($end - $start - $break) / 3600; // Umrechnung in Stunden
+        // Arbeitszeit in Sekunden berechnen und negatives Ergebnis verhindern
+        $workSeconds = max(0, $end - $start - $break);
 
-        // Rückgabe auf 2 Dezimalstellen gerundet
-        return round($workHours, 2);
+        return round($workSeconds / 3600, 2); // Rückgabe in Stunden
     }
 
     /**

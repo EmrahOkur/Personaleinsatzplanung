@@ -5,47 +5,46 @@
 @endsection
 @section('main')
     
-<div class="card">
-    <div class="card-header">
+<div class="card mt-3">
+    <div class="card-body">
         <div class="d-flex justify-content-end align-items-center">
             <form method="get" action="/orders/create">
-                <button type="submit" class="btn btn-primary">Neu anlegen</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> 
+                    Neu anlegen
+                </button>
             </form>
         </div>
-    </div>
-    <div class="card-body">
+
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Datum</th>
-                        <th>Zeit</th>
-                        <th>Kunde</th>
+                        <th>Datum/Zeit</th>
                         <th>Firma</th>
+                        <th>Kunde</th>
+                        <th>Adresse</th>
                         <th>Mitarbeiter</th>
-                        <th>Aktionen</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($orders as $order)
                         <tr>
-                            <td>{{ $order->appointment_date->format('d.m.Y') }}</td>
-                            <td>{{ $order->appointment_time->format('H:i') }}</td>
-                            <td>{{ $order->customer->nachname }}, {{ $order->customer->vorname }}</td>
-                            <td>{{ $order->customer->companyname }}</td>
-                            <td>{{  $order->employee->first_name .' ' .$order->employee->last_name }}</td>
-                           
-                            <td>
-                                
-                                    <button variant="primary" class="btn btn-primary">
-                                        <i class="bi bi-pencil me-2"></i> Bearbeiten
-                                 </button>
-                               
+                            <td class="align-middle">{{ $order->appointment_date->format('d.m.Y') }} {{ $order->appointment_time->format('H:i') }}</td>
+                            <td class="align-middle">{{ $order->customer->companyname }}</td>
+                            <td class="align-middle">{{ $order->customer->nachname }}, {{ $order->customer->vorname }}</td>
+                            <td class="align-middle p-1"><div class="d-flex flex-column p-0 m-0">{{ $order->customer->address->street }} {{ $order->customer->address->house_number }}</div><div>{{ $order->customer->address->zip_code }} {{ $order->customer->address->city }}</div></td>
+                            <td class="align-middle">{{ $order->employee->first_name .' ' .$order->employee->last_name }}</td>                           
+                            <td class="text-end align-middle">
+                                <button variant="primary" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i> Bearbeiten
+                                </button>                               
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">Keine Aufträge vorhanden</td>
+                            <td colspan="6" class="text-center">Keine Aufträge vorhanden</td>
                         </tr>
                     @endforelse
                 </tbody>

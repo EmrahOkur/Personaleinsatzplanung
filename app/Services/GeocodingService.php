@@ -35,7 +35,7 @@ class GeocodingService
         // $street = str_replace(' ', '+', $street);
         // Format and encode address
         $address = urldecode("{$street}+{$zip}+{$city}+Germany");
-        var_export($address);
+        // var_dump($address);
         // Generate cache key
         $cacheKey = 'geocoding_' . md5($address);
 
@@ -54,7 +54,7 @@ class GeocodingService
                 'limit' => 1,
                 'addressdetails' => 1,
             ]);
-
+            //dd($response);
             if (! $response->successful()) {
                 throw new Exception("Geocoding API request failed: {$response->status()}");
             }
@@ -90,25 +90,26 @@ class GeocodingService
     }
 
     public function getCoordinatesAsync($client, $address)
-{
-    $address = urldecode("{$address['street']}+{$address['zip']}+{$address['city']}+Germany");
+    {
+        $address = urldecode("{$address['street']}+{$address['zip']}+{$address['city']}+Germany");
 
-    return $client->getAsync(self::NOMINATIM_BASE_URL, [
-        'query' => [
-            'format' => 'jsonv2',
-            'q' => $address,
-            'limit' => 1,
-            'addressdetails' => 1,
-        ]
-    ])->then(function ($response) {
-        $data = $response->json();
-        return $result = [
-            'lat' => (float) $data[0]['lat'],
-            'lon' => (float) $data[0]['lon'],
-            'display_name' => $data[0]['display_name'],
-            'confidence' => $data[0]['importance'] ?? null,
-            'type' => $data[0]['type'] ?? null,
-        ];
-    });
-}
+        return $client->getAsync(self::NOMINATIM_BASE_URL, [
+            'query' => [
+                'format' => 'jsonv2',
+                'q' => $address,
+                'limit' => 1,
+                'addressdetails' => 1,
+            ],
+        ])->then(function ($response) {
+            $data = $response->json();
+
+            return $result = [
+                'lat' => (float) $data[0]['lat'],
+                'lon' => (float) $data[0]['lon'],
+                'display_name' => $data[0]['display_name'],
+                'confidence' => $data[0]['importance'] ?? null,
+                'type' => $data[0]['type'] ?? null,
+            ];
+        });
+    }
 }
