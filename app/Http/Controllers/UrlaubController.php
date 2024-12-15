@@ -166,14 +166,23 @@ class UrlaubController extends Controller
     {
         $bundesland = 'HH';
         $jahr = date('Y');
+        $naechstesJahr = date('Y') + 1;
 
         $url = "https://feiertage-api.de/api/?jahr={$jahr}&nur_land={$bundesland}";
+        $urlNaechstesJahr = "https://feiertage-api.de/api/?jahr={$naechstesJahr}&nur_land={$bundesland}";
         $response = Http::get($url);
 
-        if ($response->ok()) {
-            $feiertage = $response->json();
+        // Abrufen der Feiertage für das nächste Jahr
+        $responseNaechstesJahr = Http::get($urlNaechstesJahr);
 
-            return response()->json($feiertage);
+
+        if ($response->ok() && $responseNaechstesJahr->ok()) {
+            $feiertage = $response->json();
+            $feiertageNaechstesJahr = $responseNaechstesJahr->json();
+            // Feiertage der beiden Jahre zusammenführen
+            $alleFeiertage = array_merge($feiertage, $feiertageNaechstesJahr);
+
+            return response()->json($alleFeiertage);
         }
 
         return response()->json(['error' => 'Feiertage konnten nicht geladen werden.'], 500);
