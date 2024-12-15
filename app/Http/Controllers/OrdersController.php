@@ -59,7 +59,6 @@ class OrdersController extends Controller
     public function store(Request $request)
     {
         try {
-
             $validated = $request->validate([
                 'customer_id' => 'required|exists:customers,id',
                 'employee_id' => 'required|exists:employees,id',
@@ -71,7 +70,7 @@ class OrdersController extends Controller
             return redirect()->route('orders', $order)
                 ->with('success', 'Auftrag erfolgreich erstellt');
         } catch (Exception $ex) {
-            Log::error($ex->getMessage());
+            \Log::error($ex->getMessage());
         }
     }
 
