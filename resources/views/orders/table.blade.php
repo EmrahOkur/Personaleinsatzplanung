@@ -102,7 +102,6 @@ function showEmployeeDetails(element) {
         let employeeList = '';
         if (Array.isArray(employees)) {
             employees.forEach(emp => {
-                console.log(emp)
                 const uniqueId = `emp-${emp.employee_id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
                 employeeList += `
                     <div class="border-bottom py-2" style="cursor: pointer;" 
@@ -140,14 +139,12 @@ function showEmployeeDetails(element) {
         
     } catch (error) {
         console.error('Error parsing employees data:', error);
-        console.log('Raw data:', element.dataset.employees);
     }
 }
 
 async function fetchDistanceForEmployee(employeeId, elementId) {
     try {
         const customerId = document.getElementById('customer_id').value;
-        console.log(`Fetching distance for employee ${employeeId}`);
         
         const response = await fetch('/orders/distance', {
             method: 'POST',
@@ -194,7 +191,6 @@ function selectEmployee(date, time, employeeId, employeeName) {
     
     // Setze die Zeit
     document.getElementById('appointment_time').value = time;
-    
     // Setze den Mitarbeiter
     document.getElementById('employee_id').value = employeeId;
     document.getElementById('employee_name').value = employeeName;
