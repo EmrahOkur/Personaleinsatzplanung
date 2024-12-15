@@ -68,7 +68,6 @@
                             data-weekday="{{ $day['weekday_name'] }}"
                             data-date="{{ $day['date'] }}"
                             data-hour="{{ $hour }}"
-                            data-maxEndtime="{{  $day['max_end_time']}}"
                             onclick="showEmployeeDetails(this)"
                         @endif
                     >
@@ -114,6 +113,8 @@ function showEmployeeDetails(element) {
                                 <strong>${emp.employee_name}</strong><br>
                                 <small class="text-muted">Mitarbeiter-Nr: ${emp.employee_number}</small>
                                 <br>
+                                <small class="text-muted">Standort: ${emp.full_address}</small>
+                                <br>
                                 <small class="text-muted">Mitarbeiter verfügbar bis: ${emp.max_end_time}</small>
                             </div>
                             <div id="${uniqueId}" class="text-end" style="min-width: 100px">
@@ -145,7 +146,7 @@ function showEmployeeDetails(element) {
 
 async function fetchDistanceForEmployee(employeeId, elementId) {
     try {
-        const customerId = document.querySelector('input[name="customer_id"]').value;
+        const customerId = document.getElementById('customer_id').value;
         console.log(`Fetching distance for employee ${employeeId}`);
         
         const response = await fetch('/orders/distance', {
@@ -188,7 +189,6 @@ async function fetchDistanceForEmployee(employeeId, elementId) {
 
 
 function selectEmployee(date, time, employeeId, employeeName) {
-    console.log("selecting");
     // Setze das Datum
     document.getElementById('appointment_date').value = date;
     

@@ -11,7 +11,7 @@
                     <!-- Suchfeld Card -->                   
                     @include('components.customer-search')
                 
-                    <form id="orderForm" method="POST" action="{{ route('orders.store') }}">
+                    <form id="orderForm" method="POST" action="{{ route('orders.store') }}" autocomplete="off">
                         @csrf
                         <!-- Customer Form Fields -->
                         <div class="row">
@@ -92,22 +92,74 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Initial check
-                checkFormValidity();
+            // Create MutationObserver to watch for value changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        checkFormValidity();
+                    }
+                });
+            });
+
+        // Watch both inputs for changes
+        ['customer_id', 'employee_id'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                console.log("Setting up watchers for", id);
+                // Watch for direct changes
+                element.addEventListener('change', checkFormValidity);
+                element.addEventListener('input', checkFormValidity);
                 
-                // Check whenever hidden fields change
-                ['customer_id', 'employee_id'].forEach(id => {
-                    document.getElementById(id).addEventListener('change', checkFormValidity);
+                // Watch for programmatic changes
+                observer.observe(element, {
+                    attributes: true,
+                    attributeFilter: ['value']
                 });
 
-                function checkFormValidity() {
-                    const customerId = document.getElementById('customer_id').value;
-                    const employeeId = document.getElementById('employee_id').value;
-                    
-                    document.getElementById('save-btn').disabled = !customerId || !employeeId;
-                }
+                // Also set up a property observer
+                let value = element.value;
+                Object.defineProperty(element, 'value', {
+                    get: function() {
+                        return value;
+                    },
+                    set: function(newValue) {
+                        value = newValue;
+                        console.log(`Value changed for ${id}:`, newValue);
+                        checkFormValidity();
+                    }
+                });
+            } else {
+                console.warn(`Element ${id} not found`);
+            }
+        });
 
+        function checkFormValidity() {
+            const customerElement = document.getElementById('customer_id');
+            const employeeElement = document.getElementById('employee_id');
+            
+            if (!customerElement || !employeeElement) {
+                console.warn('Required elements not found');
+                return;
+            }
+
+            const customerId = customerElement.value;
+            const employeeId = employeeElement.value;
+            
+            console.log('Checking validity:', {
+                customerId,
+                employeeId,
+                timestamp: new Date().toISOString()
             });
+
+            const saveButton = document.getElementById('save-btn');
+            if (saveButton) {
+                saveButton.disabled = !customerId || !employeeId;
+            }
+        }
+
+        // Initial check
+        checkFormValidity();
+    });
         </script>
     @endpush
 </x-app-layout>

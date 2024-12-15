@@ -19,12 +19,6 @@ class Address extends Model
         'country',
     ];
 
-    // public function employees()
-    // {
-    //     return $this->hasMany(Employee::class);
-    // }
-
-    // Vollständige Adresse als Accessor
     public function getFullAddressAttribute()
     {
         return "{$this->street} {$this->house_number} {$this->zip_code} {$this->city}";
