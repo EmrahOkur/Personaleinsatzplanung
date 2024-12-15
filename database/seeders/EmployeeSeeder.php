@@ -20,7 +20,7 @@ class EmployeeSeeder extends Seeder
     {
         $addresses = $addressService->getAll();
 
-        collect(range(1, 50))->each(function () use ($addresses) {
+        collect(range(1, 500))->each(function () use ($addresses) {
             $employee = Employee::factory()
                 ->has(
                     Address::factory()

@@ -125,10 +125,11 @@ Route::middleware('auth')->group(function () {
     // Scheduling Controller (User Shifts)
     Route::get('/scheduling', [SchedulingController::class, 'index'])->name('scheduling');
     Route::post('/scheduling/addshifts', [SchedulingController::class, 'addshifts'])->name('scheduling.addshifts');
+    Route::post('/scheduling/addMultipleShifts', [SchedulingController::class, 'addMultipleShifts'])->name('scheduling.addMultipleShifts');
     Route::get('/scheduling/getShifts', [SchedulingController::class, 'getShifts'])->name('scheduling.getShifts');
     Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class, 'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
     Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class, 'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
-    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
+    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}/{startOfWeek}/{endOfWeek}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
     Route::delete('/scheduling/deleteShift/{shiftId}', [SchedulingController::class, 'deleteShift'])->name('scheduling.deleteShift');
 
     // responsibilities
