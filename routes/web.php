@@ -16,6 +16,7 @@ use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\UrlaubController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ManagerUrlaubController;
+use App\Http\Controllers\AdminSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -145,6 +146,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/managerurlaub/{id}/loeschen', [ManagerUrlaubController::class, 'destroy'])->name('managerUrlaubs.loeschen');
 
     });
+    // Admin Controller
+
+    Route::controller(AdminSettingsController::class)->group(function () {
+        Route::get('/adminsettings', [AdminSettingsController::class, 'index'])->name('adminsettings');
+        Route::post('/adminsettings/change', [AdminSettingsController::class, 'change'])->name('adminsettings.change');
+    });
+    
 });
 
 require __DIR__ . '/auth.php';

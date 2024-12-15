@@ -205,11 +205,8 @@
                     }
                     let shifts = document.querySelectorAll(".shift-button");
                     let shift_dates = [];
-                    console.log("events",events)
-                    console.log("shifts: ",shifts)
                     shifts.forEach(shift => {
                         shift_dates.push(shift.getAttribute("data-date"));
-                        console.log("in for each ",shift.getAttribute("data-date"))
                     })
                     events.forEach(event => {
                         if(shift_dates.includes(event.date)){
@@ -575,6 +572,7 @@
         }
         function addShiftToSchedule(){
             let shift_name = document.getElementById("name_shift").value;
+            console.log("shift name",shift_name)
             let start_time = document.getElementById("start_shift").value;
             let end_time = document.getElementById("end_shift").value;
             let amount_employees = document.getElementById("employee_schedule").value;
@@ -606,6 +604,7 @@
                     type: 'POST',
                     data:{shift_name:shift_name,shifts_start_date:shifts_start_date,shifts_end_date:shifts_end_date,start_time:start_time, end_time:end_time, amount_employees:amount_employees, date:date, shift_hours:shift_hours, checkedWorkdays:checkedWorkdays  },
                     success: function(data) {
+                        console.log("success",data)
                         updateWeek();
                     },
                     error: function(xhr, status, error) {

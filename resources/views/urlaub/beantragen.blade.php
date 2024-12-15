@@ -137,6 +137,11 @@
                 });
             });
         </script>
+        <style>
+            .fc-daygrid-day-events {
+                z-index: -1;
+            }
+        </style>
     
         @if ($errors->any())
         <div class="alert alert-danger">

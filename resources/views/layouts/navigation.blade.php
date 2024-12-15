@@ -94,6 +94,17 @@
                 </li>
             </ul>
         </div>
+
+        <div class="collapse {{ request()->routeIs('adminsettings') ? 'show' : '' }}" id="settingsSubmenu">
+            <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('adminsettings') ? 'active' : '' }}" 
+                       href="{{ route('adminsettings') }}">
+                        <i class="fas fa-users"></i> {{ __('Allgemeine Einstellungen') }}
+                    </a>
+                </li>
+            </ul>
+        </div>
     </li>
 </ul>
 @endif
