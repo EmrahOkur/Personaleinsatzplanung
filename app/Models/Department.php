@@ -27,4 +27,9 @@ class Department extends Model
     {
         return $this->belongsToMany(Employee::class, 'responsibilities');
     }
+
+    public function department()
+    {
+        return $this->belongsToMany(Shift::class);
+    }
 }

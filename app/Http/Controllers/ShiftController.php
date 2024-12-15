@@ -60,5 +60,9 @@ class ShiftController extends Controller
         $shifts_with_employees = Shift::with('employees')->get(); // Alle Schichten mit ihren Benutzern
         return response()->json($shifts_with_employees);
     }
+    public function createMultipleShifts(request $request){
+        
+    }
+
 
 }

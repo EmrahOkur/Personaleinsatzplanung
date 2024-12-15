@@ -16,6 +16,7 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\UrlaubController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -127,10 +128,11 @@ Route::middleware('auth')->group(function () {
     // Scheduling Controller (User Shifts)
     Route::get('/scheduling', [SchedulingController::class, 'index'])->name('scheduling');
     Route::post('/scheduling/addshifts', [SchedulingController::class, 'addshifts'])->name('scheduling.addshifts');
+    Route::post('/scheduling/addMultipleShifts', [SchedulingController::class, 'addMultipleShifts'])->name('scheduling.addMultipleShifts');
     Route::get('/scheduling/getShifts', [SchedulingController::class, 'getShifts'])->name('scheduling.getShifts');
     Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class, 'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
     Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class, 'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
-    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
+    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}/{startOfWeek}/{endOfWeek}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
     Route::delete('/scheduling/deleteShift/{shiftId}', [SchedulingController::class, 'deleteShift'])->name('scheduling.deleteShift');
 
     // responsibilities
@@ -146,6 +148,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/managerurlaub/{id}/loeschen', [ManagerUrlaubController::class, 'destroy'])->name('managerUrlaubs.loeschen');
 
     });
+    // Admin Controller
+
+    Route::controller(AdminSettingsController::class)->group(function () {
+        Route::get('/adminsettings', [AdminSettingsController::class, 'index'])->name('adminsettings');
+        Route::post('/adminsettings/change', [AdminSettingsController::class, 'change'])->name('adminsettings.change');
+    });
+    
 });
 
 require __DIR__ . '/auth.php';
