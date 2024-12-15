@@ -146,7 +146,7 @@ function showEmployeeDetails(element) {
 
 async function fetchDistanceForEmployee(employeeId, elementId) {
     try {
-        const customerId = document.querySelector('input[name="customer_id"]').value;
+        const customerId = document.getElementById('customer_id').value;
         console.log(`Fetching distance for employee ${employeeId}`);
         
         const response = await fetch('/orders/distance', {
@@ -189,7 +189,6 @@ async function fetchDistanceForEmployee(employeeId, elementId) {
 
 
 function selectEmployee(date, time, employeeId, employeeName) {
-    console.log("selecting");
     // Setze das Datum
     document.getElementById('appointment_date').value = date;
     
