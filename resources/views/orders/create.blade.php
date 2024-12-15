@@ -91,75 +91,91 @@
 
     @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            // Create MutationObserver to watch for value changes
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
-                        checkFormValidity();
-                    }
-                });
-            });
+           document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('orderForm');
+    const customerIdField = document.getElementById('customer_id');
+    const employeeIdField = document.getElementById('employee_id');
+    const saveButton = document.getElementById('save-btn');
 
-        // Watch both inputs for changes
-        ['customer_id', 'employee_id'].forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                console.log("Setting up watchers for", id);
-                // Watch for direct changes
-                element.addEventListener('change', checkFormValidity);
-                element.addEventListener('input', checkFormValidity);
-                
-                // Watch for programmatic changes
-                observer.observe(element, {
-                    attributes: true,
-                    attributeFilter: ['value']
-                });
+    // Create a function to update hidden fields
+    function updateHiddenField(field, value) {
+        if (field) {
+            field.value = value;
+            // Trigger a change event
+            const event = new Event('change', { bubbles: true });
+            field.dispatchEvent(event);
+        }
+    }
 
-                // Also set up a property observer
-                let value = element.value;
-                Object.defineProperty(element, 'value', {
-                    get: function() {
-                        return value;
-                    },
-                    set: function(newValue) {
-                        value = newValue;
-                        console.log(`Value changed for ${id}:`, newValue);
-                        checkFormValidity();
-                    }
-                });
-            } else {
-                console.warn(`Element ${id} not found`);
-            }
-        });
+    // Function to check form validity
+    function checkFormValidity() {
+        const customerId = customerIdField?.value;
+        const employeeId = employeeIdField?.value;
 
-        function checkFormValidity() {
-            const customerElement = document.getElementById('customer_id');
-            const employeeElement = document.getElementById('employee_id');
-            
-            if (!customerElement || !employeeElement) {
-                console.warn('Required elements not found');
+        if (saveButton) {
+            saveButton.disabled = !customerId || !employeeId;
+        }
+    }
+
+    // Add form submit handler
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Double-check values before submit
+            const customerId = customerIdField?.value;
+            const employeeId = employeeIdField?.value;
+
+            if (!customerId || !employeeId) {
+                alert('Bitte wählen Sie einen Kunden und einen Mitarbeiter aus.');
                 return;
             }
 
-            const customerId = customerElement.value;
-            const employeeId = employeeElement.value;
-            
-            console.log('Checking validity:', {
-                customerId,
-                employeeId,
-                timestamp: new Date().toISOString()
-            });
+            // Create FormData and log its contents
+            const formData = new FormData(form);
 
-            const saveButton = document.getElementById('save-btn');
-            if (saveButton) {
-                saveButton.disabled = !customerId || !employeeId;
-            }
-        }
+            // If all is good, submit the form
+            form.submit();
+        });
+    }
 
-        // Initial check
+    // Modify the existing selectEmployee function
+    window.selectEmployee = function(date, time, employeeId, employeeName) {
+        // Update visible fields
+        document.getElementById('appointment_date').value = date;
+        document.getElementById('appointment_time').value = time;
+        document.getElementById('employee_name').value = employeeName;
+        
+        // Update hidden employee_id field
+        updateHiddenField(employeeIdField, employeeId);
+        
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('employeeModal'));
+        modal.hide();
+
+        // Check form validity
         checkFormValidity();
+    };
+
+    // Watch both hidden fields for changes
+    [customerIdField, employeeIdField].forEach(field => {
+        if (field) {
+            field.addEventListener('change', checkFormValidity);
+            field.addEventListener('input', checkFormValidity);
+        }
     });
+
+    // Also watch customer search events
+    document.addEventListener('customer-selected', function(e) {
+        if (e.detail && e.detail.id) {
+            updateHiddenField(customerIdField, e.detail.id);
+            checkFormValidity();
+        }
+    });
+
+    // Initial form validity check
+    checkFormValidity();
+});
         </script>
     @endpush
 </x-app-layout>

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateEmployeeCredsRequest;
 use App\Http\Requests\UpdateEmployeeCredsRequest;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\User;
 use Exception;
@@ -21,11 +22,29 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'employee')->paginate(20);
+        $query = User::query()
+            ->leftJoin('employees', 'users.employee_id', '=', 'employees.id')
+            ->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
+            ->select('users.*', 'departments.name as department_name');
 
-        return view('users.index', compact('users'));
+        // Handle role filtering
+        if ($request->has('role') && $request->role !== 'all') {
+            $query->where('users.role', $request->role);
+        }
+
+        // Handle department filtering
+        if ($request->has('department') && $request->department !== 'all') {
+            $query->where('departments.id', $request->department);
+        }
+
+        $users = $query->paginate(20);
+
+        // Get departments for the dropdown
+        $departments = Department::select('id', 'name')->orderBy('name')->get();
+
+        return view('users.index', compact('users', 'departments'));
     }
 
     public function new(): View
@@ -44,14 +63,47 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $term = $request->input('term');
+        $role = $request->input('role', 'all');
+        $department = $request->input('department', 'all');
 
-        $users = User::where('vorname', 'LIKE', "%{$term}%")
-            ->where('role', '!=', 'employee')
-            ->orWhere('name', 'LIKE', "%{$term}%")
-            ->paginate(20);
+        $query = User::query()
+            ->leftJoin('employees', 'users.employee_id', '=', 'employees.id')
+            ->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
+            ->select('users.*', 'departments.name as department_name');
+
+        // Apply search term
+        if (! empty($term)) {
+            $query->where(function ($q) use ($term) {
+                $q->where('users.vorname', 'LIKE', "%{$term}%")
+                    ->orWhere('users.name', 'LIKE', "%{$term}%");
+            });
+        }
+
+        // Apply role filter
+        if ($role !== 'all') {
+            $query->where('users.role', $role);
+        }
+
+        // Apply department filter
+        if ($department !== 'all') {
+            $query->where('departments.id', $department);
+        }
+
+        $users = $query->paginate(20);
+
+        $transformedUsers = collect($users->items())->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'vorname' => $user->vorname,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->getRole(),
+                'department' => $user->department_name ?? '-',
+            ];
+        })->all();
 
         return response()->json([
-            'users' => $users->items(),
+            'users' => $transformedUsers,
             'pagination' => [
                 'total' => $users->total(),
                 'per_page' => $users->perPage(),

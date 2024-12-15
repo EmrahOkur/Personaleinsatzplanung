@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // Employee Routes
-    Route::controller(EmployeeController::class)->group(function () {
+    Route::controller(EmployeeController::class)->middleware('checkRole:manager')->group(function () {
         Route::get('/employees', 'index')->name('employees');
         Route::get('/employees/new', 'new')->name('employees.new');
         Route::post('/employees/create', 'create')->name('employees.create');
@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Orders
-    Route::controller(OrdersController::class)->group(function () {
+    Route::controller(OrdersController::class)->middleware('checkRole:manager')->group(function () {
         Route::get('/orders', 'index')->name('orders');
         Route::get('/orders/create', 'create')->name('orders.create');
         Route::post('/orders/distance', 'distance')->name('orders.distance');
@@ -139,7 +139,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/responsibilities/{id}/department/{department_id}', 'create')->name('responsibilities.create');
     });
 
-    Route::controller(ManagerUrlaubController::class)->group(function () {
+    Route::controller(ManagerUrlaubController::class)->middleware('checkRole:manager')->group(function () {
         Route::get('/managerurlaub', [ManagerUrlaubController::class, 'index'])->name('managerUrlaubs');
         Route::post('/managerurlaub/genehmigen', [ManagerUrlaubController::class, 'genehmigen'])->name('managerUrlaubs.genehmigen');
         Route::post('/managerurlaub/ablehnen', [ManagerUrlaubController::class, 'ablehnen'])->name('managerUrlaubs.ablehnen');

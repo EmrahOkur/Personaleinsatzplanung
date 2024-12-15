@@ -58,17 +58,20 @@ class OrdersController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'employee_id' => 'required|exists:employees,id',
-            'appointment_date' => 'required|date',
-            'appointment_time' => 'required',
-        ]);
+        try {
+            $validated = $request->validate([
+                'customer_id' => 'required|exists:customers,id',
+                'employee_id' => 'required|exists:employees,id',
+                'appointment_date' => 'required|date',
+                'appointment_time' => 'required',
+            ]);
+            $order = Orders::create($validated);
 
-        $order = Orders::create($validated);
-
-        return redirect()->route('orders', $order)
-            ->with('success', 'Auftrag erfolgreich erstellt');
+            return redirect()->route('orders', $order)
+                ->with('success', 'Auftrag erfolgreich erstellt');
+        } catch (Exception $ex) {
+            \Log::error($ex->getMessage());
+        }
     }
 
     public function distance(Request $request, GeocodingService $geocoder, OSRMService $osrm)
