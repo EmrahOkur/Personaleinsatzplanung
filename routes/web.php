@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
-
         return redirect()->route('home');
     }
 
@@ -42,16 +41,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // Employee Routes
-    Route::controller(EmployeeController::class)->middleware('checkRole:manager')->group(function () {
-        Route::get('/employees', 'index')->name('employees');
-        Route::get('/employees/new', 'new')->name('employees.new');
-        Route::post('/employees/create', 'create')->name('employees.create');
-        Route::get('/employees/search', 'search')->name('employees.search');
-        Route::get('/employees/searchInfo', 'searchInfo')->name('employees.searchInfo');
-        Route::post('/employees/store', 'store')->name('employees.store');
-        Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
-        Route::post('/employees/update/{id}', 'update')->name('employees.update');
-        Route::post('/employees/{id}/availabilities', 'saveAvailabilities')->name('employees.availabilities');
+    Route::controller(EmployeeController::class)->group(function () {
+        Route::middleware('checkRole:manager')->group(function () {
+            Route::get('/employees', 'index')->name('employees');
+            Route::get('/employees/new', 'new')->name('employees.new');
+            Route::post('/employees/create', 'create')->name('employees.create');
+            Route::post('/employees/store', 'store')->name('employees.store');
+            Route::get('/employees/edit/{id}', 'edit')->name('employees.edit');
+            Route::post('/employees/update/{id}', 'update')->name('employees.update');
+            Route::post('/employees/{id}/availabilities', 'saveAvailabilities')->name('employees.availabilities');
+        });
+        Route::middleware('checkRole:manager,admin')->group(function () {
+            Route::get('/employees/search', 'search')->name('employees.search');
+            Route::get('/employees/searchInfo', 'searchInfo')->name('employees.searchInfo');
+        });
     });
 
     // Orders
@@ -65,15 +68,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders/availabilities', 'availabilities')->name('orders.availabilities');
     });
 
-    Route::get('/urlaubs', [UrlaubController::class, 'index'])->name('urlaubs');
-    Route::get('/urlaubs/beantragen', [UrlaubController::class, 'beantragen'])->name('urlaubs.beantragen');
-    Route::post('/urlaubs/speichern', [UrlaubController::class, 'speichern'])->name('urlaubs.speichern');
-
-    Route::get('/urlaubs/übersicht', [UrlaubController::class, 'übersicht'])->name('urlaubs.übersicht');
-    Route::get('/urlaubs/feiertage', [UrlaubController::class, 'feiertage'])->name('urlaubs.feiertage');
-    Route::delete('/urlaub/{id}/loeschen', [UrlaubController::class, 'destroy'])->name('urlaubs.loeschen');
-
-    Route::get('/urlaubs/genehmigen', [UrlaubController::class, 'genehmigen'])->name('urlaubs.genehmigen');
+    //vacation
+    Route::controller(UrlaubController::class)->middleware('checkRole:manager,employee')->group(function () {
+        Route::get('/urlaubs', 'index')->name('urlaubs');
+        Route::get('/urlaubs/beantragen', 'beantragen')->name('urlaubs.beantragen');
+        Route::post('/urlaubs/speichern', 'speichern')->name('urlaubs.speichern');
+        Route::get('/urlaubs/übersicht', 'übersicht')->name('urlaubs.übersicht');
+        Route::get('/urlaubs/feiertage', 'feiertage')->name('urlaubs.feiertage');
+        Route::delete('/urlaub/{id}/loeschen', 'destroy')->name('urlaubs.loeschen');
+        Route::get('/urlaubs/genehmigen', 'genehmigen')->name('urlaubs.genehmigen');
+    });
 
     // User Routes
     Route::controller(UserController::class)->group(function () {
@@ -112,11 +116,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Customer Controller
-    Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
-    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
-    Route::delete('/customers/{id}', [CustomerController::class, 'delete'])->name('customers.delete');
-    Route::get('/customers/edit/{id}', [CustomerController::class, 'edit'])->name('customers.edit');
-    Route::put('/customers/edit/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::controller(CustomerController::class)->middleware('checkRole:manager')->group(function () {
+        Route::get('/customers', 'index')->name('customers');
+        Route::post('/customers', 'store')->name('customers.store');
+        Route::delete('/customers/{id}', 'delete')->name('customers.delete');
+        Route::get('/customers/edit/{id}', 'edit')->name('customers.edit');
+        Route::put('/customers/edit/{id}', 'update')->name('customers.update');
+    });
 
     // Shift Controller (Employee Shifts)
     Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts');
@@ -125,26 +131,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/shifts/getShiftsWithUsers', [ShiftController::class, 'getShiftsWithUsers'])->name('scheduling.getShiftsWithUsers');
 
     // Scheduling Controller (User Shifts)
-    Route::get('/scheduling', [SchedulingController::class, 'index'])->name('scheduling');
-    Route::post('/scheduling/addshifts', [SchedulingController::class, 'addshifts'])->name('scheduling.addshifts');
-    Route::get('/scheduling/getShifts', [SchedulingController::class, 'getShifts'])->name('scheduling.getShifts');
-    Route::post('/scheduling/assignEmployeesToShift', [SchedulingController::class, 'assignEmployeesToShift'])->name('scheduling.assignEmployeesToShift');
-    Route::post('/scheduling/removeEmployeesFromShift', [SchedulingController::class, 'removeEmployeesFromShift'])->name('scheduling.removeEmployeesFromShift');
-    Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}', [SchedulingController::class, 'getEmployeesForShift'])->name('scheduling.getEmployeesForShift');
-    Route::delete('/scheduling/deleteShift/{shiftId}', [SchedulingController::class, 'deleteShift'])->name('scheduling.deleteShift');
-
+    Route::controller(SchedulingController::class)->middleware('checkRole:manager,employee')->group(function () {
+        Route::get('/scheduling', 'index')->name('scheduling');
+        Route::post('/scheduling/addshifts', 'addshifts')->name('scheduling.addshifts');
+        Route::get('/scheduling/getShifts', 'getShifts')->name('scheduling.getShifts');
+        Route::post('/scheduling/assignEmployeesToShift', 'assignEmployeesToShift')->name('scheduling.assignEmployeesToShift');
+        Route::post('/scheduling/removeEmployeesFromShift', 'removeEmployeesFromShift')->name('scheduling.removeEmployeesFromShift');
+        Route::get('/scheduling/getEmployeesForShift/{shiftId}/{userId}', 'getEmployeesForShift')->name('scheduling.getEmployeesForShift');
+        Route::delete('/scheduling/deleteShift/{shiftId}', 'deleteShift')->name('scheduling.deleteShift');
+    });
     // responsibilities
-    Route::controller(ResponsibilityController::class)->group(function () {
+    Route::controller(ResponsibilityController::class)->middleware('checkRole:manager,admin')->group(function () {
         Route::delete('/responsibilities/delete', 'delete')->name('responsibilities.delete');
         Route::post('/responsibilities/{id}/department/{department_id}', 'create')->name('responsibilities.create');
     });
 
+    //manager urlaub
     Route::controller(ManagerUrlaubController::class)->middleware('checkRole:manager')->group(function () {
         Route::get('/managerurlaub', [ManagerUrlaubController::class, 'index'])->name('managerUrlaubs');
         Route::post('/managerurlaub/genehmigen', [ManagerUrlaubController::class, 'genehmigen'])->name('managerUrlaubs.genehmigen');
         Route::post('/managerurlaub/ablehnen', [ManagerUrlaubController::class, 'ablehnen'])->name('managerUrlaubs.ablehnen');
         Route::delete('/managerurlaub/{id}/loeschen', [ManagerUrlaubController::class, 'destroy'])->name('managerUrlaubs.loeschen');
-
     });
 });
 
