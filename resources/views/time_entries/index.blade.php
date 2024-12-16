@@ -27,8 +27,8 @@ Zeiterfassungen
                 <label for="employee_id" class="col-form-label">Mitarbeiter:</label>
             </div>
             <div class="col-auto">
-                <select name="employee_id" id="employee_id" class="form-control" onchange="this.form.submit()">
-                    <option value="">Alle Mitarbeiter</option>
+                <select name="employee_id" id="employee_id" class="form-control form-select" onchange="this.form.submit()">
+                    <option value="">Mitarbeiter wählen</option>
                     @foreach($employees as $employee)
                         <option value="{{ $employee->id }}" {{ request()->input('employee_id') == $employee->id ? 'selected' : '' }}>
                             {{ $employee->full_name }}
@@ -117,3 +117,4 @@ Zeiterfassungen
     </div>
 </div>
 @endsection
+

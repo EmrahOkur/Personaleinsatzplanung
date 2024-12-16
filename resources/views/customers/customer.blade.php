@@ -150,6 +150,75 @@
                 }
             });
         }
+        document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const customerTableBody = document.getElementById('employeeTableBody');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm.length >= 2) {
+                searchCustomers(searchTerm);
+            } else if (searchTerm.length === 0) {
+                searchCustomers(''); // Get all customers when search is cleared
+            }
+        }, 300); // Debounce for 300ms
+    });
+
+    async function searchCustomers(searchTerm) {
+        try {
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            
+            const response = await fetch(`/customers/search?term=${encodeURIComponent(searchTerm)}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const customers = await response.json();
+            updateCustomerTable(customers);
+        } catch (error) {
+            console.error('Error searching customers:', error);
+        }
+    }
+
+    function updateCustomerTable(customers) {
+        console.log(customerTableBody, customers);
+        customerTableBody.innerHTML = '';
+        
+        customers.customers.forEach(customer => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${customer.customer_number}</td>
+                <td>${customer.companyname}</td>
+                <td>${customer.vorname} ${customer.nachname}</td>
+                <td class="p-1">
+                    <div class="d-flex flex-column p-0 m-0">
+                        ${customer.address.street} ${customer.address.house_number}
+                    </div>
+                    <div>
+                        ${customer.address.zip_code} ${customer.address.city}
+                    </div>
+                </td>
+                <td class="d-flex justify-content-end p-2 pb-3">
+                    <a href="/customers/${customer.id}/edit" class="btn btn-primary btn">
+                        <i class="fas fa-edit"></i> Bearbeiten
+                    </a>
+                </td>
+            `;
+            customerTableBody.appendChild(row);
+        });
+    }
+});
     </script>
     @endsection
 </x-app-layout>

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\UrlaubController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +119,7 @@ Route::middleware('auth')->group(function () {
     // Customer Controller
     Route::controller(CustomerController::class)->middleware('checkRole:manager')->group(function () {
         Route::get('/customers', 'index')->name('customers');
+        Route::get('/customers/search', 'search')->name('customers.search');
         Route::post('/customers', 'store')->name('customers.store');
         Route::delete('/customers/{id}', 'delete')->name('customers.delete');
         Route::get('/customers/edit/{id}', 'edit')->name('customers.edit');
@@ -161,7 +162,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/adminsettings', [AdminSettingsController::class, 'index'])->name('adminsettings');
         Route::post('/adminsettings/change', [AdminSettingsController::class, 'change'])->name('adminsettings.change');
     });
-    
+
 });
 
 require __DIR__ . '/auth.php';
