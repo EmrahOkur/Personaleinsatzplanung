@@ -8,7 +8,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="bg-white overflow-hidden">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="container mt-4">
+                    <div class="container mt-5">
                         <div class="row mb-4 d-flex justify-content-end">
                             <div class="col-md-4 d-flex justify-content-start">
                                 <i class="fa fa-search input-icon me-2 pt-2"></i>

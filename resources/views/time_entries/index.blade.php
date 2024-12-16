@@ -4,7 +4,7 @@
 Zeiterfassungen
 @endsection
 @section('main')
-<div class="container">
+<div class="container mt-4">
     <!-- Überschrift mit einem einladenden Titel und einem Symbol -->
     <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
         
@@ -88,14 +88,14 @@ Zeiterfassungen
                                 <div class="d-flex justify-content-center gap-2">
                                     <!-- Bearbeiten Button -->
                                     <a href="{{ route('time_entries.edit', $entry->id) }}" class="btn btn-primary">
-                                        Bearbeiten
+                                        <i class="fas fa-edit me-1"></i> Bearbeiten
                                     </a>
                                     <!-- Löschen Button -->
                                     <form action="{{ route('time_entries.destroy', $entry->id) }}" method="POST" onsubmit="return confirm('Möchten Sie diesen Eintrag wirklich löschen?')" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class=" btn btn-danger">
-                                            Löschen
+                                            <i class="fas fa-trash me-2"></i>Löschen
                                         </button>
                                     </form>
                                 </div>

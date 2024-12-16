@@ -81,12 +81,13 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="container">
                         <div class="d-flex justify-content-between mb-4 w-100">
-                            <div class="col-md-6">
+                            <div class="col-md-6 d-flex justify-content-start">
+                                <i class="fa fa-search input-icon me-2 pt-2"></i>
                                 <input type="text" id="search" class="form-control" placeholder="Kunden suchen...">
                             </div>
                             <div class="col-md-6 d-flex justify-content-end">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
-                                    <i class="fas fa-plus"></i> Hinzufügen
+                                    <i class="fas fa-plus"></i> Kunden anlegen
                                 </button>
                             </div>
                         </div>

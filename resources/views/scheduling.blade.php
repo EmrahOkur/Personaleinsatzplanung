@@ -7,11 +7,11 @@
 </span>
 @endsection
 @section('main')
-<section class="header d-flex flex-column align-items-center mt-2 mb-3" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" data-showemployees="{{$settings->show_employees}}" >
+<section class="header d-flex flex-column align-items-center mt-4 mb-3" id="schedule-header" data-loggeduserid = "{{Auth::id()}}" data-showemployees="{{$settings->show_employees}}" >
     <div class="month-navigation">
-        <button id="prev-week" class="btn btn-primary">Vorherige Woche</button>
+        <button id="prev-week" class="btn btn-primary"> << Vorherige Woche</button>
         <span id="week-label" class="mx-2"></span>
-        <button id="next-week" class="btn btn-primary">Nächste Woche</button>
+        <button id="next-week" class="btn btn-primary">Nächste Woche >></button>
     </div>
 </section>
     <!-- 2. Modalfenster -->
@@ -359,7 +359,6 @@
                         <button class="btn btn-success" onclick="secondScheduleModal(event)" data-shiftid = ${shift.id} data-requiredemployees = ${shift.amount_employees} data-bs-target="#secondModalSchedule" id="secondModalAddEmployees" data-bs-toggle="modal">Bearbeiten </button>
                     `;
                     // Abfrage, ob Mitarbeiter angezeigt werden sollen. Wird in den Settings bestimmt.
-                    console.log("Interessant",showingEmployees ? "true":"false")
                     if(showingEmployees == true){
                         if(shift.name){
                         shiftDiv.innerHTML = `
@@ -439,7 +438,6 @@
             let checkbox = document.getElementById("checkbox_for_calender");
             if(checkbox.checked){
                 checkbox.checked = false;
-                console.log("was checked")
             }
 
             document.getElementById("multiple_shifts").style.display = 'none';
@@ -473,15 +471,12 @@
         fetch(`/scheduling/getEmployeesForShift/${shiftId}/${userId}/${startDate}/${endDate}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data.employeesWithVacation);
                 data.employees.forEach(employee => {
 
                     let checkboxDiv = document.createElement('div');
                     checkboxDiv.classList.add('form-check');
 
                     let countTime = 0;
-                    console.log("second modal");
-                    console.log(employee.shifts, " Mitarbeiter ",employee);
                     employee.shifts.forEach(shift =>{
                         countTime += parseFloat(shift.shift_hours);
                     })
@@ -537,7 +532,6 @@
                 data:{shift_id:shiftId, employee_ids:selectedEmployees },
                 success: function(data) {
                     if(data.error) {
-                    console.log("error");
                     document.getElementById("modal-error-message-2").innerHTML = data.error;
                     // alert(data.error)
                     }
@@ -549,7 +543,6 @@
                     
                 },
                 error: function(xhr, status, error) {
-                    console.log(shiftId,selectedEmployees)
                     // Fehlerbehandlung: Logge die Antwort und zeige sie in der Konsole
                     alert("error");
                     console.error('Fehler bei der Anfrage:', error);
