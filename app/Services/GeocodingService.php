@@ -46,7 +46,7 @@ class GeocodingService
 
         try {
             $response = Http::withHeaders([
-                'User-Agent' => 'YourAppName/1.0', // Required by Nominatim ToS
+                'User-Agent' => 'YourAppName1/1.1', // Required by Nominatim ToS
                 'Accept-Language' => 'de,en', // Prefer German results
             ])->get(self::NOMINATIM_BASE_URL, [
                 'format' => 'jsonv2',
@@ -60,7 +60,7 @@ class GeocodingService
             }
 
             $data = $response->json();
-            //dd($data);
+
             // Check if any results were found
             if (empty($data)) {
                 return null;
