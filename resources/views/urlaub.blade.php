@@ -16,7 +16,7 @@
         <div class="p-3">    
             <div class="d-flex justify-content-end fixed-bottom-buttons mb-4">
                 <form action="{{ route('urlaubs.beantragen') }}" method="GET" style="display: inline;">
-                    <button type="submit" class="btn btn-primary">Urlaub beantragen</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"> </i> Urlaub beantragen</button>
                 </form>
             </div>
 
