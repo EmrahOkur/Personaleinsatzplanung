@@ -1,6 +1,6 @@
 <ul class="nav flex-column">
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('home') }}">
+    <li class="nav-item ">
+        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
             <i class="fas fa-home"></i> Dashboard
         </a>
     </li>
