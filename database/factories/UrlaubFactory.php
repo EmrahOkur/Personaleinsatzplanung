@@ -31,7 +31,7 @@ class UrlaubFactory extends Factory
 
         return [
             'datum' => $startDate->format('Y-m-d'),
-            'status' => $this->faker->randomElement(['pending']),
+            'status' => $this->faker->randomElement(['accepted']),
         ];
     }
 

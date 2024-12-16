@@ -43,6 +43,22 @@ class CustomerController extends Controller
         return redirect()->route('customers');
     }
 
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('term');
+
+        $customers = Customer::with('address')
+            ->where('vorname', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('nachname', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('companyname', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('customer_number', 'LIKE', "%{$searchTerm}%")
+            ->get();
+
+        return response()->json([
+            'customers' => $customers,
+        ]);
+    }
+
     public function delete($id)
     {
         $customer = Customer::findorfail($id);

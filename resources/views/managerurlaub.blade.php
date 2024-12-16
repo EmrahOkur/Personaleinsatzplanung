@@ -24,9 +24,9 @@
                             <th>Status</th>
                             <th>Vorname</th>      
                             <th>Nachname</th>  
-                            <th></th>      
-                            <th></th>    
-                            <th></th>
+                            <th  style="width: 150px;"></th>      
+                            <th  style="width: 150px;"></th>    
+                            <th  style="width: 150px;"></th>
                         </tr>
                     </thead>
                     <tbody id="urlaubTableBody">
@@ -36,29 +36,34 @@
                                 <td>{{ $status[$urlaub->status] }}</td>
                                 <td>{{ $urlaub->first_name }}</td>
                                 <td>{{ $urlaub->last_name }}</td>
-                                <td class="pe-3">
-                                    <form action="{{ route('managerUrlaubs.genehmigen') }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        @method('POST')
-                                        <button type="submit" class="btn btn-primary btn-sm" >
-                                            <i class="bi bi-trash" ></i>Genehmigen 
-                                        </button>
-                                        <input type="hidden" name="vacation_id" value="{{$urlaub->urlaub_id}}">
-                                    </form>
+                                <td class="pe-3"  style="width: 150px;">
+                                    @if ($urlaub->status === 'pending') 
+                                        <form action="{{ route('managerUrlaubs.genehmigen') }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('POST')
+                                            <button type="submit" class="btn btn-primary btn-sm" >
+                                                <i class="bi bi-trash" ></i>Genehmigen 
+                                            </button>
+                                            <input type="hidden" name="vacation_id" value="{{$urlaub->urlaub_id}}">
+                                        </form>
+                                    @endif
                                 </td>
 
-                                <td class="pe-3">
-                                    <form action="{{ route('managerUrlaubs.ablehnen', $urlaub->urlaub_id) }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        @method('POST')
-                                        <button type="submit" class="btn btn-primary btn-sm" >
-                                            <i class="bi bi-trash" ></i>Ablehnen 
-                                        </button>
-                                        <input type="hidden" name="vacation_id" value="{{$urlaub->urlaub_id}}">
-                                    </form>
+                                <td class="pe-3"  style="width: 150px;">
+                                    @if ($urlaub->status === 'pending')                                        
+                                    
+                                        <form action="{{ route('managerUrlaubs.ablehnen', $urlaub->urlaub_id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('POST')
+                                            <button type="submit" class="btn btn-primary btn-sm" >
+                                                <i class="bi bi-trash" ></i>Ablehnen 
+                                            </button>
+                                            <input type="hidden" name="vacation_id" value="{{$urlaub->urlaub_id}}">
+                                        </form>
+                                    @endif
                                 </td>
                                 
-                                <td class="pe-3">
+                                <td class="pe-3" style="width: 150px;">
                                     <form action="{{ route('managerUrlaubs.loeschen', $urlaub->urlaub_id) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')

@@ -26,6 +26,6 @@
             </ul>
         </div>
     </div>
-    <span class="h4 ms-4 ls-3 ps-3 fs-4 pt-4">@yield('header')</span>
+    <span class="h4 ms-4 ls-3 ps-3 fs-4">@yield('header')</span>
     
 </div>

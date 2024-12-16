@@ -15,13 +15,11 @@ class UrlaubSeeder extends Seeder
      */
     public function run(): void
     {
-        
         $employees = Employee::all();
         foreach ($employees as $e) {
             Urlaub::factory()->count(5)->create(
-                ['employee_id' => $e->id]
+                ['employee_id' => $e->id, 'status' => 'accepted']
             );
         }
-
     }
 }

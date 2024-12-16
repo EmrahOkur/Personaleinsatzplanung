@@ -29,7 +29,7 @@
 
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth', // Startansicht (Monatsansicht)
-                    firstDay: 2,
+                    firstDay: 1,
                     locale: 'de',                // Deutsche Lokalisierung
                     headerToolbar: {
                         left: 'prev,next today',  // Navigationsbuttons

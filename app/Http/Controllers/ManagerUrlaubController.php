@@ -6,11 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Urlaub;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class ManagerUrlaubController extends Controller
 {
@@ -23,10 +21,10 @@ class ManagerUrlaubController extends Controller
         $departmentId = $employee->department->id;  // Der Benutzer hat bereits eine department_id
 
         $urlaubs = DB::table('urlaubs')
-            ->select('urlaubs.datum', 'urlaubs.status', 'urlaubs.id as urlaub_id','employees.id as employee_id','employees.first_name','employees.last_name')
-            ->join('employees','urlaubs.employee_id','employees.id')
+            ->select('urlaubs.datum', 'urlaubs.status', 'urlaubs.id as urlaub_id', 'employees.id as employee_id', 'employees.first_name', 'employees.last_name')
+            ->join('employees', 'urlaubs.employee_id', 'employees.id')
             ->where('employees.department_id', $departmentId)
-            ->orderBy('last_name', 'desc')
+            ->orderBy('status', 'desc')
             ->get();
 
         // Initialisierung von Werten
@@ -51,6 +49,7 @@ class ManagerUrlaubController extends Controller
         // Daten an die Ansicht übergeben
         return view('managerurlaub', compact('verfügbare_tage', 'genommene_tage', 'verplante_tage', 'verbleibende_tage', 'urlaubs', 'employee', 'events'));
     }
+
     public function genehmigen(Request $request)
     {
 
