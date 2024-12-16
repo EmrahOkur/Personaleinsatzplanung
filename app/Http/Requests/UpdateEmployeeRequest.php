@@ -41,7 +41,6 @@ class UpdateEmployeeRequest extends FormRequest
             'exit_date' => ['nullable', 'date', 'after:hire_date'],
             'position' => ['string', 'max:255'],
             'vacation_days' => ['integer', 'min:0', 'max:100'],
-            'working_hours' => ['required', 'integer', 'min:0', 'max:60'],
             'status' => ['string', 'in:active,inactive,on_leave'],
             'emergency_contact_name' => ['nullable', 'string', 'max:255'],
             'emergency_contact_phone' => ['nullable', 'string', 'max:20'],
