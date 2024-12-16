@@ -20,22 +20,6 @@ class UserSeeder extends Seeder
         $addressIds = Address::pluck('id');
 
         // Beispiel-Benutzer
-        $employee = Employee::factory()
-            ->create([
-                'first_name' => 'Patrik',
-                'last_name' => 'Wendt',
-                'department_id' => 1,
-                'address_id' => $addressIds->random(),
-            ]);
-        $patrik = User::factory()->create([
-            'name' => 'Wendt',
-            'vorname' => 'Patrik',
-            'role' => 'manager',
-            'email' => 'pwe@pwe.de',
-            'password' => '$2y$10$Ub.ZAwHgIer4/r0h6TbAmuCVQSnTX81eUh72q17BQW9dxn8YMjWcK', // pwe123 https://onlinephp.io/password-hash
-            'employee_id' => $employee->id,
-        ]);
-
         User::factory()->create([
             'name' => 'Admin',
             'vorname' => 'Ein',
