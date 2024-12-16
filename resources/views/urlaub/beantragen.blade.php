@@ -49,7 +49,7 @@
                     themeSystem: 'bootstrap',
                     initialView: 'dayGridMonth',
                     locale: 'de',
-                    firstDay: 2,
+                    firstDay: 1,
                     headerToolbar: {
                         left: 'today',
                         center: 'title',
